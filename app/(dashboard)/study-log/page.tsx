@@ -177,7 +177,7 @@ export default async function StudyLogPage() {
                     </p>
                   )}
                   {log.blockers && (
-                    <p className="mt-0.5 text-xs text-red-400/70 line-clamp-1">
+                    <p className="mt-0.5 text-xs text-[var(--token-red)]/70 line-clamp-1">
                       Blocker: {log.blockers}
                     </p>
                   )}

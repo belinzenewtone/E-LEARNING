@@ -143,7 +143,7 @@ export function SubmissionForm({ assignmentId }: SubmissionFormProps) {
         <div className="space-y-1.5">
           <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             Reflection{" "}
-            <span className="text-red-400 normal-case font-normal">
+            <span className="text-[var(--token-red)] normal-case font-normal">
               (required)
             </span>
           </Label>
@@ -159,7 +159,7 @@ export function SubmissionForm({ assignmentId }: SubmissionFormProps) {
         <div className="space-y-1.5">
           <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             Self Score (1–10){" "}
-            <span className="text-red-400 normal-case font-normal">
+            <span className="text-[var(--token-red)] normal-case font-normal">
               (required)
             </span>
           </Label>
@@ -170,7 +170,7 @@ export function SubmissionForm({ assignmentId }: SubmissionFormProps) {
               max={10}
               value={selfScore === "" ? 5 : selfScore}
               onChange={(e) => setSelfScore(parseInt(e.target.value, 10))}
-              className="flex-1 accent-primary"
+              className="form-range flex-1"
             />
             <span className="w-8 text-center text-sm font-bold text-foreground">
               {selfScore === "" ? "—" : selfScore}

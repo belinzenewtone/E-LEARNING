@@ -10,6 +10,10 @@ interface EmptyStateProps {
     label: string;
     href: string;
   };
+  secondaryAction?: {
+    label: string;
+    href: string;
+  };
 }
 
 export function EmptyState({
@@ -17,6 +21,7 @@ export function EmptyState({
   title,
   description,
   action,
+  secondaryAction,
 }: EmptyStateProps) {
   return (
     <div className="flex flex-col items-center justify-center gap-4 py-16 text-center">
@@ -29,11 +34,18 @@ export function EmptyState({
         <p className="text-sm text-muted-foreground">{description}</p>
       </div>
 
-      {action && (
-        <Button variant="outline" size="sm" asChild>
-          <Link href={action.href}>{action.label}</Link>
-        </Button>
-      )}
+      <div className="flex flex-wrap items-center justify-center gap-2">
+        {action && (
+          <Button variant="outline" size="sm" asChild>
+            <Link href={action.href}>{action.label}</Link>
+          </Button>
+        )}
+        {secondaryAction && (
+          <Button variant="ghost" size="sm" asChild>
+            <Link href={secondaryAction.href}>{secondaryAction.label}</Link>
+          </Button>
+        )}
+      </div>
     </div>
   );
 }

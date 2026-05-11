@@ -108,7 +108,7 @@ export function StudyLogForm({ tracks }: StudyLogFormProps) {
             <select
               value={trackId}
               onChange={(e) => setTrackId(e.target.value)}
-              className="flex h-9 w-full rounded-md border border-input bg-muted/20 px-3 py-1 text-sm text-foreground shadow-sm focus:outline-none focus:ring-1 focus:ring-ring"
+              className="form-select flex h-9 w-full rounded-md border border-input bg-muted/20 px-3 py-1 text-sm text-foreground shadow-sm focus:outline-none focus:ring-1 focus:ring-ring"
             >
               <option value="">All / General</option>
               {tracks.map((t) => (
@@ -170,7 +170,7 @@ export function StudyLogForm({ tracks }: StudyLogFormProps) {
             max={5}
             value={energy}
             onChange={(e) => setEnergy(parseInt(e.target.value, 10))}
-            className="w-full accent-primary"
+            className="form-range"
           />
           <div className="flex justify-between text-[10px] text-muted-foreground/60">
             <span>Drained</span>

@@ -97,7 +97,7 @@ function ProgressSidebar({ lesson }: { lesson: LessonFull }) {
             Week {lesson.week.weekNumber} Progress
           </p>
           <div className="flex items-center gap-3">
-            <ProgressRing value={weekProgress} size={56} color="#22d3ee" />
+            <ProgressRing value={weekProgress} size={56} color="var(--token-cyan)" />
             <div>
               <p className="text-sm font-semibold text-foreground">
                 {completedInWeek}/{weekLessons.length} lessons
@@ -267,33 +267,46 @@ async function LessonContent({ slug, userId }: { slug: string; userId: string })
   const checkpointQuestions = lesson.checkpointQuestions as { question: string }[];
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[280px_1fr_220px]">
-      <aside>
-        <LessonInfoPanel lesson={lesson} />
-      </aside>
+    <div>
+      <nav className="mb-6 flex items-center gap-1.5 text-xs text-muted-foreground">
+        <Link href="/dashboard" className="hover:text-foreground transition-colors">
+          Dashboard
+        </Link>
+        <ChevronRight className="h-3 w-3" />
+        <Link href="/lessons" className="hover:text-foreground transition-colors">
+          Lessons
+        </Link>
+        <ChevronRight className="h-3 w-3" />
+        <span className="text-foreground truncate max-w-[240px]">{lesson.title}</span>
+      </nav>
+      <div className="grid gap-6 xl:grid-cols-[280px_1fr_220px]">
+        <aside>
+          <LessonInfoPanel lesson={lesson} />
+        </aside>
 
-      <main className="space-y-5">
-        {lesson.content && (
-          <Card className="border-border/40 bg-card/60">
-            <CardContent className="p-5">
-              <MarkdownContent content={lesson.content} />
-            </CardContent>
-          </Card>
-        )}
-        <LessonStudyArea
-          lessonId={lesson.id}
-          lessonSlug={lesson.slug}
-          userId={userId}
-          checkpointQuestions={checkpointQuestions}
-          existingNotes={lesson.notes}
-          existingAnswers={lesson.checkpointAnswers}
-          isCompleted={lesson.progress[0]?.status === "completed"}
-        />
-      </main>
+        <main className="space-y-5">
+          {lesson.content && (
+            <Card className="border-border/40 bg-card/60">
+              <CardContent className="p-5">
+                <MarkdownContent content={lesson.content} />
+              </CardContent>
+            </Card>
+          )}
+          <LessonStudyArea
+            lessonId={lesson.id}
+            lessonSlug={lesson.slug}
+            userId={userId}
+            checkpointQuestions={checkpointQuestions}
+            existingNotes={lesson.notes}
+            existingAnswers={lesson.checkpointAnswers}
+            isCompleted={lesson.progress[0]?.status === "completed"}
+          />
+        </main>
 
-      <aside>
-        <ProgressSidebar lesson={lesson} />
-      </aside>
+        <aside>
+          <ProgressSidebar lesson={lesson} />
+        </aside>
+      </div>
     </div>
   );
 }
@@ -306,18 +319,6 @@ export default async function LessonPage({ params }: LessonPageProps) {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8">
-      <nav className="mb-6 flex items-center gap-1.5 text-xs text-muted-foreground">
-        <Link href="/dashboard" className="hover:text-foreground transition-colors">
-          Dashboard
-        </Link>
-        <ChevronRight className="h-3 w-3" />
-        <Link href="/lessons" className="hover:text-foreground transition-colors">
-          Lessons
-        </Link>
-        <ChevronRight className="h-3 w-3" />
-        <span className="text-foreground truncate max-w-[200px]">{slug}</span>
-      </nav>
-
       <Suspense fallback={<LessonSkeleton />}>
         <LessonContent slug={slug} userId={session.user.id} />
       </Suspense>

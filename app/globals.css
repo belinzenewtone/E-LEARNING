@@ -91,6 +91,13 @@
   --warning-foreground: oklch(0.14 0.012 240);
   --success: oklch(0.65 0.17 155);
   --success-foreground: oklch(0.14 0.012 240);
+  /* Adaptive color tokens — used by getStatusColor / getDifficultyColor */
+  --token-cyan: oklch(0.72 0.18 210);
+  --token-emerald: oklch(0.65 0.17 155);
+  --token-amber: oklch(0.78 0.18 85);
+  --token-red: oklch(0.62 0.22 25);
+  --token-purple: oklch(0.72 0.19 300);
+  --token-blue: oklch(0.65 0.18 250);
 }
 
 /* Light mode override */
@@ -121,6 +128,13 @@
   --sidebar-accent-foreground: oklch(0.15 0.015 240);
   --sidebar-border: oklch(0.85 0.01 240);
   --sidebar-ring: oklch(0.55 0.20 210);
+  /* Light-mode adaptive tokens (darker for contrast) */
+  --token-cyan: oklch(0.55 0.18 210);
+  --token-emerald: oklch(0.50 0.17 155);
+  --token-amber: oklch(0.65 0.18 85);
+  --token-red: oklch(0.55 0.22 25);
+  --token-purple: oklch(0.55 0.19 300);
+  --token-blue: oklch(0.50 0.18 250);
 }
 
 @layer base {
@@ -165,5 +179,57 @@
     backdrop-filter: blur(12px);
     background: oklch(1 0 0 / 4%);
     border: 1px solid oklch(1 0 0 / 8%);
+  }
+  /* Styled native form elements */
+  .form-select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-right: 2.5rem;
+  }
+  .form-range {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    border-radius: 3px;
+    background: oklch(1 0 0 / 10%);
+    outline: none;
+    width: 100%;
+  }
+  .form-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--primary);
+    cursor: pointer;
+    border: 2px solid var(--background);
+    box-shadow: 0 0 0 1px oklch(1 0 0 / 10%);
+    transition: transform 0.15s ease;
+  }
+  .form-range::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+  }
+  .form-range::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--primary);
+    cursor: pointer;
+    border: 2px solid var(--background);
+    box-shadow: 0 0 0 1px oklch(1 0 0 / 10%);
+    transition: transform 0.15s ease;
+  }
+  .form-range::-moz-range-thumb:hover {
+    transform: scale(1.1);
+  }
+  /* Light mode: disable glass-card transparency to avoid muddy edges */
+  .light .glass {
+    background: oklch(0.97 0.005 240);
+    border-color: oklch(0.88 0.01 240);
   }
 }

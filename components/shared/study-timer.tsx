@@ -45,7 +45,7 @@ function TimerRing({
   const center = size / 2;
 
   const trackColor = "currentColor";
-  const progressColor = mode === "work" ? "#22d3ee" : "#34d399"; // cyan-400 / emerald-400
+  const progressColor = mode === "work" ? "var(--token-cyan)" : "var(--token-emerald)";
 
   return (
     <div
@@ -102,6 +102,13 @@ export function StudyTimer() {
   const [running, setRunning] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  // Request notification permission once on mount
+  useEffect(() => {
+    if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "default") {
+      Notification.requestPermission();
+    }
+  }, []);
+
   const totalSeconds = mode === "work" ? WORK_SECONDS : BREAK_SECONDS;
   const fraction = secondsLeft / totalSeconds;
 
@@ -109,6 +116,21 @@ export function StudyTimer() {
 
   const handleSessionComplete = useCallback((completedMode: Mode) => {
     setRunning(false);
+
+    // Browser notification (if permitted)
+    if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
+      if (completedMode === "work") {
+        new Notification("Focus session complete!", {
+          body: "Time for a 5-minute break.",
+          icon: "/window.svg",
+        });
+      } else {
+        new Notification("Break over!", {
+          body: "Ready to focus again?",
+          icon: "/window.svg",
+        });
+      }
+    }
 
     if (completedMode === "work") {
       toast.success("Session complete! Log your study time.", {
@@ -180,7 +202,7 @@ export function StudyTimer() {
 
   const modeLabel = mode === "work" ? "Focus" : "Break";
   const modeColor =
-    mode === "work" ? "text-cyan-400" : "text-emerald-400";
+    mode === "work" ? "text-[var(--token-cyan)]" : "text-[var(--token-emerald)]";
 
   return (
     <div className="rounded-xl border border-border/40 bg-card/60 p-4 flex flex-col items-center gap-3">
@@ -203,13 +225,13 @@ export function StudyTimer() {
         <span
           className={cn(
             "h-1.5 w-6 rounded-full transition-colors",
-            mode === "work" ? "bg-cyan-400" : "bg-muted/40"
+            mode === "work" ? "bg-[var(--token-cyan)]" : "bg-muted/40"
           )}
         />
         <span
           className={cn(
             "h-1.5 w-6 rounded-full transition-colors",
-            mode === "break" ? "bg-emerald-400" : "bg-muted/40"
+            mode === "break" ? "bg-[var(--token-emerald)]" : "bg-muted/40"
           )}
         />
       </div>
@@ -232,10 +254,10 @@ export function StudyTimer() {
           className={cn(
             "flex h-9 w-24 items-center justify-center gap-1.5 rounded-lg border text-xs font-semibold transition-colors",
             running
-              ? "border-amber-400/40 bg-amber-400/10 text-amber-400 hover:bg-amber-400/20"
+              ? "border-[var(--token-amber)]/40 bg-[var(--token-amber)]/10 text-[var(--token-amber)] hover:bg-[var(--token-amber)]/20"
               : mode === "work"
-              ? "border-cyan-400/40 bg-cyan-400/10 text-cyan-400 hover:bg-cyan-400/20"
-              : "border-emerald-400/40 bg-emerald-400/10 text-emerald-400 hover:bg-emerald-400/20"
+              ? "border-[var(--token-cyan)]/40 bg-[var(--token-cyan)]/10 text-[var(--token-cyan)] hover:bg-[var(--token-cyan)]/20"
+              : "border-[var(--token-emerald)]/40 bg-[var(--token-emerald)]/10 text-[var(--token-emerald)] hover:bg-[var(--token-emerald)]/20"
           )}
         >
           {running ? (

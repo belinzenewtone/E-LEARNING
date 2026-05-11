@@ -35,9 +35,11 @@ export function MobileNav({ userXp = 0, streak = 0, userName = "Learner" }: Mobi
       </Button>
 
       <Sheet open={open} onOpenChange={setOpen}>
-        <SheetContent side="left" className="w-60 p-0 bg-sidebar border-sidebar-border">
+        <SheetContent side="left" className="w-60 p-0 bg-sidebar border-sidebar-border flex flex-col">
           <SheetTitle className="sr-only">Navigation</SheetTitle>
-          <Sidebar userXp={userXp} streak={streak} userName={userName} />
+          <div className="flex-1 overflow-y-auto scrollbar-thin">
+            <Sidebar userXp={userXp} streak={streak} userName={userName} />
+          </div>
         </SheetContent>
       </Sheet>
     </>

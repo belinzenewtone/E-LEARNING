@@ -13,10 +13,10 @@ interface StatCardProps {
 }
 
 const colorMap: Record<StatColor, { icon: string; glow: string; text: string }> = {
-  primary:  { icon: "bg-cyan-500/10 text-cyan-400 border border-cyan-500/20",   glow: "shadow-cyan-500/5",    text: "text-cyan-400"    },
-  success:  { icon: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20", glow: "shadow-emerald-500/5", text: "text-emerald-400" },
-  warning:  { icon: "bg-amber-500/10 text-amber-400 border border-amber-500/20",  glow: "shadow-amber-500/5",   text: "text-amber-400"   },
-  danger:   { icon: "bg-red-500/10 text-red-400 border border-red-500/20",        glow: "shadow-red-500/5",     text: "text-red-400"     },
+  primary:  { icon: "bg-[var(--token-cyan)]/10 text-[var(--token-cyan)] border border-[var(--token-cyan)]/20",   glow: "shadow-[var(--token-cyan)]/5",    text: "text-[var(--token-cyan)]"    },
+  success:  { icon: "bg-[var(--token-emerald)]/10 text-[var(--token-emerald)] border border-[var(--token-emerald)]/20", glow: "shadow-[var(--token-emerald)]/5", text: "text-[var(--token-emerald)]" },
+  warning:  { icon: "bg-[var(--token-amber)]/10 text-[var(--token-amber)] border border-[var(--token-amber)]/20",  glow: "shadow-[var(--token-amber)]/5",   text: "text-[var(--token-amber)]"   },
+  danger:   { icon: "bg-[var(--token-red)]/10 text-[var(--token-red)] border border-[var(--token-red)]/20",        glow: "shadow-[var(--token-red)]/5",     text: "text-[var(--token-red)]"     },
 };
 
 export function StatCard({ title, value, subtitle, icon: Icon, color = "primary", trend }: StatCardProps) {
@@ -48,7 +48,7 @@ export function StatCard({ title, value, subtitle, icon: Icon, color = "primary"
                 <p className="truncate text-xs text-muted-foreground">{subtitle}</p>
               )}
               {trend !== undefined && (
-                <span className={cn("inline-flex items-center gap-0.5 text-xs font-medium", trendPositive ? "text-emerald-400" : "text-red-400")}>
+                <span className={cn("inline-flex items-center gap-0.5 text-xs font-medium", trendPositive ? "text-[var(--token-emerald)]" : "text-[var(--token-red)]")}>
                   {trendPositive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
                   {Math.abs(trend)}%
                 </span>

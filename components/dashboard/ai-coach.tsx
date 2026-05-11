@@ -108,8 +108,8 @@ export function AiCoach({ hasApiKey = false, userName = "Learner" }: AiCoachProp
           className={cn(
             "text-xs",
             hasApiKey
-              ? "text-emerald-400 border-emerald-400/30"
-              : "text-amber-400 border-amber-400/30"
+              ? "text-[var(--token-emerald)] border-[var(--token-emerald)]/30"
+              : "text-[var(--token-amber)] border-[var(--token-amber)]/30"
           )}
         >
           {hasApiKey ? "✓ Active" : "Demo mode"}
@@ -117,7 +117,7 @@ export function AiCoach({ hasApiKey = false, userName = "Learner" }: AiCoachProp
       </div>
 
       {!hasApiKey && messages.length === 0 && (
-        <div className="mx-4 mt-4 p-3 rounded-lg bg-amber-400/5 border border-amber-400/20 text-xs text-amber-400">
+        <div className="mx-4 mt-4 p-3 rounded-lg bg-[var(--token-amber)]/5 border border-[var(--token-amber)]/20 text-xs text-[var(--token-amber)]">
           <AlertCircle className="w-3 h-3 inline mr-1" />
           Running in demo mode. Set ANTHROPIC_API_KEY to enable real AI coaching.
         </div>

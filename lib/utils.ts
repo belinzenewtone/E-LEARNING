@@ -65,11 +65,11 @@ export function truncate(str: string, length: number): string {
 export function getDifficultyColor(difficulty: string): string {
   switch (difficulty) {
     case "beginner":
-      return "text-emerald-400 bg-emerald-400/10";
+      return "text-[var(--token-emerald)] bg-[var(--token-emerald)]/10";
     case "intermediate":
-      return "text-amber-400 bg-amber-400/10";
+      return "text-[var(--token-amber)] bg-[var(--token-amber)]/10";
     case "advanced":
-      return "text-red-400 bg-red-400/10";
+      return "text-[var(--token-red)] bg-[var(--token-red)]/10";
     default:
       return "text-muted-foreground bg-muted";
   }
@@ -78,22 +78,46 @@ export function getDifficultyColor(difficulty: string): string {
 export function getStatusColor(status: string): string {
   switch (status) {
     case "completed":
-      return "text-emerald-400 bg-emerald-400/10 border-emerald-400/20";
+      return "text-[var(--token-emerald)] bg-[var(--token-emerald)]/10 border-[var(--token-emerald)]/20";
     case "in-progress":
     case "active":
-      return "text-cyan-400 bg-cyan-400/10 border-cyan-400/20";
+      return "text-[var(--token-cyan)] bg-[var(--token-cyan)]/10 border-[var(--token-cyan)]/20";
     case "submitted":
-      return "text-blue-400 bg-blue-400/10 border-blue-400/20";
+      return "text-[var(--token-blue)] bg-[var(--token-blue)]/10 border-[var(--token-blue)]/20";
     case "needs-improvement":
-      return "text-amber-400 bg-amber-400/10 border-amber-400/20";
+      return "text-[var(--token-amber)] bg-[var(--token-amber)]/10 border-[var(--token-amber)]/20";
     case "locked":
       return "text-muted-foreground bg-muted border-border";
     case "not-started":
       return "text-muted-foreground bg-muted border-border";
     case "overdue":
-      return "text-red-400 bg-red-400/10 border-red-400/20";
+      return "text-[var(--token-red)] bg-[var(--token-red)]/10 border-[var(--token-red)]/20";
     default:
       return "text-muted-foreground bg-muted border-border";
+  }
+}
+
+/** Return a hex color for a given track slug (for SVG / chart usage) */
+export function getTrackColor(slug: string): string {
+  switch (slug) {
+    case "web":
+      return "#22d3ee";
+    case "data":
+      return "#34d399";
+    default:
+      return "#94a3b8";
+  }
+}
+
+/** Return CSS variable–based color class for track progress bars */
+export function getTrackColorClass(slug: string): string {
+  switch (slug) {
+    case "web":
+      return "bg-[var(--token-cyan)]";
+    case "data":
+      return "bg-[var(--token-emerald)]";
+    default:
+      return "bg-muted-foreground";
   }
 }
 

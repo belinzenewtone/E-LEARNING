@@ -59,7 +59,7 @@ export function Topbar({ title, subtitle, breadcrumbs, actions }: TopbarProps) {
         <ThemeToggle />
         <NotificationBell notifications={notifications} unreadCount={unreadCount} userId={userId} />
         <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground" asChild>
-          <a href="https://github.com/anthropics/claude-code/issues" target="_blank" rel="noopener noreferrer" title="Help & Feedback">
+          <a href="/dashboard" title="Dashboard">
             <HelpCircle className="h-4 w-4" />
           </a>
         </Button>

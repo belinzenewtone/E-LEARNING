@@ -119,13 +119,13 @@ export function NotesClient({ notes, tracks }: NotesClientProps) {
                     </h3>
                     <div className="flex shrink-0 items-center gap-1">
                       {note.pinned && (
-                        <Pin className="h-3.5 w-3.5 text-amber-400" />
+                        <Pin className="h-3.5 w-3.5 text-[var(--token-amber)]" />
                       )}
                       {note.reviewLater && (
-                        <BookmarkCheck className="h-3.5 w-3.5 text-cyan-400" />
+                        <BookmarkCheck className="h-3.5 w-3.5 text-[var(--token-cyan)]" />
                       )}
                       {note.confusing && (
-                        <AlertCircle className="h-3.5 w-3.5 text-red-400" />
+                        <AlertCircle className="h-3.5 w-3.5 text-[var(--token-red)]" />
                       )}
                     </div>
                   </div>

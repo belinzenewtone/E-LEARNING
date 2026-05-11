@@ -130,7 +130,7 @@ export function LessonStudyArea({
             className={cn(
               "flex w-full items-center gap-3 rounded-lg border px-4 py-3 text-sm font-medium transition-colors",
               sourceReviewed
-                ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-400"
+                ? "border-[var(--token-emerald)]/30 bg-[var(--token-emerald)]/10 text-[var(--token-emerald)]"
                 : "border-border/50 bg-muted/20 text-muted-foreground hover:border-border hover:text-foreground"
             )}
           >
@@ -179,7 +179,7 @@ export function LessonStudyArea({
         <Card className="border-border/40 bg-card/60">
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-sm">
-              <HelpCircle className="h-4 w-4 text-amber-400" />
+              <HelpCircle className="h-4 w-4 text-[var(--token-amber)]" />
               Checkpoint Questions
             </CardTitle>
           </CardHeader>
@@ -205,7 +205,7 @@ export function LessonStudyArea({
       <Card className="border-border/40 bg-card/60">
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-sm">
-            <Lightbulb className="h-4 w-4 text-emerald-400" />
+            <Lightbulb className="h-4 w-4 text-[var(--token-emerald)]" />
             Reflection
           </CardTitle>
         </CardHeader>
@@ -259,7 +259,7 @@ export function LessonStudyArea({
             : isPending
             ? "Completing…"
             : "Complete Lesson"}
-          {optimisticCompleted && <CheckCircle2 className="h-4 w-4 text-emerald-400" />}
+          {optimisticCompleted && <CheckCircle2 className="h-4 w-4 text-[var(--token-emerald)]" />}
         </Button>
         {!canComplete && !optimisticCompleted && (
           <p className="text-center text-xs text-muted-foreground">

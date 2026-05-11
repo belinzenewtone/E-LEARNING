@@ -11,11 +11,11 @@ import { getWeeksList } from "@/server/queries/weeks";
 import { Topbar } from "@/components/layout/topbar";
 
 const PHASES: { label: string; range: [number, number]; color: string; bg: string }[] = [
-  { label: "Phase 1 — Foundations",     range: [1, 4],   color: "text-cyan-400",    bg: "bg-cyan-400/10 border-cyan-400/20"    },
-  { label: "Phase 2 — Core Skills",     range: [5, 8],   color: "text-blue-400",    bg: "bg-blue-400/10 border-blue-400/20"    },
-  { label: "Phase 3 — Advanced Topics", range: [9, 13],  color: "text-purple-400",  bg: "bg-purple-400/10 border-purple-400/20" },
-  { label: "Phase 4 — Build",           range: [14, 17], color: "text-amber-400",   bg: "bg-amber-400/10 border-amber-400/20"  },
-  { label: "Phase 5 — Capstone",        range: [18, 22], color: "text-emerald-400", bg: "bg-emerald-400/10 border-emerald-400/20" },
+  { label: "Phase 1 — Foundations",     range: [1, 4],   color: "text-[var(--token-cyan)]",    bg: "bg-[var(--token-cyan)]/10 border-[var(--token-cyan)]/20"    },
+  { label: "Phase 2 — Core Skills",     range: [5, 8],   color: "text-[var(--token-blue)]",    bg: "bg-[var(--token-blue)]/10 border-[var(--token-blue)]/20"    },
+  { label: "Phase 3 — Advanced Topics", range: [9, 13],  color: "text-[var(--token-purple)]",  bg: "bg-[var(--token-purple)]/10 border-[var(--token-purple)]/20" },
+  { label: "Phase 4 — Build",           range: [14, 17], color: "text-[var(--token-amber)]",   bg: "bg-[var(--token-amber)]/10 border-[var(--token-amber)]/20"  },
+  { label: "Phase 5 — Capstone",        range: [18, 22], color: "text-[var(--token-emerald)]", bg: "bg-[var(--token-emerald)]/10 border-[var(--token-emerald)]/20" },
 ];
 
 function getPhase(weekNumber: number) {
@@ -23,8 +23,8 @@ function getPhase(weekNumber: number) {
 }
 
 function WeekStatusIcon({ status }: { status: string }) {
-  if (status === "completed") return <CheckCircle2 className="h-4 w-4 text-emerald-400" />;
-  if (status === "active")    return <Zap className="h-4 w-4 text-cyan-400" />;
+  if (status === "completed") return <CheckCircle2 className="h-4 w-4 text-[var(--token-emerald)]" />;
+  if (status === "active")    return <Zap className="h-4 w-4 text-[var(--token-cyan)]" />;
   return <Lock className="h-4 w-4 text-muted-foreground/30" />;
 }
 
@@ -60,12 +60,12 @@ export default async function WeeksPage() {
           </div>
           <div className="rounded-xl border border-border/50 bg-card/60 p-4">
             <p className="text-xs text-muted-foreground uppercase tracking-wider">Completed</p>
-            <p className="mt-1 text-2xl font-bold text-emerald-400">{completedWeeks}</p>
+            <p className="mt-1 text-2xl font-bold text-[var(--token-emerald)]">{completedWeeks}</p>
             <p className="text-xs text-muted-foreground">of {totalWeeks} weeks</p>
           </div>
           <div className="rounded-xl border border-border/50 bg-card/60 p-4">
             <p className="text-xs text-muted-foreground uppercase tracking-wider">Active Sprint</p>
-            <p className="mt-1 text-2xl font-bold text-cyan-400">
+            <p className="mt-1 text-2xl font-bold text-[var(--token-cyan)]">
               {activeWeek ? `W${activeWeek.weekNumber}` : "—"}
             </p>
             {activeWeek && <p className="text-xs text-muted-foreground truncate">{activeWeek.theme}</p>}
@@ -115,7 +115,7 @@ export default async function WeeksPage() {
                           <div className={cn(
                             "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xs font-bold",
                             isActive ? "bg-primary/15 text-primary border border-primary/20"
-                            : isDone ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                            : isDone ? "bg-emerald-500/10 text-[var(--token-emerald)] border border-emerald-500/20"
                             : "bg-muted/30 text-muted-foreground border border-border/40"
                           )}>
                             W{week.weekNumber}

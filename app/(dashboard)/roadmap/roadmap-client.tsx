@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, ChevronRight, Lock, BookOpen, CheckCircle2, Circle, Clock, Layers } from "lucide-react";
 import { cn, getStatusColor } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -75,9 +76,9 @@ type TrackFilter = "both" | "web" | "data";
 function LessonRow({ lesson }: { lesson: LessonInModule }) {
   const statusIcon =
     lesson.status === "completed" ? (
-      <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+      <CheckCircle2 className="h-3.5 w-3.5 text-[var(--token-emerald)]" />
     ) : lesson.status === "in-progress" ? (
-      <Circle className="h-3.5 w-3.5 text-cyan-400 fill-cyan-400/20" />
+      <Circle className="h-3.5 w-3.5 text-[var(--token-cyan)] fill-[var(--token-cyan)]/20" />
     ) : (
       <Circle className="h-3.5 w-3.5 text-muted-foreground/40" />
     );
@@ -130,9 +131,9 @@ function ModuleCard({
           className={cn(
             "mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg",
             module.status === "completed"
-              ? "bg-emerald-400/10 text-emerald-400"
+              ? "bg-[var(--token-emerald)]/10 text-[var(--token-emerald)]"
               : module.status === "active"
-              ? "bg-cyan-400/10 text-cyan-400"
+              ? "bg-[var(--token-cyan)]/10 text-[var(--token-cyan)]"
               : "bg-muted/50 text-muted-foreground"
           )}
         >
@@ -173,7 +174,7 @@ function ModuleCard({
               {module.estimatedHours}h
             </span>
             {module.completedCount > 0 && (
-              <span className="text-emerald-400">
+              <span className="text-[var(--token-emerald)]">
                 {module.completedCount}/{module.lessonCount} done
               </span>
             )}
@@ -199,13 +200,23 @@ function ModuleCard({
       </button>
 
       {/* Lessons list */}
-      {expanded && !isLocked && module.lessons.length > 0 && (
-        <div className="border-t border-border/30 px-4 pb-3 pt-2">
-          {module.lessons.map((lesson) => (
-            <LessonRow key={lesson.id} lesson={lesson} />
-          ))}
-        </div>
-      )}
+      <AnimatePresence initial={false}>
+        {expanded && !isLocked && module.lessons.length > 0 && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25, ease: "easeInOut" }}
+            className="overflow-hidden"
+          >
+            <div className="border-t border-border/30 px-4 pb-3 pt-2">
+              {module.lessons.map((lesson) => (
+                <LessonRow key={lesson.id} lesson={lesson} />
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
@@ -389,14 +400,14 @@ export function RoadmapClient({ webTrack, dataTrack }: RoadmapClientProps) {
           <TrackColumn
             track={webTrack}
             statusFilter={statusFilter}
-            color="#22d3ee"
+            color="var(--token-cyan)"
           />
         )}
         {(trackFilter === "both" || trackFilter === "data") && dataTrack && (
           <TrackColumn
             track={dataTrack}
             statusFilter={statusFilter}
-            color="#34d399"
+            color="var(--token-emerald)"
           />
         )}
       </div>

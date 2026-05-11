@@ -32,11 +32,11 @@ interface NotificationBellProps {
 function typeColor(type: string): string {
   switch (type) {
     case "overdue_assignment":
-      return "bg-red-400";
+      return "bg-[var(--token-red)]";
     case "streak_risk":
-      return "bg-amber-400";
+      return "bg-[var(--token-amber)]";
     case "week_complete":
-      return "bg-emerald-400";
+      return "bg-[var(--token-emerald)]";
     case "milestone":
       return "bg-primary";
     default:
@@ -101,7 +101,7 @@ export function NotificationBell({
           <span className="text-sm font-semibold text-foreground">
             Notifications
             {count > 0 && (
-              <span className="ml-1.5 rounded-full bg-red-500/15 px-1.5 py-0.5 text-[10px] font-bold text-red-400">
+              <span className="ml-1.5 rounded-full bg-red-500/15 px-1.5 py-0.5 text-[10px] font-bold text-[var(--token-red)]">
                 {count} new
               </span>
             )}

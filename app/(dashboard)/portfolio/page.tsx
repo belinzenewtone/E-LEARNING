@@ -91,10 +91,10 @@ export default async function PortfolioPage() {
                   <Badge variant="outline" className="text-primary border-primary/30">
                     <Zap className="w-3 h-3 mr-1" />{totalXpAmount.toLocaleString()} XP
                   </Badge>
-                  <Badge variant="outline" className="text-emerald-400 border-emerald-400/30">
+                  <Badge variant="outline" className="text-[var(--token-emerald)] border-[var(--token-emerald)]/30">
                     <Code2 className="w-3 h-3 mr-1" />Web Track
                   </Badge>
-                  <Badge variant="outline" className="text-emerald-400 border-emerald-400/30">
+                  <Badge variant="outline" className="text-[var(--token-emerald)] border-[var(--token-emerald)]/30">
                     <Database className="w-3 h-3 mr-1" />Data Engineering
                   </Badge>
                   <Badge variant="outline" className="text-muted-foreground border-border">
@@ -164,7 +164,7 @@ export default async function PortfolioPage() {
                           </Button>
                         )}
                         {sub.deploymentUrl && (
-                          <Button asChild size="sm" variant="outline" className="h-7 px-2 text-xs gap-1 text-emerald-400 border-emerald-400/30">
+                          <Button asChild size="sm" variant="outline" className="h-7 px-2 text-xs gap-1 text-[var(--token-emerald)] border-[var(--token-emerald)]/30">
                             <a href={sub.deploymentUrl} target="_blank" rel="noopener noreferrer">
                               <Globe className="w-3 h-3" />Live
                             </a>
@@ -187,7 +187,7 @@ export default async function PortfolioPage() {
                       </div>
 
                       {sub.selfScore !== null && (
-                        <div className="flex items-center gap-1.5 text-xs text-amber-400">
+                        <div className="flex items-center gap-1.5 text-xs text-[var(--token-amber)]">
                           <Star className="w-3 h-3 fill-current" />
                           Self-score: {sub.selfScore}/10
                         </div>

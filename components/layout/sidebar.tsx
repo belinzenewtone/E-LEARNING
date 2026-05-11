@@ -142,7 +142,7 @@ export function Sidebar({ userXp = 0, streak = 0, userName = "Learner" }: Sideba
         </Link>
         <Button
           variant="ghost"
-          className="w-full justify-start gap-2.5 px-2.5 py-1.5 h-auto text-[13px] font-medium text-sidebar-foreground/65 hover:bg-red-500/10 hover:text-red-400 rounded-md transition-colors"
+          className="w-full justify-start gap-2.5 px-2.5 py-1.5 h-auto text-[13px] font-medium text-sidebar-foreground/65 hover:bg-red-500/10 hover:text-[var(--token-red)] rounded-md transition-colors"
           onClick={() => signOut({ callbackUrl: "/login" })}
         >
           <LogOut className="h-3.5 w-3.5 text-muted-foreground/50" />
@@ -164,7 +164,7 @@ export function Sidebar({ userXp = 0, streak = 0, userName = "Learner" }: Sideba
         <span className="text-muted-foreground/30 text-xs">·</span>
         <span className="text-[11px] font-semibold text-muted-foreground/60">Lv {level}</span>
         <span className="text-muted-foreground/30 text-xs">·</span>
-        <span className="flex items-center gap-1 text-[11px] font-semibold text-amber-400/80">
+        <span className="flex items-center gap-1 text-[11px] font-semibold text-[var(--token-amber)]/80">
           <Flame className="h-3 w-3" />
           {streak}d
         </span>

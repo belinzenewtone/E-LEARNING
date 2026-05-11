@@ -23,7 +23,7 @@ const PHASES: {
     number: 1,
     label: "Phase 1 — Foundations",
     range: [1, 4],
-    color: "text-cyan-400",
+    color: "text-[var(--token-cyan)]",
     bg: "bg-cyan-400/8",
     border: "border-cyan-400/20",
     glow: "shadow-cyan-400/20",
@@ -33,7 +33,7 @@ const PHASES: {
     number: 2,
     label: "Phase 2 — Core Skills",
     range: [5, 8],
-    color: "text-blue-400",
+    color: "text-[var(--token-blue)]",
     bg: "bg-blue-400/8",
     border: "border-blue-400/20",
     glow: "shadow-blue-400/20",
@@ -43,7 +43,7 @@ const PHASES: {
     number: 3,
     label: "Phase 3 — Advanced Topics",
     range: [9, 13],
-    color: "text-purple-400",
+    color: "text-[var(--token-purple)]",
     bg: "bg-purple-400/8",
     border: "border-purple-400/20",
     glow: "shadow-purple-400/20",
@@ -53,7 +53,7 @@ const PHASES: {
     number: 4,
     label: "Phase 4 — Build",
     range: [14, 17],
-    color: "text-amber-400",
+    color: "text-[var(--token-amber)]",
     bg: "bg-amber-400/8",
     border: "border-amber-400/20",
     glow: "shadow-amber-400/20",
@@ -63,7 +63,7 @@ const PHASES: {
     number: 5,
     label: "Phase 5 — Capstone",
     range: [18, 22],
-    color: "text-emerald-400",
+    color: "text-[var(--token-emerald)]",
     bg: "bg-emerald-400/8",
     border: "border-emerald-400/20",
     glow: "shadow-emerald-400/20",
@@ -124,7 +124,7 @@ function WeekCard({
             isActive
               ? "bg-primary/15 text-primary border border-primary/20"
               : isDone
-              ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+              ? "bg-[var(--token-emerald)]/10 text-[var(--token-emerald)] border border-[var(--token-emerald)]/20"
               : "bg-muted/30 text-muted-foreground border border-border/30"
           )}
         >
@@ -134,7 +134,7 @@ function WeekCard({
         {/* Status icon */}
         <span className="mt-0.5">
           {isDone ? (
-            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+            <CheckCircle2 className="h-3.5 w-3.5 text-[var(--token-emerald)]" />
           ) : isActive ? (
             <Zap className="h-3.5 w-3.5 text-primary" />
           ) : isLocked ? (
@@ -211,7 +211,7 @@ export default async function CalendarPage() {
           </div>
           <div className="h-4 w-px bg-border/50" />
           <span className="text-sm text-muted-foreground">
-            <span className="font-semibold text-emerald-400">{completedWeeks}</span>
+            <span className="font-semibold text-[var(--token-emerald)]">{completedWeeks}</span>
             {" "}of{" "}
             <span className="font-semibold text-foreground">{totalWeeks}</span>
             {" "}weeks complete

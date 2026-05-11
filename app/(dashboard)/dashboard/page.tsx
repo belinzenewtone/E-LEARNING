@@ -4,8 +4,8 @@ import { redirect } from "next/navigation";
 import { format } from "date-fns";
 import Link from "next/link";
 import {
-  Zap, Flame, TrendingUp, Clock, BookOpen, AlertCircle,
-  CheckCircle2, PlayCircle, FileText, PenLine, Map, Plus,
+  Zap, Flame, TrendingUp, Clock, BookOpen, AlertCircle, Calendar,
+  CheckCircle2, PlayCircle, FileText, PenLine, Map, NotebookPen,
   ArrowRight, ChevronRight, Target,
 } from "lucide-react";
 import {
@@ -56,12 +56,12 @@ function eventLabel(type: string): string {
 
 function eventIcon(type: string) {
   switch (type) {
-    case "lesson-complete": return <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />;
-    case "assignment-submit": return <FileText className="h-3.5 w-3.5 text-cyan-400" />;
-    case "retro": return <PenLine className="h-3.5 w-3.5 text-purple-400" />;
-    case "study-log": return <Clock className="h-3.5 w-3.5 text-amber-400" />;
-    case "note-added": return <PenLine className="h-3.5 w-3.5 text-blue-400" />;
-    default: return <Zap className="h-3.5 w-3.5 text-primary" />;
+    case "lesson-complete": return <CheckCircle2 className="h-3.5 w-3.5 text-[var(--token-emerald)]" />;
+    case "assignment-submit": return <FileText className="h-3.5 w-3.5 text-[var(--token-cyan)]" />;
+    case "retro": return <PenLine className="h-3.5 w-3.5 text-[var(--token-purple)]" />;
+    case "study-log": return <Clock className="h-3.5 w-3.5 text-[var(--token-amber)]" />;
+    case "note-added": return <PenLine className="h-3.5 w-3.5 text-[var(--token-blue)]" />;
+    default: return <Zap className="h-3.5 w-3.5 text-primary" />
   }
 }
 
@@ -112,25 +112,25 @@ async function DashboardContent({ userId, userName }: { userId: string; userName
             <div className="flex justify-between text-xs text-muted-foreground">
               <span>Overall</span><span className="font-medium text-foreground">{stats.overallProgress}%</span>
             </div>
-            <Progress value={stats.overallProgress} className="h-1" />
+            <Progress value={stats.overallProgress} className="h-1.5" />
           </div>
           <div className="space-y-1">
             <div className="flex justify-between text-xs text-muted-foreground">
               <span>Web Track</span><span className="font-medium text-foreground">{stats.webProgress}%</span>
             </div>
-            <Progress value={stats.webProgress} className="h-1 [&>div]:bg-cyan-400" />
+            <Progress value={stats.webProgress} className="h-1.5 [&>div]:bg-[var(--token-cyan)]" />
           </div>
           <div className="space-y-1">
             <div className="flex justify-between text-xs text-muted-foreground">
               <span>Data Track</span><span className="font-medium text-foreground">{stats.dataProgress}%</span>
             </div>
-            <Progress value={stats.dataProgress} className="h-1 [&>div]:bg-emerald-400" />
+            <Progress value={stats.dataProgress} className="h-1.5 [&>div]:bg-[var(--token-emerald)]" />
           </div>
           <div className="space-y-1">
             <div className="flex justify-between text-xs text-muted-foreground">
               <span>Weekly Score</span><span className="font-medium text-foreground">{stats.weeklyScore}%</span>
             </div>
-            <Progress value={stats.weeklyScore} className="h-1 [&>div]:bg-amber-400" />
+            <Progress value={stats.weeklyScore} className="h-1.5 [&>div]:bg-[var(--token-amber)]" />
           </div>
         </div>
       </div>
@@ -145,9 +145,9 @@ async function DashboardContent({ userId, userName }: { userId: string; userName
 
       {/* ── Due for review ───────────────────────────────────────────────────── */}
       {dueReviews.length > 0 && (
-        <Card className="border-amber-400/20 bg-amber-400/5">
+        <Card className="border-[var(--token-amber)]/20 bg-[var(--token-amber)]/5">
           <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-sm text-amber-400">
+            <CardTitle className="flex items-center gap-2 text-sm text-[var(--token-amber)]">
               <BookOpen className="h-4 w-4" />
               Spaced Repetition — Due for Review ({dueReviews.length})
             </CardTitle>
@@ -156,7 +156,7 @@ async function DashboardContent({ userId, userName }: { userId: string; userName
             <ul className="flex flex-wrap gap-2">
               {dueReviews.map((r) => (
                 <li key={r.lessonId}>
-                  <Button variant="outline" size="sm" asChild className="border-amber-400/20 text-amber-400 hover:bg-amber-400/10">
+                  <Button variant="outline" size="sm" asChild className="border-[var(--token-amber)]/20 text-[var(--token-amber)] hover:bg-[var(--token-amber)]/10">
                     <Link href={`/lessons/${r.slug}`}>{r.title}</Link>
                   </Button>
                 </li>
@@ -207,7 +207,7 @@ async function DashboardContent({ userId, userName }: { userId: string; userName
                         )}
                       >
                         <div className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-lg", isDone ? "bg-emerald-500/10" : "bg-primary/10")}>
-                          {isDone ? <CheckCircle2 className="h-4 w-4 text-emerald-400" /> : <PlayCircle className="h-4 w-4 text-primary" />}
+                          {isDone ? <CheckCircle2 className="h-4 w-4 text-[var(--token-emerald)]" /> : <PlayCircle className="h-4 w-4 text-primary" />}
                         </div>
                         <div className="min-w-0 flex-1">
                           <p className={cn("truncate text-sm font-medium", isDone && "line-through text-muted-foreground")}>
@@ -239,7 +239,7 @@ async function DashboardContent({ userId, userName }: { userId: string; userName
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-sm">
-              <span>📅</span> Current Week
+              <Calendar className="h-4 w-4 text-muted-foreground" /> Current Week
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -259,14 +259,14 @@ async function DashboardContent({ userId, userName }: { userId: string; userName
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-muted-foreground">Weekly score</span>
-                    <span className={cn("font-bold", stats.weeklyScore >= 80 ? "text-emerald-400" : stats.weeklyScore >= 50 ? "text-amber-400" : "text-foreground")}>
+                    <span className={cn("font-bold", stats.weeklyScore >= 80 ? "text-[var(--token-emerald)]" : stats.weeklyScore >= 50 ? "text-[var(--token-amber)]" : "text-foreground")}>
                       {stats.weeklyScore}%
                     </span>
                   </div>
-                  <Progress value={stats.weeklyScore} className="h-1.5" />
+                  <Progress value={stats.weeklyScore} className="h-2" />
                 </div>
                 {stats.overdueAssignments > 0 && (
-                  <div className="flex items-center gap-2 rounded-lg border border-red-400/20 bg-red-400/5 px-3 py-2 text-xs text-red-400">
+                  <div className="flex items-center gap-2 rounded-lg border border-[var(--token-red)]/20 bg-[var(--token-red)]/5 px-3 py-2 text-xs text-[var(--token-red)]">
                     <AlertCircle className="h-3.5 w-3.5 shrink-0" />
                     {stats.overdueAssignments} overdue
                   </div>
@@ -311,7 +311,7 @@ async function DashboardContent({ userId, userName }: { userId: string; userName
                 <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Web Development</p>
                 <p className="mt-0.5 text-lg font-bold text-foreground">{stats.webProgress}%</p>
                 <p className="text-xs text-muted-foreground">JavaScript · TypeScript · Next.js</p>
-                <Progress value={stats.webProgress} className="mt-2 h-1 [&>div]:bg-cyan-400" />
+                <Progress value={stats.webProgress} className="mt-2 h-1.5 [&>div]:bg-[var(--token-cyan)]" />
               </div>
               <Button size="sm" variant="ghost" className="shrink-0" asChild>
                 <Link href="/roadmap"><ChevronRight className="h-4 w-4" /></Link>
@@ -328,7 +328,7 @@ async function DashboardContent({ userId, userName }: { userId: string; userName
                 <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Data Engineering</p>
                 <p className="mt-0.5 text-lg font-bold text-foreground">{stats.dataProgress}%</p>
                 <p className="text-xs text-muted-foreground">SQL · dbt · Airflow · BigQuery</p>
-                <Progress value={stats.dataProgress} className="mt-2 h-1 [&>div]:bg-emerald-400" />
+                <Progress value={stats.dataProgress} className="mt-2 h-1.5 [&>div]:bg-[var(--token-emerald)]" />
               </div>
               <Button size="sm" variant="ghost" className="shrink-0" asChild>
                 <Link href="/roadmap"><ChevronRight className="h-4 w-4" /></Link>
@@ -362,7 +362,7 @@ async function DashboardContent({ userId, userName }: { userId: string; userName
                       <p className="truncate text-sm text-foreground">{event.reason || eventLabel(event.type)}</p>
                       <p className="text-xs text-muted-foreground">{timeAgo(event.createdAt)}</p>
                     </div>
-                    <span className="shrink-0 text-sm font-bold text-emerald-400">+{event.points}</span>
+                    <span className="shrink-0 text-sm font-bold text-[var(--token-emerald)]">+{event.points}</span>
                   </li>
                 ))}
               </ul>
@@ -379,9 +379,9 @@ async function DashboardContent({ userId, userName }: { userId: string; userName
             <div className="grid grid-cols-2 gap-2">
               {[
                 { href: "/lessons", icon: PlayCircle, label: "Start Lesson", color: "text-primary", bg: "bg-primary/8 hover:bg-primary/15" },
-                { href: "/study-log", icon: Clock, label: "Log Study", color: "text-amber-400", bg: "bg-amber-400/8 hover:bg-amber-400/15" },
-                { href: "/roadmap", icon: Map, label: "Roadmap", color: "text-emerald-400", bg: "bg-emerald-400/8 hover:bg-emerald-400/15" },
-                { href: "/notes", icon: Plus, label: "Add Note", color: "text-purple-400", bg: "bg-purple-400/8 hover:bg-purple-400/15" },
+                { href: "/study-log", icon: Clock, label: "Log Study", color: "text-[var(--token-amber)]", bg: "bg-[var(--token-amber)]/8 hover:bg-[var(--token-amber)]/15" },
+                { href: "/roadmap", icon: Map, label: "Roadmap", color: "text-[var(--token-emerald)]", bg: "bg-[var(--token-emerald)]/8 hover:bg-[var(--token-emerald)]/15" },
+                { href: "/notes/new", icon: NotebookPen, label: "Add Note", color: "text-[var(--token-purple)]", bg: "bg-[var(--token-purple)]/8 hover:bg-[var(--token-purple)]/15" },
               ].map(({ href, icon: Icon, label, color, bg }) => (
                 <Button key={href} variant="ghost" className={cn("h-auto flex-col gap-2 py-4 rounded-xl border border-border/40 transition-all", bg)} asChild>
                   <Link href={href}>

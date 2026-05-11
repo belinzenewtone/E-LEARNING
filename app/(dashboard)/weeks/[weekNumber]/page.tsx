@@ -48,11 +48,11 @@ export default async function WeekDetailPage({ params }: WeekDetailPageProps) {
     : 0;
 
   const phaseColors: Record<number, string> = {
-    1: "text-cyan-400 bg-cyan-400/10 border-cyan-400/30",
-    2: "text-blue-400 bg-blue-400/10 border-blue-400/30",
-    3: "text-purple-400 bg-purple-400/10 border-purple-400/30",
-    4: "text-amber-400 bg-amber-400/10 border-amber-400/30",
-    5: "text-emerald-400 bg-emerald-400/10 border-emerald-400/30",
+    1: "text-[var(--token-cyan)] bg-[var(--token-cyan)]/10 border-[var(--token-cyan)]/30",
+    2: "text-[var(--token-blue)] bg-[var(--token-blue)]/10 border-[var(--token-blue)]/30",
+    3: "text-[var(--token-purple)] bg-[var(--token-purple)]/10 border-[var(--token-purple)]/30",
+    4: "text-[var(--token-amber)] bg-[var(--token-amber)]/10 border-[var(--token-amber)]/30",
+    5: "text-[var(--token-emerald)] bg-[var(--token-emerald)]/10 border-[var(--token-emerald)]/30",
   };
 
   return (
@@ -176,7 +176,7 @@ export default async function WeekDetailPage({ params }: WeekDetailPageProps) {
                   >
                     <div className="shrink-0">
                       {isDone ? (
-                        <CheckCircle2 className="h-5 w-5 text-emerald-400" />
+                        <CheckCircle2 className="h-5 w-5 text-[var(--token-emerald)]" />
                       ) : (
                         <Circle className="h-5 w-5 text-muted-foreground/40" />
                       )}
@@ -207,7 +207,7 @@ export default async function WeekDetailPage({ params }: WeekDetailPageProps) {
         {/* Assignments */}
         <div className="space-y-3">
           <h2 className="flex items-center gap-2 text-sm font-semibold text-foreground">
-            <FileText className="h-4 w-4 text-amber-400" />
+            <FileText className="h-4 w-4 text-[var(--token-amber)]" />
             Assignments ({week.assignments.length})
           </h2>
 
@@ -250,7 +250,7 @@ export default async function WeekDetailPage({ params }: WeekDetailPageProps) {
                       <Button size="sm" variant={submitted ? "outline" : "default"} className="w-full" asChild>
                         <Link href={`/assignments/${assignment.id}`}>
                           {submitted ? (
-                            <><CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" /> View Submission</>
+                            <><CheckCircle2 className="h-3.5 w-3.5 text-[var(--token-emerald)]" /> View Submission</>
                           ) : (
                             <>Start Assignment <ArrowRight className="h-3.5 w-3.5" /></>
                           )}
@@ -271,7 +271,7 @@ export default async function WeekDetailPage({ params }: WeekDetailPageProps) {
           <Separator />
           <section className="space-y-3">
             <h2 className="flex items-center gap-2 text-sm font-semibold text-foreground">
-              <Star className="h-4 w-4 text-amber-400" />
+              <Star className="h-4 w-4 text-[var(--token-amber)]" />
               Weekly Retrospective
               {week.retrospectiveCompleted && (
                 <Badge variant="success" className="ml-auto">

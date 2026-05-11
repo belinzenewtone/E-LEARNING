@@ -119,6 +119,7 @@ export function CommandSearch() {
         onOpenChange={handleOpenChange}
         title="Global Search"
         description="Search lessons, assignments, and notes"
+        className="[&_[cmdk-item]]:aria-selected:bg-primary/10 [&_[cmdk-item]]:aria-selected:text-primary"
       >
         <CommandInput
           placeholder="Search lessons, assignments, notes..."

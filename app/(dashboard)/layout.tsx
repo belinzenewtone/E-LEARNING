@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { Sidebar } from "@/components/layout/sidebar";
 import { DashboardShell } from "@/components/layout/dashboard-shell";
+import { ScrollToTop } from "@/components/shared/scroll-to-top";
 import { syncWeekStatuses } from "@/lib/week-activator";
 import { generateNotifications, getNotifications, getUnreadCount } from "@/server/queries/notifications";
 
@@ -95,6 +96,7 @@ export default async function DashboardLayout({
         </div>
         <main className="flex-1 min-w-0 overflow-y-auto scrollbar-thin">
           {children}
+          <ScrollToTop />
         </main>
       </div>
     </DashboardShell>

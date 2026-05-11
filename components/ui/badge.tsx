@@ -14,11 +14,11 @@ const badgeVariants = cva(
           "border-transparent bg-destructive/10 text-destructive",
         outline: "border-border text-foreground",
         success:
-          "border-emerald-400/20 bg-emerald-400/10 text-emerald-400",
+          "border-[var(--token-emerald)]/20 bg-[var(--token-emerald)]/10 text-[var(--token-emerald)]",
         warning:
-          "border-amber-400/20 bg-amber-400/10 text-amber-400",
+          "border-[var(--token-amber)]/20 bg-[var(--token-amber)]/10 text-[var(--token-amber)]",
         info:
-          "border-cyan-400/20 bg-cyan-400/10 text-cyan-400",
+          "border-[var(--token-cyan)]/20 bg-[var(--token-cyan)]/10 text-[var(--token-cyan)]",
         muted:
           "border-border bg-muted text-muted-foreground",
       },

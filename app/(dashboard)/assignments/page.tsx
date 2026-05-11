@@ -63,15 +63,15 @@ export default async function AssignmentsPage() {
             <span className="text-muted-foreground">total</span>
           </div>
           <div className="flex items-center gap-1.5 rounded-lg border border-emerald-400/20 bg-emerald-400/10 px-3 py-1.5 text-sm">
-            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
-            <span className="font-semibold text-emerald-400">{submitted}</span>
-            <span className="text-emerald-400/70">submitted</span>
+            <CheckCircle2 className="h-3.5 w-3.5 text-[var(--token-emerald)]" />
+            <span className="font-semibold text-[var(--token-emerald)]">{submitted}</span>
+            <span className="text-[var(--token-emerald)]/70">submitted</span>
           </div>
           {overdueCount > 0 && (
             <div className="flex items-center gap-1.5 rounded-lg border border-red-400/20 bg-red-400/10 px-3 py-1.5 text-sm">
-              <AlertCircle className="h-3.5 w-3.5 text-red-400" />
-              <span className="font-semibold text-red-400">{overdueCount}</span>
-              <span className="text-red-400/70">overdue</span>
+              <AlertCircle className="h-3.5 w-3.5 text-[var(--token-red)]" />
+              <span className="font-semibold text-[var(--token-red)]">{overdueCount}</span>
+              <span className="text-[var(--token-red)]/70">overdue</span>
             </div>
           )}
         </div>

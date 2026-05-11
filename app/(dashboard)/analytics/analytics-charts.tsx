@@ -6,12 +6,13 @@ import {
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatCard } from "@/components/shared/stat-card";
-import { Clock, Zap, BookOpen, Flame, Calendar } from "lucide-react";
+import { EmptyState } from "@/components/shared/empty-state";
+import { Clock, Zap, BookOpen, Flame, Calendar, BarChart3 } from "lucide-react";
 import { minutesToHours } from "@/lib/utils";
 import type { AnalyticsData } from "@/server/queries/analytics";
 
-const CYAN = "#22d3ee";
-const EMERALD = "#34d399";
+const CYAN = "var(--token-cyan)";
+const EMERALD = "var(--token-emerald)";
 
 const tooltipStyle = {
   contentStyle: {
@@ -52,7 +53,12 @@ export function AnalyticsCharts({ data }: AnalyticsChartsProps) {
           </CardHeader>
           <CardContent>
             {weeklyHours.length === 0 ? (
-              <p className="text-sm text-muted-foreground text-center py-8">No study data yet. Log your first session!</p>
+              <EmptyState
+                icon={BarChart3}
+                title="No study data yet"
+                description="Log your first study session to see your weekly hours chart."
+                action={{ label: "Log Study", href: "/study-log" }}
+              />
             ) : (
               <ResponsiveContainer width="100%" height={220}>
                 <BarChart data={weeklyHours} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
@@ -73,7 +79,12 @@ export function AnalyticsCharts({ data }: AnalyticsChartsProps) {
           </CardHeader>
           <CardContent>
             {xpOverTime.length === 0 ? (
-              <p className="text-sm text-muted-foreground text-center py-8">Complete lessons and assignments to earn XP!</p>
+              <EmptyState
+                icon={Zap}
+                title="No XP yet"
+                description="Complete lessons and assignments to start earning XP and see your progress."
+                action={{ label: "View Roadmap", href: "/roadmap" }}
+              />
             ) : (
               <ResponsiveContainer width="100%" height={220}>
                 <AreaChart data={xpOverTime} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
@@ -103,7 +114,12 @@ export function AnalyticsCharts({ data }: AnalyticsChartsProps) {
           </CardHeader>
           <CardContent>
             {lessonsOverTime.length === 0 ? (
-              <p className="text-sm text-muted-foreground text-center py-8">No completed lessons yet. Start your first lesson!</p>
+              <EmptyState
+                icon={BookOpen}
+                title="No completed lessons yet"
+                description="Start your first lesson to see your completion trend over time."
+                action={{ label: "Start Learning", href: "/lessons" }}
+              />
             ) : (
               <ResponsiveContainer width="100%" height={220}>
                 <LineChart data={lessonsOverTime} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
@@ -162,8 +178,8 @@ export function AnalyticsCharts({ data }: AnalyticsChartsProps) {
                 style={{
                   backgroundColor: day.active
                     ? day.minutes >= 120 ? CYAN
-                    : day.minutes >= 60 ? "#22d3ee80"
-                    : "#22d3ee40"
+                    : day.minutes >= 60 ? "color-mix(in oklch, var(--token-cyan) 50%, transparent)"
+                    : "color-mix(in oklch, var(--token-cyan) 25%, transparent)"
                     : "oklch(1 0 0 / 6%)",
                 }}
               />
@@ -171,9 +187,9 @@ export function AnalyticsCharts({ data }: AnalyticsChartsProps) {
           </div>
           <div className="flex flex-wrap items-center gap-3 mt-3 text-xs text-muted-foreground">
             <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-sm bg-white/5" /> No activity</div>
-            <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-sm" style={{ backgroundColor: "#22d3ee40" }} /> &lt;60 min</div>
-            <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-sm" style={{ backgroundColor: "#22d3ee80" }} /> 60–120 min</div>
-            <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-sm" style={{ backgroundColor: CYAN }} /> 120+ min</div>
+            <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-sm" style={{ backgroundColor: "color-mix(in oklch, var(--token-cyan) 25%, transparent)" }} /> &lt;60 min</div>
+            <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-sm" style={{ backgroundColor: "color-mix(in oklch, var(--token-cyan) 50%, transparent)" }} /> 60–120 min</div>
+            <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-sm" style={{ backgroundColor: "var(--token-cyan)" }} /> 120+ min</div>
           </div>
         </CardContent>
       </Card>

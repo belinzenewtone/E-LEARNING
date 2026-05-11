@@ -10,7 +10,7 @@ export function ProgressRing({
   value,
   size = 80,
   strokeWidth = 6,
-  color = "#22d3ee", // cyan-400
+  color = "var(--token-cyan)", // adaptive token
   label,
 }: ProgressRingProps) {
   const clampedValue = Math.min(100, Math.max(0, value));
