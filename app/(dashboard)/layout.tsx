@@ -25,8 +25,9 @@ export default async function DashboardLayout({
   // Auto-activate/complete weeks based on today's date (lightweight — only runs if status changes)
   await syncWeekStatuses();
 
-  // Generate new notifications — wrapped so a missing table never crashes the layout
-  try { await generateNotifications(user.id); } catch { /* table may not exist yet */ }
+  try { await generateNotifications(user.id); } catch (err) {
+    console.error("[layout] generateNotifications failed:", err);
+  }
 
   const [xpAggregate, recentLogs] = await Promise.all([
     db.xpEvent.aggregate({
@@ -78,7 +79,9 @@ export default async function DashboardLayout({
       getNotifications(user.id),
       getUnreadCount(user.id),
     ]);
-  } catch { /* notification table not yet migrated — bell shows empty */ }
+  } catch (err) {
+    console.error("[layout] getNotifications failed:", err);
+  }
 
   return (
     <DashboardShell

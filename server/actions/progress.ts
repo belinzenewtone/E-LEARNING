@@ -243,41 +243,31 @@ export async function saveCheckpointAnswers(
   answers: { questionIndex: number; answer: string; quality: 0 | 1 | 2 | 3 | 4 | 5 }[]
 ) {
   const userId = await requireUserId();
+  if (answers.length === 0) return;
 
-  for (const { questionIndex, answer, quality } of answers) {
-    const existing = await db.lessonCheckpointAnswer.findUnique({
-      where: { userId_lessonId_questionIndex: { userId, lessonId, questionIndex } },
-    });
+  // Fetch all existing answers in one query
+  const existing = await db.lessonCheckpointAnswer.findMany({
+    where: { userId, lessonId, questionIndex: { in: answers.map((a) => a.questionIndex) } },
+  });
+  const existingMap = new Map(existing.map((a) => [a.questionIndex, a]));
 
-    const card = {
-      repetitions: existing?.repetitions ?? 0,
-      interval: existing?.interval ?? 1,
-      easeFactor: existing?.easeFactor ?? 2.5,
-    };
-
-    const result = sm2(card, quality);
-
-    await db.lessonCheckpointAnswer.upsert({
-      where: { userId_lessonId_questionIndex: { userId, lessonId, questionIndex } },
-      update: {
-        answer,
-        repetitions: result.repetitions,
-        interval: result.interval,
-        easeFactor: result.easeFactor,
-        nextReview: result.nextReview,
-      },
-      create: {
-        userId,
-        lessonId,
-        questionIndex,
-        answer,
-        repetitions: result.repetitions,
-        interval: result.interval,
-        easeFactor: result.easeFactor,
-        nextReview: result.nextReview,
-      },
-    });
-  }
+  // Compute SM-2 updates and run all upserts in a single transaction
+  await db.$transaction(
+    answers.map(({ questionIndex, answer, quality }) => {
+      const prev = existingMap.get(questionIndex);
+      const card = {
+        repetitions: prev?.repetitions ?? 0,
+        interval: prev?.interval ?? 1,
+        easeFactor: prev?.easeFactor ?? 2.5,
+      };
+      const result = sm2(card, quality);
+      return db.lessonCheckpointAnswer.upsert({
+        where: { userId_lessonId_questionIndex: { userId, lessonId, questionIndex } },
+        update: { answer, repetitions: result.repetitions, interval: result.interval, easeFactor: result.easeFactor, nextReview: result.nextReview },
+        create: { userId, lessonId, questionIndex, answer, repetitions: result.repetitions, interval: result.interval, easeFactor: result.easeFactor, nextReview: result.nextReview },
+      });
+    })
+  );
 }
 
 // ── addNote ───────────────────────────────────────────────────────────────────

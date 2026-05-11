@@ -12,39 +12,45 @@ export async function GET() {
 
   const userId = session.user.id;
 
-  const notes = await db.note.findMany({
-    where: { userId },
-    orderBy: { createdAt: "asc" },
-    select: {
-      title: true,
-      content: true,
-      tags: true,
-      createdAt: true,
-    },
-  });
+  try {
+    const notes = await db.note.findMany({
+      where: { userId },
+      orderBy: { createdAt: "asc" },
+      select: {
+        title: true,
+        content: true,
+        tags: true,
+        createdAt: true,
+      },
+    });
 
-  const lines: string[] = [];
+    const lines: string[] = [];
 
-  for (const note of notes) {
-    lines.push(`## ${note.title}`);
-    lines.push("");
-    if (note.tags.length > 0) {
-      lines.push(`**Tags:** ${note.tags.join(", ")}`);
+    for (const note of notes) {
+      lines.push(`## ${note.title}`);
+      lines.push("");
+      if (note.tags.length > 0) {
+        lines.push(`**Tags:** ${note.tags.join(", ")}`);
+        lines.push("");
+      }
+      lines.push(note.content);
+      lines.push("");
+      lines.push("---");
       lines.push("");
     }
-    lines.push(note.content);
-    lines.push("");
-    lines.push("---");
-    lines.push("");
+
+    return new Response(lines.join("\n"), {
+      status: 200,
+      headers: {
+        "Content-Type": "text/markdown; charset=utf-8",
+        "Content-Disposition": 'attachment; filename="notes.md"',
+      },
+    });
+  } catch (err) {
+    console.error("[api/export/notes] GET error:", err);
+    return new Response(JSON.stringify({ error: "Failed to export notes" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
-
-  const markdown = lines.join("\n");
-
-  return new Response(markdown, {
-    status: 200,
-    headers: {
-      "Content-Type": "text/markdown; charset=utf-8",
-      "Content-Disposition": 'attachment; filename="notes.md"',
-    },
-  });
 }

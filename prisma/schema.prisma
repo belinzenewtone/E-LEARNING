@@ -161,6 +161,9 @@ model Submission {
 
   assignment Assignment @relation(fields: [assignmentId], references: [id])
   user       User       @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([assignmentId, userId])
 }
 
 model Progress {
@@ -182,6 +185,9 @@ model Progress {
   week   WeekSprint? @relation(fields: [weekId], references: [id])
 
   @@unique([userId, lessonId])
+  @@index([userId])
+  @@index([userId, status])
+  @@index([userId, trackId])
 }
 
 model Note {
@@ -205,6 +211,8 @@ model Note {
   assignment Assignment? @relation(fields: [assignmentId], references: [id])
   week       WeekSprint? @relation(fields: [weekId], references: [id])
   track      Track?      @relation(fields: [trackId], references: [id])
+
+  @@index([userId])
 }
 
 model StudyLog {
@@ -223,6 +231,9 @@ model StudyLog {
 
   user  User   @relation(fields: [userId], references: [id])
   track Track? @relation(fields: [trackId], references: [id])
+
+  @@index([userId])
+  @@index([userId, date])
 }
 
 model XpEvent {
@@ -242,6 +253,9 @@ model XpEvent {
   assignment Assignment? @relation(fields: [assignmentId], references: [id])
   week       WeekSprint? @relation(fields: [weekId], references: [id])
   track      Track?      @relation(fields: [trackId], references: [id])
+
+  @@index([userId])
+  @@index([userId, createdAt])
 }
 
 model ProgressSnapshot {
@@ -311,6 +325,7 @@ model LessonCheckpointAnswer {
   lesson Lesson @relation(fields: [lessonId], references: [id])
 
   @@unique([userId, lessonId, questionIndex])
+  @@index([userId, nextReview])
 }
 
 model Notification {
@@ -324,4 +339,7 @@ model Notification {
   createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([userId, read])
 }

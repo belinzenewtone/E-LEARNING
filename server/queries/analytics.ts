@@ -62,20 +62,23 @@ export async function getAnalyticsData(userId: string): Promise<AnalyticsData> {
     return { date: p.completedAt ? format(new Date(p.completedAt), "MMM d") : "", count: lessonCount };
   });
 
-  // Track progress
-  const trackProgress = await Promise.all(
-    tracks.map(async (track) => {
-      const totalLessons = track.modules.reduce((sum, m) => sum + m._count.lessons, 0);
-      const completedLessons = await db.progress.count({
-        where: { userId, trackId: track.id, status: "completed", lessonId: { not: null } },
-      });
-      return {
-        name: track.name, slug: track.slug, color: track.color,
-        total: totalLessons, completed: completedLessons,
-        percent: totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0,
-      };
-    })
-  );
+  // Track progress — single groupBy instead of one count() per track
+  const completedByTrack = await db.progress.groupBy({
+    by: ["trackId"],
+    where: { userId, status: "completed", lessonId: { not: null }, trackId: { not: null } },
+    _count: { id: true },
+  });
+  const completedMap = new Map(completedByTrack.map((r) => [r.trackId!, r._count.id]));
+
+  const trackProgress = tracks.map((track) => {
+    const totalLessons = track.modules.reduce((sum, m) => sum + m._count.lessons, 0);
+    const completedLessons = completedMap.get(track.id) ?? 0;
+    return {
+      name: track.name, slug: track.slug, color: track.color,
+      total: totalLessons, completed: completedLessons,
+      percent: totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0,
+    };
+  });
 
   // Activity heatmap (last 60 days)
   const activityDays: { date: string; active: boolean; minutes: number }[] = [];

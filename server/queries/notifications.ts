@@ -42,28 +42,29 @@ export async function generateNotifications(userId: string) {
     select: { id: true, title: true },
   });
 
-  for (const assignment of overdueAssignments) {
-    const existing = await db.notification.findFirst({
-      where: {
+  // Batch-check which assignments already have an unread notification
+  if (overdueAssignments.length > 0) {
+    const overdueHrefs = overdueAssignments.map((a) => `/assignments/${a.id}`);
+    const existingNotifs = await db.notification.findMany({
+      where: { userId, type: "overdue_assignment", read: false, href: { in: overdueHrefs } },
+      select: { href: true },
+    });
+    const notifiedHrefs = new Set(existingNotifs.map((n) => n.href));
+
+    const newData = overdueAssignments
+      .filter((a) => !notifiedHrefs.has(`/assignments/${a.id}`))
+      .map((a) => ({
         userId,
         type: "overdue_assignment",
-        href: `/assignments/${assignment.id}`,
+        title: "Overdue Assignment",
+        body: `"${a.title}" is past due and hasn't been submitted yet.`,
+        href: `/assignments/${a.id}`,
         read: false,
-      },
-    });
+      }));
 
-    if (!existing) {
-      const notification = await db.notification.create({
-        data: {
-          userId,
-          type: "overdue_assignment",
-          title: "Overdue Assignment",
-          body: `"${assignment.title}" is past due and hasn't been submitted yet.`,
-          href: `/assignments/${assignment.id}`,
-          read: false,
-        },
-      });
-      created.push(notification.id);
+    if (newData.length > 0) {
+      await db.notification.createMany({ data: newData });
+      created.push(...newData.map((d) => d.href));
     }
   }
 
