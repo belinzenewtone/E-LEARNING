@@ -92,7 +92,7 @@ export function LessonStudyArea({
             quality: 4 as const,
           }));
         if (answers.length > 0) {
-          await saveCheckpointAnswers(lessonId, answers);
+          try { await saveCheckpointAnswers(lessonId, answers); } catch { /* schema not yet migrated */ }
         }
         await completeLesson(lessonId);
         toast.success("Lesson completed! +20 XP earned.");

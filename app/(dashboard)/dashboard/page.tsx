@@ -66,13 +66,16 @@ function eventIcon(type: string) {
 }
 
 async function DashboardContent({ userId, userName }: { userId: string; userName: string }) {
-  const [stats, todaysTasks, recentActivity, weekAssignments, dueReviews] = await Promise.all([
+  const [stats, todaysTasks, recentActivity, weekAssignments] = await Promise.all([
     getDashboardStats(userId),
     getTodaysTasks(userId),
     getRecentActivity(userId),
     getCurrentWeekAssignments(userId),
-    getDueReviews(userId),
   ]);
+
+  // getDueReviews requires the nextReview column — guard until prisma db push is run
+  let dueReviews: Awaited<ReturnType<typeof getDueReviews>> = [];
+  try { dueReviews = await getDueReviews(userId); } catch { /* schema not yet migrated */ }
 
   const now = new Date();
   const greeting = getGreeting(now.getHours());
