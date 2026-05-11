@@ -5,6 +5,9 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { MobileNav } from "./mobile-nav";
 import { useNavData } from "./dashboard-shell";
+import { CommandSearch } from "./command-search";
+import { ThemeToggle } from "./theme-toggle";
+import { NotificationBell } from "./notification-bell";
 
 interface TopbarProps {
   title?: string;
@@ -15,6 +18,7 @@ interface TopbarProps {
 
 export function Topbar({ title, subtitle, breadcrumbs, actions }: TopbarProps) {
   const nav = useNavData();
+  const { notifications, unreadCount, userId } = nav;
 
   return (
     <header className="h-14 border-b border-border/60 bg-background/90 backdrop-blur-sm sticky top-0 z-10 flex items-center px-4 sm:px-6 gap-3">
@@ -51,6 +55,9 @@ export function Topbar({ title, subtitle, breadcrumbs, actions }: TopbarProps) {
       {/* Right actions */}
       <div className="flex items-center gap-1.5 shrink-0">
         {actions}
+        <CommandSearch />
+        <ThemeToggle />
+        <NotificationBell notifications={notifications} unreadCount={unreadCount} userId={userId} />
         <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground" asChild>
           <a href="https://github.com/anthropics/claude-code/issues" target="_blank" rel="noopener noreferrer" title="Help & Feedback">
             <HelpCircle className="h-4 w-4" />

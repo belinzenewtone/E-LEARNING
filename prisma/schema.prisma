@@ -12,6 +12,7 @@ model User {
   email        String   @unique
   passwordHash String
   avatarUrl    String?
+  theme        String   @default("dark")
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -24,6 +25,7 @@ model User {
   goals             Goal[]
   blockers          Blocker[]
   checkpointAnswers LessonCheckpointAnswer[]
+  notifications     Notification[]
 }
 
 model Track {
@@ -95,6 +97,7 @@ model Lesson {
   title               String
   slug                String   @unique
   objective           String
+  content             String?
   sourceName          String
   sourceType          String
   sourceUrl           String
@@ -291,16 +294,34 @@ model Blocker {
 }
 
 model LessonCheckpointAnswer {
-  id            String   @id @default(cuid())
+  id            String    @id @default(cuid())
   userId        String
   lessonId      String
   questionIndex Int
   answer        String
   correct       Boolean?
-  createdAt     DateTime @default(now())
+  nextReview    DateTime?
+  interval      Int       @default(1)
+  repetitions   Int       @default(0)
+  easeFactor    Float     @default(2.5)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @default(now()) @updatedAt
 
   user   User   @relation(fields: [userId], references: [id])
   lesson Lesson @relation(fields: [lessonId], references: [id])
 
   @@unique([userId, lessonId, questionIndex])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String
+  title     String
+  body      String
+  read      Boolean  @default(false)
+  href      String?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

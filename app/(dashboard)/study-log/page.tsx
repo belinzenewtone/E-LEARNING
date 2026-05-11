@@ -1,7 +1,8 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
-import { Clock, BookOpen } from "lucide-react";
+import { Clock, BookOpen, Download } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/shared/empty-state";
 import { StatCard } from "@/components/shared/stat-card";
@@ -48,11 +49,19 @@ export default async function StudyLogPage() {
   return (
     <div className="space-y-6 p-4 sm:p-6 lg:p-8">
       {/* Header */}
-      <div className="flex flex-col gap-1">
-        <h1 className="text-2xl font-bold text-foreground">Study Log</h1>
-        <p className="text-sm text-muted-foreground">
-          Track your daily study sessions and build consistency.
-        </p>
+      <div className="flex items-start justify-between gap-4">
+        <div className="space-y-1">
+          <h1 className="text-2xl font-bold text-foreground">Study Log</h1>
+          <p className="text-sm text-muted-foreground">
+            Track your daily study sessions and build consistency.
+          </p>
+        </div>
+        <Button variant="outline" size="sm" asChild>
+          <a href="/api/export/study-log" download>
+            <Download className="h-4 w-4" />
+            Export CSV
+          </a>
+        </Button>
       </div>
 
       {/* Stats row */}

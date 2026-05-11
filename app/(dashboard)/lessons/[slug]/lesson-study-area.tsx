@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useOptimistic } from "react";
 import { CheckCircle2, Circle, PenLine, HelpCircle, Lightbulb } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import { completeLesson, addNote } from "@/server/actions/progress";
+import { completeLesson, addNote, saveCheckpointAnswers } from "@/server/actions/progress";
 import { toast } from "sonner";
 
 interface CheckpointQuestion {
@@ -59,9 +59,10 @@ export function LessonStudyArea({
     confused: "",
     apply: "",
   });
-  const [completed, setCompleted] = useState(isCompleted);
   const [isPending, startTransition] = useTransition();
   const [isSavingNote, startSavingNote] = useTransition();
+
+  const [optimisticCompleted, setOptimisticCompleted] = useOptimistic(isCompleted);
 
   // Validation for complete button
   const hasAnsweredCheckpoint =
@@ -72,7 +73,7 @@ export function LessonStudyArea({
     reflection.confused.trim().length > 0 ||
     reflection.apply.trim().length > 0;
   const canComplete =
-    sourceReviewed && hasAnsweredCheckpoint && hasReflection && !completed;
+    sourceReviewed && hasAnsweredCheckpoint && hasReflection && !optimisticCompleted;
 
   function handleAnswerChange(index: number, value: string) {
     setCheckpointAnswers((prev) => ({ ...prev, [index]: value }));
@@ -80,11 +81,23 @@ export function LessonStudyArea({
 
   function handleCompleteLesson() {
     startTransition(async () => {
+      setOptimisticCompleted(true);
       try {
+        // Save checkpoint answers with SM-2 spaced repetition (quality 4 = "correct")
+        const answers = Object.entries(checkpointAnswers)
+          .filter(([, ans]) => ans.trim().length > 0)
+          .map(([idx, answer]) => ({
+            questionIndex: Number(idx),
+            answer,
+            quality: 4 as const,
+          }));
+        if (answers.length > 0) {
+          await saveCheckpointAnswers(lessonId, answers);
+        }
         await completeLesson(lessonId);
-        setCompleted(true);
         toast.success("Lesson completed! +20 XP earned.");
       } catch {
+        setOptimisticCompleted(false);
         toast.error("Failed to complete lesson. Please try again.");
       }
     });
@@ -241,14 +254,14 @@ export function LessonStudyArea({
           disabled={!canComplete || isPending}
           onClick={handleCompleteLesson}
         >
-          {completed
+          {optimisticCompleted
             ? "Lesson Completed"
             : isPending
             ? "Completing…"
             : "Complete Lesson"}
-          {completed && <CheckCircle2 className="h-4 w-4 text-emerald-400" />}
+          {optimisticCompleted && <CheckCircle2 className="h-4 w-4 text-emerald-400" />}
         </Button>
-        {!canComplete && !completed && (
+        {!canComplete && !optimisticCompleted && (
           <p className="text-center text-xs text-muted-foreground">
             Mark source reviewed, answer at least one checkpoint, and fill in
             your reflection to complete.

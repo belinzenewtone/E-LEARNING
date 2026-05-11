@@ -9,6 +9,7 @@ import {
   LayoutDashboard,
   Map,
   Calendar,
+  CalendarRange,
   FileText,
   ClipboardList,
   NotebookPen,
@@ -33,8 +34,9 @@ const navSections = [
   {
     label: "Learn",
     items: [
-      { href: "/weeks",       label: "Weekly Sprints", icon: Calendar     },
-      { href: "/lessons",     label: "Lessons",        icon: FileText     },
+      { href: "/weeks",       label: "Weekly Sprints", icon: Calendar      },
+      { href: "/calendar",    label: "Calendar",       icon: CalendarRange },
+      { href: "/lessons",     label: "Lessons",        icon: FileText      },
       { href: "/assignments", label: "Assignments",    icon: ClipboardList },
     ],
   },

@@ -9,7 +9,7 @@ import {
   ArrowRight, ChevronRight, Target,
 } from "lucide-react";
 import {
-  getDashboardStats, getTodaysTasks, getRecentActivity, getCurrentWeekAssignments,
+  getDashboardStats, getTodaysTasks, getRecentActivity, getCurrentWeekAssignments, getDueReviews,
 } from "@/server/queries/dashboard";
 import { Topbar } from "@/components/layout/topbar";
 import { StatCard } from "@/components/shared/stat-card";
@@ -66,11 +66,12 @@ function eventIcon(type: string) {
 }
 
 async function DashboardContent({ userId, userName }: { userId: string; userName: string }) {
-  const [stats, todaysTasks, recentActivity, weekAssignments] = await Promise.all([
+  const [stats, todaysTasks, recentActivity, weekAssignments, dueReviews] = await Promise.all([
     getDashboardStats(userId),
     getTodaysTasks(userId),
     getRecentActivity(userId),
     getCurrentWeekAssignments(userId),
+    getDueReviews(userId),
   ]);
 
   const now = new Date();
@@ -138,6 +139,29 @@ async function DashboardContent({ userId, userName }: { userId: string; userName
         <StatCard title="Study Time" value={`${(stats.studyMinutesThisWeek / 60).toFixed(1)}h`} subtitle="This week" icon={Clock} color="success" />
         <StatCard title="Overdue" value={stats.overdueAssignments} subtitle={stats.overdueAssignments === 0 ? "All clear!" : "Assignments"} icon={AlertCircle} color={stats.overdueAssignments > 0 ? "danger" : "success"} />
       </div>
+
+      {/* ── Due for review ───────────────────────────────────────────────────── */}
+      {dueReviews.length > 0 && (
+        <Card className="border-amber-400/20 bg-amber-400/5">
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-sm text-amber-400">
+              <BookOpen className="h-4 w-4" />
+              Spaced Repetition — Due for Review ({dueReviews.length})
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ul className="flex flex-wrap gap-2">
+              {dueReviews.map((r) => (
+                <li key={r.lessonId}>
+                  <Button variant="outline" size="sm" asChild className="border-amber-400/20 text-amber-400 hover:bg-amber-400/10">
+                    <Link href={`/lessons/${r.slug}`}>{r.title}</Link>
+                  </Button>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+      )}
 
       {/* ── Main two-column ───────────────────────────────────────────────────── */}
       <div className="grid gap-4 xl:grid-cols-3">

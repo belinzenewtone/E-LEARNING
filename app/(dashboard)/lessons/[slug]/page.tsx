@@ -18,6 +18,8 @@ import { LessonSkeleton } from "@/components/shared/loading-skeleton";
 import { cn, minutesToHours, getDifficultyColor, getStatusColor } from "@/lib/utils";
 import { LessonStudyArea } from "./lesson-study-area";
 import { ProgressRing } from "@/components/shared/progress-ring";
+import { StudyTimer } from "@/components/shared/study-timer";
+import { MarkdownContent } from "@/components/shared/markdown-content";
 
 // ── Prisma result type ────────────────────────────────────────────────────────
 
@@ -68,6 +70,9 @@ function ProgressSidebar({ lesson }: { lesson: LessonFull }) {
 
   return (
     <div className="space-y-4">
+      {/* Study Timer */}
+      <StudyTimer />
+
       {/* Status card */}
       <Card className="border-border/40 bg-card/60">
         <CardHeader className="pb-3">
@@ -267,7 +272,14 @@ async function LessonContent({ slug, userId }: { slug: string; userId: string })
         <LessonInfoPanel lesson={lesson} />
       </aside>
 
-      <main>
+      <main className="space-y-5">
+        {lesson.content && (
+          <Card className="border-border/40 bg-card/60">
+            <CardContent className="p-5">
+              <MarkdownContent content={lesson.content} />
+            </CardContent>
+          </Card>
+        )}
         <LessonStudyArea
           lessonId={lesson.id}
           lessonSlug={lesson.slug}

@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { db } from "@/lib/db";
+import { checkRateLimit } from "@/lib/rate-limit";
 import bcrypt from "bcryptjs";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -13,6 +14,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
+
+        // Rate limit: 10 attempts per email per 15 minutes
+        const rl = checkRateLimit({
+          key: `auth:${credentials.email}`,
+          limit: 10,
+          windowMs: 15 * 60 * 1000,
+        });
+        if (!rl.allowed) return null;
 
         const user = await db.user.findUnique({
           where: { email: credentials.email as string },
@@ -37,9 +46,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   session: { strategy: "jwt" },
-  pages: {
-    signIn: "/login",
-  },
+  pages: { signIn: "/login" },
   callbacks: {
     async jwt({ token, user }) {
       if (user) token.id = user.id;

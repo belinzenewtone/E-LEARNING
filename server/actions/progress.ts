@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { sm2, isDue } from "@/lib/spaced-repetition";
 
 // ── auth guard ────────────────────────────────────────────────────────────────
 
@@ -233,6 +234,50 @@ export async function completeRetro(weekId: string, notes: string) {
   revalidatePath("/weeks");
 
   return { success: true };
+}
+
+// ── saveCheckpointAnswers ─────────────────────────────────────────────────────
+
+export async function saveCheckpointAnswers(
+  lessonId: string,
+  answers: { questionIndex: number; answer: string; quality: 0 | 1 | 2 | 3 | 4 | 5 }[]
+) {
+  const userId = await requireUserId();
+
+  for (const { questionIndex, answer, quality } of answers) {
+    const existing = await db.lessonCheckpointAnswer.findUnique({
+      where: { userId_lessonId_questionIndex: { userId, lessonId, questionIndex } },
+    });
+
+    const card = {
+      repetitions: existing?.repetitions ?? 0,
+      interval: existing?.interval ?? 1,
+      easeFactor: existing?.easeFactor ?? 2.5,
+    };
+
+    const result = sm2(card, quality);
+
+    await db.lessonCheckpointAnswer.upsert({
+      where: { userId_lessonId_questionIndex: { userId, lessonId, questionIndex } },
+      update: {
+        answer,
+        repetitions: result.repetitions,
+        interval: result.interval,
+        easeFactor: result.easeFactor,
+        nextReview: result.nextReview,
+      },
+      create: {
+        userId,
+        lessonId,
+        questionIndex,
+        answer,
+        repetitions: result.repetitions,
+        interval: result.interval,
+        easeFactor: result.easeFactor,
+        nextReview: result.nextReview,
+      },
+    });
+  }
 }
 
 // ── addNote ───────────────────────────────────────────────────────────────────

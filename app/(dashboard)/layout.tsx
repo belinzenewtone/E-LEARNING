@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { Sidebar } from "@/components/layout/sidebar";
 import { DashboardShell } from "@/components/layout/dashboard-shell";
 import { syncWeekStatuses } from "@/lib/week-activator";
+import { generateNotifications, getNotifications, getUnreadCount } from "@/server/queries/notifications";
 
 export default async function DashboardLayout({
   children,
@@ -22,6 +23,9 @@ export default async function DashboardLayout({
 
   // Auto-activate/complete weeks based on today's date (lightweight — only runs if status changes)
   await syncWeekStatuses();
+
+  // Generate new notifications (idempotent — skips duplicates)
+  await generateNotifications(user.id);
 
   const [xpAggregate, recentLogs] = await Promise.all([
     db.xpEvent.aggregate({
@@ -66,8 +70,20 @@ export default async function DashboardLayout({
   const userXp = xpAggregate._sum.points ?? 0;
   const userName = user.name ?? "Learner";
 
+  const [notifications, unreadCount] = await Promise.all([
+    getNotifications(user.id),
+    getUnreadCount(user.id),
+  ]);
+
   return (
-    <DashboardShell userXp={userXp} streak={streak} userName={userName}>
+    <DashboardShell
+      userXp={userXp}
+      streak={streak}
+      userName={userName}
+      userId={user.id}
+      notifications={notifications}
+      unreadCount={unreadCount}
+    >
       <div className="flex h-screen overflow-hidden bg-background">
         {/* Desktop sidebar — hidden on mobile */}
         <div className="hidden lg:flex lg:shrink-0">

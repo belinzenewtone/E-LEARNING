@@ -5,6 +5,7 @@
  */
 
 import { calculateStreak, calculateWeeklyScore, calculateXpTotal, isLessonCompletable, isAssignmentSubmittable } from "../lib/progress";
+import { sm2, isDue } from "../lib/spaced-repetition";
 
 // Simple test runner
 let passed = 0;
@@ -164,6 +165,62 @@ test("assignment not submittable without proof link", () => {
   expect(
     isAssignmentSubmittable({ hasProofLink: false, hasReflection: true, hasSelfScore: true })
   ).toBe(false);
+});
+
+// ── sm2 spaced repetition ────────────────────────────────────────────────────
+
+test("sm2: first correct response sets interval to 1", () => {
+  const card = { repetitions: 0, interval: 0, easeFactor: 2.5 };
+  const result = sm2(card, 4);
+  expect(result.interval).toBe(1);
+  expect(result.repetitions).toBe(1);
+});
+
+test("sm2: second correct response sets interval to 6", () => {
+  const card = { repetitions: 1, interval: 1, easeFactor: 2.5 };
+  const result = sm2(card, 4);
+  expect(result.interval).toBe(6);
+  expect(result.repetitions).toBe(2);
+});
+
+test("sm2: incorrect response resets repetitions and interval", () => {
+  const card = { repetitions: 3, interval: 20, easeFactor: 2.5 };
+  const result = sm2(card, 1);
+  expect(result.repetitions).toBe(0);
+  expect(result.interval).toBe(1);
+});
+
+test("sm2: ease factor never falls below 1.3", () => {
+  let card = { repetitions: 0, interval: 0, easeFactor: 1.4 };
+  // Multiple wrong answers
+  for (let i = 0; i < 5; i++) {
+    card = sm2(card, 0);
+  }
+  expect(card.easeFactor).toBe(1.3);
+});
+
+test("sm2: nextReview is in the future", () => {
+  const card = { repetitions: 0, interval: 0, easeFactor: 2.5 };
+  const result = sm2(card, 4);
+  if (result.nextReview <= new Date()) {
+    throw new Error(`Expected nextReview to be in the future`);
+  }
+});
+
+// ── isDue ────────────────────────────────────────────────────────────────────
+
+test("isDue: null nextReview is always due", () => {
+  if (!isDue(null)) throw new Error("Expected isDue(null) to be true");
+});
+
+test("isDue: past date is due", () => {
+  const past = new Date(Date.now() - 1000);
+  if (!isDue(past)) throw new Error("Expected past date to be due");
+});
+
+test("isDue: future date is not due", () => {
+  const future = new Date(Date.now() + 86400000);
+  if (isDue(future)) throw new Error("Expected future date to not be due");
 });
 
 // ── Summary ──────────────────────────────────────────────────────────────────

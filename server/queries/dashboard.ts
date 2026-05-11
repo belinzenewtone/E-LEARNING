@@ -292,6 +292,23 @@ export async function getRecentActivity(userId: string) {
 
 // ── getCurrentWeekAssignments ─────────────────────────────────────────────────
 
+export async function getDueReviews(userId: string) {
+  const now = new Date();
+  const answers = await db.lessonCheckpointAnswer.findMany({
+    where: {
+      userId,
+      nextReview: { lte: now },
+    },
+    select: {
+      lessonId: true,
+      lesson: { select: { title: true, slug: true } },
+    },
+    distinct: ["lessonId"],
+    take: 5,
+  });
+  return answers.map((a) => ({ lessonId: a.lessonId, title: a.lesson.title, slug: a.lesson.slug }));
+}
+
 export async function getCurrentWeekAssignments(userId: string) {
   const activeWeek = await db.weekSprint.findFirst({
     where: { status: "active" },

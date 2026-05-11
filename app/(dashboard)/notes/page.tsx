@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import Link from "next/link";
-import { PenLine, Plus } from "lucide-react";
+import { PenLine, Plus, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/shared/empty-state";
 import { NotesClient } from "./notes-client";
@@ -42,12 +42,20 @@ export default async function NotesPage() {
             {notes.length} note{notes.length !== 1 ? "s" : ""} in your collection.
           </p>
         </div>
-        <Button asChild>
-          <Link href="/notes/new">
-            <Plus className="h-4 w-4" />
-            Add Note
-          </Link>
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" asChild>
+            <a href="/api/export/notes" download>
+              <Download className="h-4 w-4" />
+              Export
+            </a>
+          </Button>
+          <Button asChild>
+            <Link href="/notes/new">
+              <Plus className="h-4 w-4" />
+              Add Note
+            </Link>
+          </Button>
+        </div>
       </div>
 
       {notes.length === 0 ? (
