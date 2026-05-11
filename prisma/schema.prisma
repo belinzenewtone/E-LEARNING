@@ -1,0 +1,306 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  avatarUrl    String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  notes             Note[]
+  studyLogs         StudyLog[]
+  xpEvents          XpEvent[]
+  progressSnapshots ProgressSnapshot[]
+  submissions       Submission[]
+  progress          Progress[]
+  goals             Goal[]
+  blockers          Blocker[]
+  checkpointAnswers LessonCheckpointAnswer[]
+}
+
+model Track {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String
+  color       String
+  icon        String
+  targetHours Int
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  modules     Module[]
+  assignments Assignment[]
+  studyLogs   StudyLog[]
+  xpEvents    XpEvent[]
+  notes       Note[]
+  goals       Goal[]
+  progress    Progress[]
+}
+
+model Module {
+  id                    String   @id @default(cuid())
+  trackId               String
+  title                 String
+  slug                  String   @unique
+  description           String
+  order                 Int
+  status                String   @default("locked")
+  estimatedHours        Int
+  prerequisiteModuleIds String[] @default([])
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  track    Track      @relation(fields: [trackId], references: [id])
+  lessons  Lesson[]
+  progress Progress[]
+}
+
+model WeekSprint {
+  id                     String   @id @default(cuid())
+  weekNumber             Int      @unique
+  title                  String
+  theme                  String
+  startDate              DateTime
+  endDate                DateTime
+  goals                  String[]
+  status                 String   @default("locked")
+  estimatedHours         Int
+  retrospectiveCompleted Boolean  @default(false)
+  retrospectiveNotes     String?
+  phase                  Int      @default(1)
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  lessons     Lesson[]
+  assignments Assignment[]
+  notes       Note[]
+  xpEvents    XpEvent[]
+  progress    Progress[]
+}
+
+model Lesson {
+  id                  String   @id @default(cuid())
+  moduleId            String
+  weekId              String
+  title               String
+  slug                String   @unique
+  objective           String
+  sourceName          String
+  sourceType          String
+  sourceUrl           String
+  estimatedMinutes    Int
+  order               Int
+  difficulty          String   @default("beginner")
+  status              String   @default("locked")
+  keyConcepts         String[]
+  checkpointQuestions Json     @default("[]")
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  module            Module                   @relation(fields: [moduleId], references: [id])
+  week              WeekSprint               @relation(fields: [weekId], references: [id])
+  notes             Note[]
+  xpEvents          XpEvent[]
+  progress          Progress[]
+  blockers          Blocker[]
+  checkpointAnswers LessonCheckpointAnswer[]
+}
+
+model Assignment {
+  id                   String   @id @default(cuid())
+  weekId               String
+  trackId              String?
+  title                String
+  brief                String
+  difficulty           String   @default("intermediate")
+  dueDate              DateTime
+  rubric               Json     @default("[]")
+  requiredDeliverables Json     @default("[]")
+  status               String   @default("not-started")
+  xpReward             Int      @default(80)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  week        WeekSprint   @relation(fields: [weekId], references: [id])
+  track       Track?       @relation(fields: [trackId], references: [id])
+  submissions Submission[]
+  notes       Note[]
+  xpEvents    XpEvent[]
+  blockers    Blocker[]
+}
+
+model Submission {
+  id            String    @id @default(cuid())
+  assignmentId  String
+  userId        String
+  repoUrl       String?
+  deploymentUrl String?
+  screenshotUrl String?
+  sqlScriptUrl  String?
+  notes         String?
+  reflection    String?
+  selfScore     Int?
+  status        String    @default("submitted")
+  submittedAt   DateTime  @default(now())
+  reviewedAt    DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  assignment Assignment @relation(fields: [assignmentId], references: [id])
+  user       User       @relation(fields: [userId], references: [id])
+}
+
+model Progress {
+  id          String    @id @default(cuid())
+  userId      String
+  lessonId    String?
+  moduleId    String?
+  trackId     String?
+  weekId      String?
+  status      String    @default("not-started")
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user   User        @relation(fields: [userId], references: [id])
+  lesson Lesson?     @relation(fields: [lessonId], references: [id])
+  module Module?     @relation(fields: [moduleId], references: [id])
+  track  Track?      @relation(fields: [trackId], references: [id])
+  week   WeekSprint? @relation(fields: [weekId], references: [id])
+
+  @@unique([userId, lessonId])
+}
+
+model Note {
+  id           String   @id @default(cuid())
+  userId       String
+  lessonId     String?
+  assignmentId String?
+  weekId       String?
+  trackId      String?
+  title        String
+  content      String
+  tags         String[] @default([])
+  pinned       Boolean  @default(false)
+  reviewLater  Boolean  @default(false)
+  confusing    Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user       User        @relation(fields: [userId], references: [id])
+  lesson     Lesson?     @relation(fields: [lessonId], references: [id])
+  assignment Assignment? @relation(fields: [assignmentId], references: [id])
+  week       WeekSprint? @relation(fields: [weekId], references: [id])
+  track      Track?      @relation(fields: [trackId], references: [id])
+}
+
+model StudyLog {
+  id        String   @id @default(cuid())
+  userId    String
+  date      DateTime
+  trackId   String?
+  minutes   Int
+  mood      String?
+  energy    Int?
+  learned   String?
+  blockers  String?
+  nextStep  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user  User   @relation(fields: [userId], references: [id])
+  track Track? @relation(fields: [trackId], references: [id])
+}
+
+model XpEvent {
+  id           String   @id @default(cuid())
+  userId       String
+  type         String
+  points       Int
+  reason       String
+  lessonId     String?
+  assignmentId String?
+  weekId       String?
+  trackId      String?
+  createdAt    DateTime @default(now())
+
+  user       User        @relation(fields: [userId], references: [id])
+  lesson     Lesson?     @relation(fields: [lessonId], references: [id])
+  assignment Assignment? @relation(fields: [assignmentId], references: [id])
+  week       WeekSprint? @relation(fields: [weekId], references: [id])
+  track      Track?      @relation(fields: [trackId], references: [id])
+}
+
+model ProgressSnapshot {
+  id                   String   @id @default(cuid())
+  userId               String
+  date                 DateTime
+  totalXp              Int
+  streak               Int
+  webProgress          Float
+  dataProgress         Float
+  overallProgress      Float
+  studyMinutesThisWeek Int
+  weeklyScore          Float
+  createdAt            DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Goal {
+  id          String    @id @default(cuid())
+  userId      String
+  title       String
+  description String?
+  targetDate  DateTime?
+  status      String    @default("active")
+  trackId     String?
+  weekId      String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user  User   @relation(fields: [userId], references: [id])
+  track Track? @relation(fields: [trackId], references: [id])
+}
+
+model Blocker {
+  id           String   @id @default(cuid())
+  userId       String
+  lessonId     String?
+  assignmentId String?
+  title        String
+  description  String
+  status       String   @default("open")
+  resolution   String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user       User        @relation(fields: [userId], references: [id])
+  lesson     Lesson?     @relation(fields: [lessonId], references: [id])
+  assignment Assignment? @relation(fields: [assignmentId], references: [id])
+}
+
+model LessonCheckpointAnswer {
+  id            String   @id @default(cuid())
+  userId        String
+  lessonId      String
+  questionIndex Int
+  answer        String
+  correct       Boolean?
+  createdAt     DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id])
+  lesson Lesson @relation(fields: [lessonId], references: [id])
+
+  @@unique([userId, lessonId, questionIndex])
+}
