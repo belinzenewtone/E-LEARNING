@@ -153,7 +153,7 @@
 @layer utilities {
   .scrollbar-thin {
     scrollbar-width: thin;
-    scrollbar-color: oklch(1 0 0 / 15%) transparent;
+    scrollbar-color: oklch(1 0 0 / 18%) transparent;
   }
   .scrollbar-thin::-webkit-scrollbar {
     width: 4px;
@@ -163,7 +163,7 @@
     background: transparent;
   }
   .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: oklch(1 0 0 / 15%);
+    background: oklch(1 0 0 / 18%);
     border-radius: 2px;
   }
   .gradient-primary {
@@ -195,7 +195,7 @@
     appearance: none;
     height: 6px;
     border-radius: 3px;
-    background: oklch(1 0 0 / 10%);
+    background: oklch(1 0 0 / 12%);
     outline: none;
     width: 100%;
   }
@@ -227,9 +227,55 @@
   .form-range::-moz-range-thumb:hover {
     transform: scale(1.1);
   }
-  /* Light mode: disable glass-card transparency to avoid muddy edges */
+
+  /* ── Light mode overrides ──────────────────────────────────────────────────── */
+
+  /* Scrollbar — use dark ink instead of white */
+  .light .scrollbar-thin {
+    scrollbar-color: oklch(0.65 0.01 240 / 35%) transparent;
+  }
+  .light .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: oklch(0.65 0.01 240 / 35%);
+  }
+
+  /* Glass card — opaque and bordered */
   .light .glass {
-    background: oklch(0.97 0.005 240);
-    border-color: oklch(0.88 0.01 240);
+    background: oklch(0.99 0.003 240);
+    border-color: oklch(0.85 0.01 240);
+  }
+
+  /* Form range track */
+  .light .form-range {
+    background: oklch(0.15 0.01 240 / 12%);
+  }
+
+  /* Form select arrow (darker for light bg) */
+  .light .form-select {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  }
+
+  /* Cards: subtle shadow so they lift off the page background */
+  .light [data-slot="card"] {
+    box-shadow: 0 1px 3px oklch(0 0 0 / 7%), 0 1px 2px oklch(0 0 0 / 5%);
+  }
+  .light [data-slot="card"]:hover {
+    box-shadow: 0 2px 8px oklch(0 0 0 / 9%), 0 1px 3px oklch(0 0 0 / 6%);
+  }
+
+  /* Topbar: more visible border in light mode */
+  .light header.sticky {
+    border-bottom-color: oklch(0.84 0.01 240);
+    background-color: oklch(0.99 0.003 240);
+  }
+
+  /* Sidebar: visible border */
+  .light aside {
+    border-right-color: oklch(0.84 0.01 240);
+  }
+
+  /* Section headings: slightly bolder in light mode */
+  .light h2.text-sm.font-medium {
+    color: oklch(0.20 0.015 240);
+    font-weight: 600;
   }
 }

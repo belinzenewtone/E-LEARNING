@@ -12,19 +12,19 @@ interface StatCardProps {
   trend?: number;
 }
 
-const colorMap: Record<StatColor, string> = {
-  primary:  "text-[var(--token-cyan)]",
-  success:  "text-[var(--token-emerald)]",
-  warning:  "text-[var(--token-amber)]",
-  danger:   "text-[var(--token-red)]",
+const colorMap: Record<StatColor, { text: string; bg: string; border: string }> = {
+  primary: { text: "text-[var(--token-cyan)]",    bg: "bg-[var(--token-cyan)]/10",    border: "border-[var(--token-cyan)]/20" },
+  success: { text: "text-[var(--token-emerald)]", bg: "bg-[var(--token-emerald)]/10", border: "border-[var(--token-emerald)]/20" },
+  warning: { text: "text-[var(--token-amber)]",   bg: "bg-[var(--token-amber)]/10",   border: "border-[var(--token-amber)]/20" },
+  danger:  { text: "text-[var(--token-red)]",     bg: "bg-[var(--token-red)]/10",     border: "border-[var(--token-red)]/20" },
 };
 
 export function StatCard({ title, value, subtitle, icon: Icon, color = "primary", trend }: StatCardProps) {
-  const textColor = colorMap[color];
+  const { text, bg, border } = colorMap[color];
   const trendPositive = trend !== undefined && trend >= 0;
 
   return (
-    <div className="rounded-xl border border-white/[0.04] bg-[oklch(0.18_0.01_240)] p-4 transition-colors hover:border-white/[0.08]">
+    <div className="rounded-xl border border-border bg-card p-4 transition-all hover:border-border/80 hover:shadow-sm">
       <div className="flex items-center justify-between">
         <div className="min-w-0">
           <p className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground">
@@ -47,7 +47,7 @@ export function StatCard({ title, value, subtitle, icon: Icon, color = "primary"
             </div>
           )}
         </div>
-        <div className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/[0.03] border border-white/[0.05]", textColor)}>
+        <div className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border", bg, border, text)}>
           <Icon className="h-4 w-4" />
         </div>
       </div>

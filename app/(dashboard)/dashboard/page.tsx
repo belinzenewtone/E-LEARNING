@@ -206,10 +206,10 @@ async function DashboardContent({ userId, userName }: { userId: string; userName
                         href={`/lessons/${lesson.slug}`}
                         className={cn(
                           "flex items-center gap-3 rounded-lg border p-3 transition-all hover:shadow-sm",
-                          isDone ? "border-emerald-500/20 bg-emerald-500/5" : "border-border/40 bg-muted/10 hover:bg-muted/20 hover:border-primary/30"
+                          isDone ? "border-[var(--token-emerald)]/20 bg-[var(--token-emerald)]/5" : "border-border/40 bg-muted/10 hover:bg-muted/20 hover:border-primary/30"
                         )}
                       >
-                        <div className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-lg", isDone ? "bg-emerald-500/10" : "bg-primary/10")}>
+                        <div className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-lg", isDone ? "bg-[var(--token-emerald)]/10" : "bg-primary/10")}>
                           {isDone ? <CheckCircle2 className="h-4 w-4 text-[var(--token-emerald)]" /> : <PlayCircle className="h-4 w-4 text-primary" />}
                         </div>
                         <div className="min-w-0 flex-1">
