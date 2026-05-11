@@ -11,7 +11,6 @@ import {
 import {
   getDashboardStats, getTodaysTasks, getRecentActivity, getCurrentWeekAssignments, getDueReviews,
 } from "@/server/queries/dashboard";
-import { Topbar } from "@/components/layout/topbar";
 import { StatCard } from "@/components/shared/stat-card";
 import { DashboardSkeleton } from "@/components/shared/loading-skeleton";
 import { EmptyState } from "@/components/shared/empty-state";
@@ -83,31 +82,42 @@ async function DashboardContent({ userId, userName }: { userId: string; userName
   const firstName = userName.split(" ")[0];
 
   return (
-    <div>
-      <Topbar title="Dashboard" subtitle={todayLabel} />
-    <div className="space-y-6 p-4 sm:p-6 lg:p-8">
+    <div className="space-y-8 p-4 sm:p-6 lg:p-8">
 
       {/* ── Hero header ─────────────────────────────────────────────────────── */}
-      <div className="rounded-xl border border-border/50 bg-gradient-to-br from-primary/5 via-card/60 to-secondary/5 p-6">
-        <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight text-foreground">
-              {greeting}, <span className="text-primary">{firstName}</span> 👋
-            </h1>
-            <p className="mt-1 text-sm text-muted-foreground">{todayLabel}</p>
-          </div>
+      <div className="space-y-1">
+        <p className="text-xs text-muted-foreground">{todayLabel}</p>
+        <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+          {greeting}, {firstName}
+        </h1>
+        <div className="flex flex-wrap items-center gap-2 pt-2">
           {stats.currentWeek && (
-            <div className="mt-3 sm:mt-0 flex items-center gap-2 rounded-lg border border-primary/20 bg-primary/5 px-3 py-2 text-sm">
-              <Target className="h-4 w-4 text-primary shrink-0" />
-              <span className="font-medium text-foreground truncate max-w-[200px]">
-                Week {stats.currentWeek.weekNumber}: {stats.currentWeek.theme}
+            <div className="flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/5 px-2.5 py-1 text-xs">
+              <Target className="h-3 w-3 text-primary" />
+              <span className="font-medium text-foreground">
+                Week {stats.currentWeek.weekNumber}
               </span>
             </div>
           )}
+          <div className="flex items-center gap-1 rounded-full border border-border/40 bg-muted/20 px-2 py-1 text-[11px]">
+            <Zap className="h-3 w-3 text-primary" />
+            <span className="font-semibold text-foreground">{stats.totalXp.toLocaleString()}</span>
+            <span className="text-muted-foreground">XP</span>
+          </div>
+          {stats.streak > 0 && (
+            <div className="flex items-center gap-1 rounded-full border border-border/40 bg-muted/20 px-2 py-1 text-[11px]">
+              <Flame className="h-3 w-3 text-[var(--token-amber)]" />
+              <span className="font-semibold text-[var(--token-amber)]">{stats.streak}d streak</span>
+            </div>
+          )}
+          <div className="flex items-center gap-1 rounded-full border border-border/40 bg-muted/20 px-2 py-1 text-[11px] text-muted-foreground">
+            Lv {Math.floor(stats.totalXp / 500) + 1}
+          </div>
         </div>
+      </div>
 
-        {/* Mini progress row */}
-        <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-4">
+      {/* Mini progress row */}
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
           <div className="space-y-1">
             <div className="flex justify-between text-xs text-muted-foreground">
               <span>Overall</span><span className="font-medium text-foreground">{stats.overallProgress}%</span>
@@ -133,7 +143,6 @@ async function DashboardContent({ userId, userName }: { userId: string; userName
             <Progress value={stats.weeklyScore} className="h-1.5 [&>div]:bg-[var(--token-amber)]" />
           </div>
         </div>
-      </div>
 
       {/* ── Stat cards ────────────────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
@@ -166,26 +175,20 @@ async function DashboardContent({ userId, userName }: { userId: string; userName
         </Card>
       )}
 
-      {/* ── Main two-column ───────────────────────────────────────────────────── */}
-      <div className="grid gap-4 xl:grid-cols-3">
-
-        {/* Today's learning plan */}
-        <Card className="xl:col-span-2">
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <BookOpen className="h-4 w-4 text-primary" />
-                Today&apos;s Learning Plan
-              </CardTitle>
-              {stats.lessonsCompletedToday > 0 && (
-                <Badge variant="success" className="gap-1">
-                  <CheckCircle2 className="h-3 w-3" />
-                  {stats.lessonsCompletedToday} done
-                </Badge>
-              )}
-            </div>
-          </CardHeader>
-          <CardContent>
+      {/* ── Today&apos;s Learning Plan ─────────────────────────────────────────── */}
+      <div>
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-sm font-medium text-foreground">Today&apos;s Learning Plan</h2>
+          {stats.lessonsCompletedToday > 0 && (
+            <Badge variant="success" className="gap-1">
+              <CheckCircle2 className="h-3 w-3" />
+              {stats.lessonsCompletedToday} done
+            </Badge>
+          )}
+        </div>
+        <div className="grid gap-4 xl:grid-cols-3">
+          <Card className="xl:col-span-2">
+            <CardContent className="p-4">
             {todaysTasks.length === 0 ? (
               <EmptyState
                 icon={BookOpen}
@@ -235,14 +238,8 @@ async function DashboardContent({ userId, userName }: { userId: string; userName
           </CardContent>
         </Card>
 
-        {/* Current week card */}
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-sm">
-              <Calendar className="h-4 w-4 text-muted-foreground" /> Current Week
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
+          <Card>
+            <CardContent className="p-4 space-y-4">
             {stats.currentWeek ? (
               <>
                 <div>
@@ -259,7 +256,7 @@ async function DashboardContent({ userId, userName }: { userId: string; userName
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-muted-foreground">Weekly score</span>
-                    <span className={cn("font-bold", stats.weeklyScore >= 80 ? "text-[var(--token-emerald)]" : stats.weeklyScore >= 50 ? "text-[var(--token-amber)]" : "text-foreground")}>
+                    <span className={cn("font-semibold", stats.weeklyScore >= 80 ? "text-[var(--token-emerald)]" : stats.weeklyScore >= 50 ? "text-[var(--token-amber)]" : "text-foreground")}>
                       {stats.weeklyScore}%
                     </span>
                   </div>
@@ -278,7 +275,7 @@ async function DashboardContent({ userId, userName }: { userId: string; userName
                       const done = a.submissions.length > 0;
                       return (
                         <Link key={a.id} href={`/assignments/${a.id}`} className="flex items-center gap-2 group">
-                          <div className={cn("h-1.5 w-1.5 rounded-full shrink-0", done ? "bg-emerald-400" : "bg-muted-foreground/30")} />
+                          <div className={cn("h-1.5 w-1.5 rounded-full shrink-0", done ? "bg-[var(--token-emerald)]" : "bg-muted-foreground/30")} />
                           <span className={cn("flex-1 truncate text-xs transition-colors group-hover:text-primary", done ? "text-muted-foreground line-through" : "text-foreground")}>
                             {a.title}
                           </span>
@@ -300,16 +297,19 @@ async function DashboardContent({ userId, userName }: { userId: string; userName
           </CardContent>
         </Card>
       </div>
+    </div>
 
-      {/* ── Track progress ─────────────────────────────────────────────────────── */}
+    {/* ── Track Progress ─────────────────────────────────────────────────────── */}
+    <div>
+      <h2 className="text-sm font-medium text-foreground mb-3">Track Progress</h2>
       <div className="grid gap-4 sm:grid-cols-2">
         <Card>
           <CardContent className="p-5">
             <div className="flex items-center gap-4">
-              <ProgressRing value={stats.webProgress} size={72} color="#22d3ee" />
+              <ProgressRing value={stats.webProgress} size={72} color="var(--token-cyan)" />
               <div className="min-w-0 flex-1">
                 <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Web Development</p>
-                <p className="mt-0.5 text-lg font-bold text-foreground">{stats.webProgress}%</p>
+                <p className="mt-0.5 text-lg font-semibold text-foreground">{stats.webProgress}%</p>
                 <p className="text-xs text-muted-foreground">JavaScript · TypeScript · Next.js</p>
                 <Progress value={stats.webProgress} className="mt-2 h-1.5 [&>div]:bg-[var(--token-cyan)]" />
               </div>
@@ -323,10 +323,10 @@ async function DashboardContent({ userId, userName }: { userId: string; userName
         <Card>
           <CardContent className="p-5">
             <div className="flex items-center gap-4">
-              <ProgressRing value={stats.dataProgress} size={72} color="#34d399" />
+              <ProgressRing value={stats.dataProgress} size={72} color="var(--token-emerald)" />
               <div className="min-w-0 flex-1">
                 <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Data Engineering</p>
-                <p className="mt-0.5 text-lg font-bold text-foreground">{stats.dataProgress}%</p>
+                <p className="mt-0.5 text-lg font-semibold text-foreground">{stats.dataProgress}%</p>
                 <p className="text-xs text-muted-foreground">SQL · dbt · Airflow · BigQuery</p>
                 <Progress value={stats.dataProgress} className="mt-2 h-1.5 [&>div]:bg-[var(--token-emerald)]" />
               </div>
@@ -337,18 +337,14 @@ async function DashboardContent({ userId, userName }: { userId: string; userName
           </CardContent>
         </Card>
       </div>
+    </div>
 
-      {/* ── Bottom row ────────────────────────────────────────────────────────── */}
+    {/* ── Activity & Actions ─────────────────────────────────────────────────── */}
+    <div>
+      <h2 className="text-sm font-medium text-foreground mb-3">Recent Activity</h2>
       <div className="grid gap-4 md:grid-cols-2">
-
-        {/* Recent activity */}
         <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-base">
-              <Zap className="h-4 w-4 text-primary" /> Recent Activity
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+          <CardContent className="p-4">
             {recentActivity.length === 0 ? (
               <EmptyState icon={Zap} title="No activity yet" description="Complete a lesson or log a study session to earn XP." />
             ) : (
@@ -362,7 +358,7 @@ async function DashboardContent({ userId, userName }: { userId: string; userName
                       <p className="truncate text-sm text-foreground">{event.reason || eventLabel(event.type)}</p>
                       <p className="text-xs text-muted-foreground">{timeAgo(event.createdAt)}</p>
                     </div>
-                    <span className="shrink-0 text-sm font-bold text-[var(--token-emerald)]">+{event.points}</span>
+                    <span className="shrink-0 text-sm font-semibold text-[var(--token-emerald)]">+{event.points}</span>
                   </li>
                 ))}
               </ul>
@@ -370,12 +366,8 @@ async function DashboardContent({ userId, userName }: { userId: string; userName
           </CardContent>
         </Card>
 
-        {/* Quick actions */}
         <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base">Quick Actions</CardTitle>
-          </CardHeader>
-          <CardContent>
+          <CardContent className="p-4">
             <div className="grid grid-cols-2 gap-2">
               {[
                 { href: "/lessons", icon: PlayCircle, label: "Start Lesson", color: "text-primary", bg: "bg-primary/8 hover:bg-primary/15" },
@@ -395,7 +387,7 @@ async function DashboardContent({ userId, userName }: { userId: string; userName
         </Card>
       </div>
     </div>
-    </div>
+  </div>
   );
 }
 

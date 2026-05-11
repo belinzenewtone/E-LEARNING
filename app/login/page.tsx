@@ -101,7 +101,7 @@ export default function LoginPage() {
 
           {/* Heading */}
           <div>
-            <h2 className="text-2xl font-bold text-foreground">Welcome back</h2>
+            <h2 className="text-2xl font-semibold text-foreground">Welcome back</h2>
             <p className="text-sm text-muted-foreground mt-1.5">Sign in to continue your learning journey</p>
           </div>
 
