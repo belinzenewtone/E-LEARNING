@@ -24,8 +24,8 @@ export default async function DashboardLayout({
   // Auto-activate/complete weeks based on today's date (lightweight — only runs if status changes)
   await syncWeekStatuses();
 
-  // Generate new notifications (idempotent — skips duplicates)
-  await generateNotifications(user.id);
+  // Generate new notifications — wrapped so a missing table never crashes the layout
+  try { await generateNotifications(user.id); } catch { /* table may not exist yet */ }
 
   const [xpAggregate, recentLogs] = await Promise.all([
     db.xpEvent.aggregate({
@@ -70,10 +70,14 @@ export default async function DashboardLayout({
   const userXp = xpAggregate._sum.points ?? 0;
   const userName = user.name ?? "Learner";
 
-  const [notifications, unreadCount] = await Promise.all([
-    getNotifications(user.id),
-    getUnreadCount(user.id),
-  ]);
+  let notifications: Awaited<ReturnType<typeof getNotifications>> = [];
+  let unreadCount = 0;
+  try {
+    [notifications, unreadCount] = await Promise.all([
+      getNotifications(user.id),
+      getUnreadCount(user.id),
+    ]);
+  } catch { /* notification table not yet migrated — bell shows empty */ }
 
   return (
     <DashboardShell
