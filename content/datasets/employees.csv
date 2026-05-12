@@ -1,0 +1,21 @@
+id,name,department,salary,hire_date,manager_id,performance_score,location
+1,Alice Wanjiku,Engineering,95000,2020-03-15,,4.5,Nairobi
+2,Bob Ochieng,Engineering,85000,2021-06-01,1,4.2,Lagos
+3,Carol Muthoni,Data Science,110000,2019-09-10,,4.8,Nairobi
+4,David Kimani,Engineering,78000,2022-01-20,1,3.9,Remote
+5,Eve Akinyi,Marketing,65000,2021-11-05,,4.1,Nairobi
+6,Frank Odhiambo,Data Science,92000,2020-07-15,3,4.3,Nairobi
+7,Grace Wambui,Engineering,88000,2021-04-12,1,4.6,Lagos
+8,Henry Kiprotich,Marketing,58000,2023-02-01,5,3.5,Nairobi
+9,Irene Chelagat,Sales,72000,2020-10-20,,3.8,Remote
+10,James Mwangi,Engineering,102000,2018-05-15,1,4.9,Nairobi
+11,Karen Njeri,Data Science,80000,2022-08-01,3,4.0,Nairobi
+12,Leo Barasa,Sales,68000,2021-03-18,9,3.7,Lagos
+13,Mary Achieng,Engineering,76000,2022-04-10,1,4.4,Remote
+14,Noah Wekesa,Marketing,62000,2023-01-05,5,3.2,Nairobi
+15,Olivia Kemunto,Data Science,98000,2019-11-20,3,4.7,Nairobi
+16,Peter Njoroge,Sales,70000,2022-06-15,9,4.0,Lagos
+17,Queenter Atieno,Engineering,90000,2020-02-28,1,4.5,Remote
+18,Robert Kiplagat,Marketing,55000,2023-07-01,5,3.1,Nairobi
+19,Sarah Nyambura,Data Science,105000,2019-04-10,3,4.8,Nairobi
+20,Tom Ondiek,Engineering,82000,2021-09-15,1,4.1,Lagos

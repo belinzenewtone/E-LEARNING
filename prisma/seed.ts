@@ -4,6 +4,8 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
 import bcrypt from "bcryptjs";
 import { addDays, addWeeks } from "date-fns";
+import fs from "fs";
+import path from "path";
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool);
@@ -402,15 +404,20 @@ async function main() {
     if (!weekId) continue;
 
     const lessonStatus = weekStatus(l.week) !== "locked" ? "available" : "locked";
+
+    const contentPath = path.join(process.cwd(), "content", "lessons", `${l.slug}.md`);
+    const content = fs.existsSync(contentPath) ? fs.readFileSync(contentPath, "utf-8") : undefined;
+
     await db.lesson.upsert({
       where: { slug: l.slug },
-      update: { status: lessonStatus },
+      update: { status: lessonStatus, content },
       create: {
         moduleId,
         weekId,
         title: l.title,
         slug: l.slug,
         objective: l.objective,
+        content,
         sourceName: l.sourceName,
         sourceType: l.sourceType,
         sourceUrl: l.sourceUrl,

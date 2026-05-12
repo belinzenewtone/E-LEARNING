@@ -1,0 +1,31 @@
+id,title,company,location,experience_level,salary,salary_currency,remote,posted_date,description
+1,Junior Frontend Developer,Acme Corp,Nairobi,entry,45000,USD,false,2026-01-15,Build and maintain responsive web interfaces using React
+2,Senior Data Engineer,Globex Inc,Remote,senior,145000,USD,true,2026-02-01,Design and maintain ETL pipelines processing 10TB+ daily
+3,Data Analyst,TechKenya,Nairobi,mid,55000,USD,false,2026-01-20,Analyze customer behavior data and create dashboards
+4,Full Stack Developer,StartupXYZ,Lagos,mid,72000,USD,true,2026-03-10,Build features across the entire stack using Next.js and PostgreSQL
+5,Data Scientist,Safaricom,Nairobi,senior,120000,USD,false,2026-02-15,Develop ML models for customer churn prediction
+6,Backend Engineer,Andela,Remote,mid,85000,USD,true,2026-01-05,Design REST APIs and microservices with Node.js
+7,Junior Data Analyst,Jumia,Nairobi,entry,38000,USD,false,2026-03-01,Create weekly sales reports and maintain SQL queries
+8,DevOps Engineer,Cellulant,Nairobi,senior,130000,USD,false,2026-02-20,Manage Kubernetes clusters and CI/CD pipelines
+9,Database Administrator,Equity Bank,Nairobi,mid,68000,USD,false,2026-01-25,Maintain and optimize PostgreSQL databases
+10,Data Engineering Intern,Twiga Foods,Nairobi,entry,25000,USD,false,2026-04-01,Assist in building data pipelines with Python and SQL
+11,Senior Frontend Developer,M-KOPA,Nairobi,senior,105000,USD,true,2026-02-10,Lead the frontend team building React applications
+12,ETL Developer,Lipa Later,Nairobi,mid,62000,USD,false,2026-03-15,Design and implement ETL processes using Apache Airflow
+13,Data Warehouse Architect,KCB Bank,Nairobi,senior,155000,USD,false,2026-01-10,Design enterprise data warehouse using Snowflake
+14,Software Engineer,Microsoft,Remote,mid,110000,USD,true,2026-02-28,Build cloud services on Azure
+15,ML Engineer,Zindi,Nairobi,mid,90000,USD,true,2026-03-20,Deploy machine learning models to production
+16,Junior SQL Developer,NHIF,Nairobi,entry,40000,USD,false,2026-04-10,Write and optimize SQL queries for reporting
+17,Platform Engineer,Paystack,Lagos,senior,135000,USD,true,2026-01-30,Design internal developer platform and infrastructure
+18,Analytics Engineer,Twiga Foods,Nairobi,mid,75000,USD,true,2026-02-05,Build dbt models and maintain data transformations
+19,BI Developer,Sanlam,Nairobi,mid,58000,USD,false,2026-03-05,Create PowerBI dashboards and maintain data models
+20,Principal Data Engineer,Google,Nairobi,senior,180000,USD,true,2026-01-01,Lead data infrastructure team for Google Africa
+21,React Developer,Craft Silicon,Nairobi,mid,65000,USD,false,2026-02-18,Build React Native mobile applications
+22,Data Governance Analyst,Central Bank,Nairobi,mid,70000,USD,false,2026-03-25,Implement data governance frameworks and policies
+23,Cloud Data Engineer,Sendy,Nairobi,mid,82000,USD,true,2026-04-05,Build data pipelines on AWS (Glue, Redshift, S3)
+24,AI Engineer,Intelipro,Nairobi,senior,125000,USD,true,2026-02-22,Develop AI solutions for financial inclusion
+25,Junior Web Developer,Zuku,Nairobi,entry,35000,USD,false,2026-03-30,Maintain company websites and landing pages
+26,Data Platform Lead,Cellulant,Nairobi,senior,160000,USD,false,2026-01-18,Architect and lead the data platform strategy
+27,Technical Support Engineer,Oracle,Nairobi,mid,50000,USD,false,2026-02-12,Provide technical support for Oracle database products
+28,Python Developer,BrandEye,Remote,mid,78000,USD,true,2026-03-12,Build backend services with FastAPI and PostgreSQL
+29,Junior Data Scientist,Apollo,Nairobi,entry,42000,USD,false,2026-04-15,Assist in building predictive models for insurance
+30,Engineering Manager,Andela,Nairobi,senior,140000,USD,true,2026-02-08,Manage a team of 8 engineers building EdTech products
