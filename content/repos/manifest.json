@@ -1,0 +1,91 @@
+[
+  {
+    "repo": "getify/You-Dont-Know-JS",
+    "label": "You Don't Know JS (2nd ed.)",
+    "dir": "getify-You-Dont-Know-JS",
+    "files": [
+      "get-started-README.md",
+      "get-started-ch1.md",
+      "get-started-ch2.md",
+      "get-started-ch3.md",
+      "scope-closures-README.md",
+      "scope-closures-ch1.md",
+      "scope-closures-ch2.md",
+      "scope-closures-ch3.md",
+      "scope-closures-ch4.md",
+      "scope-closures-ch5.md",
+      "scope-closures-ch6.md",
+      "scope-closures-ch7.md",
+      "scope-closures-ch8.md",
+      "objects-classes-README.md",
+      "objects-classes-ch1.md",
+      "objects-classes-ch2.md",
+      "objects-classes-ch3.md",
+      "objects-classes-ch4.md",
+      "objects-classes-ch5.md",
+      "types-grammar-README.md",
+      "types-grammar-ch1.md",
+      "types-grammar-ch2.md"
+    ]
+  },
+  {
+    "repo": "ryanmcdermott/clean-code-javascript",
+    "label": "Clean Code JavaScript",
+    "dir": "ryanmcdermott-clean-code-javascript",
+    "files": [
+      "README.md"
+    ]
+  },
+  {
+    "repo": "lydiahallie/javascript-questions",
+    "label": "JavaScript Interview Questions",
+    "dir": "lydiahallie-javascript-questions",
+    "files": [
+      "README.md"
+    ]
+  },
+  {
+    "repo": "goldbergyoni/javascript-testing-best-practices",
+    "label": "JavaScript Testing Best Practices",
+    "dir": "goldbergyoni-javascript-testing-best-practices",
+    "files": [
+      "readme.md"
+    ]
+  },
+  {
+    "repo": "leonardomso/33-js-concepts",
+    "label": "33 Concepts Every JavaScript Developer Should Know",
+    "dir": "leonardomso-33-js-concepts",
+    "files": [
+      "README.md"
+    ]
+  },
+  {
+    "repo": "DataTalksClub/data-engineering-zoomcamp",
+    "label": "Data Engineering Zoomcamp",
+    "dir": "DataTalksClub-data-engineering-zoomcamp",
+    "files": [
+      "README.md",
+      "01-docker-terraform-README.md",
+      "02-workflow-orchestration-README.md",
+      "03-data-warehouse-README.md",
+      "04-analytics-engineering-README.md"
+    ]
+  },
+  {
+    "repo": "kamranahmedse/developer-roadmap",
+    "label": "Developer Roadmap",
+    "dir": "kamranahmedse-developer-roadmap",
+    "files": [
+      "readme.md"
+    ]
+  },
+  {
+    "repo": "EbookFoundation/free-programming-books",
+    "label": "Free Programming Books",
+    "dir": "EbookFoundation-free-programming-books",
+    "files": [
+      "README.md"
+    ]
+  }
+]

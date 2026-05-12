@@ -20,6 +20,8 @@ import { LessonStudyArea } from "./lesson-study-area";
 import { ProgressRing } from "@/components/shared/progress-ring";
 import { StudyTimer } from "@/components/shared/study-timer";
 import { MarkdownContent } from "@/components/shared/markdown-content";
+import { SupplementarySection } from "@/components/shared/supplementary-section";
+import { getSupplementaryContent } from "@/server/queries/supplementary";
 
 // ── Prisma result type ────────────────────────────────────────────────────────
 
@@ -292,6 +294,9 @@ async function LessonContent({ slug, userId }: { slug: string; userId: string })
               </CardContent>
             </Card>
           )}
+          <SupplementarySection
+            items={getSupplementaryContent(lesson.slug)}
+          />
           <LessonStudyArea
             lessonId={lesson.id}
             lessonSlug={lesson.slug}
