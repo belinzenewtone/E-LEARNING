@@ -1,5 +1,6 @@
 import { type LucideIcon, TrendingUp, TrendingDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type StatColor = "primary" | "success" | "warning" | "danger";
 
@@ -27,7 +28,7 @@ export function StatCard({ title, value, subtitle, icon: Icon, color = "primary"
     <div className="rounded-xl border border-border bg-card p-4 transition-all hover:border-border/80 hover:shadow-sm">
       <div className="flex items-center justify-between">
         <div className="min-w-0">
-          <p className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground">
+          <p className="text-[11px] font-medium uppercase tracking-widest text-muted-foreground">
             {title}
           </p>
           <p className="mt-1 text-xl font-semibold tracking-tight text-foreground">
@@ -50,6 +51,21 @@ export function StatCard({ title, value, subtitle, icon: Icon, color = "primary"
         <div className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border", bg, border, text)}>
           <Icon className="h-4 w-4" />
         </div>
+      </div>
+    </div>
+  );
+}
+
+export function StatCardSkeleton() {
+  return (
+    <div className="rounded-xl border border-border bg-card p-4">
+      <div className="flex items-center justify-between">
+        <div className="min-w-0 space-y-2">
+          <Skeleton className="h-3 w-16" />
+          <Skeleton className="h-6 w-20" />
+          <Skeleton className="h-3 w-24" />
+        </div>
+        <Skeleton className="h-9 w-9 rounded-lg" />
       </div>
     </div>
   );

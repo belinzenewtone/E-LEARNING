@@ -97,6 +97,27 @@ export function getStatusColor(status: string): string {
   }
 }
 
+export function getStatusBadgeVariant(status: string): "success" | "info" | "warning" | "destructive" | "muted" {
+  switch (status) {
+    case "completed": return "success";
+    case "in-progress":
+    case "active":
+    case "submitted": return "info";
+    case "needs-improvement": return "warning";
+    case "overdue": return "destructive";
+    default: return "muted";
+  }
+}
+
+export function getDifficultyBadgeVariant(difficulty: string): "success" | "warning" | "destructive" | "muted" {
+  switch (difficulty) {
+    case "beginner": return "success";
+    case "intermediate": return "warning";
+    case "advanced": return "destructive";
+    default: return "muted";
+  }
+}
+
 /** Return a hex color for a given track slug (for SVG / chart usage) */
 export function getTrackColor(slug: string): string {
   switch (slug) {

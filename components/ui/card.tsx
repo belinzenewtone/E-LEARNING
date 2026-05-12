@@ -1,11 +1,18 @@
 import { cn } from "@/lib/utils";
 
-function Card({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+type CardVariant = "default" | "interactive";
+
+interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+  variant?: CardVariant;
+}
+
+function Card({ className, variant = "default", ...props }: CardProps) {
   return (
     <div
       data-slot="card"
       className={cn(
         "rounded-xl border border-border bg-card text-card-foreground",
+        variant === "interactive" && "cursor-pointer hover:border-border/70 hover:shadow-sm",
         className
       )}
       {...props}

@@ -1,3 +1,7 @@
+"use client";
+
+import { useState, useEffect } from "react";
+
 interface ProgressRingProps {
   value: number; // 0–100
   size?: number;
@@ -18,6 +22,15 @@ export function ProgressRing({
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (clampedValue / 100) * circumference;
   const center = size / 2;
+
+  const [animatedOffset, setAnimatedOffset] = useState(circumference);
+
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => {
+      setAnimatedOffset(offset);
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [offset]);
 
   return (
     <div className="relative inline-flex items-center justify-center" style={{ width: size, height: size }}>
@@ -48,9 +61,9 @@ export function ProgressRing({
           stroke={color}
           strokeWidth={strokeWidth}
           strokeDasharray={circumference}
-          strokeDashoffset={offset}
+          strokeDashoffset={animatedOffset}
           strokeLinecap="round"
-          style={{ transition: "stroke-dashoffset 0.5s ease" }}
+          style={{ transition: "stroke-dashoffset 0.6s ease-out" }}
         />
       </svg>
 

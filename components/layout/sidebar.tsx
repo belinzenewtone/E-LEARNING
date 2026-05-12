@@ -17,7 +17,15 @@ import {
   Briefcase,
   Settings,
   LogOut,
+  Zap,
+  Flame,
 } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+  TooltipProvider,
+} from "@/components/ui/tooltip";
 
 const navItems = [
   { href: "/dashboard", label: "Home", icon: LayoutDashboard },
@@ -45,76 +53,117 @@ export function Sidebar({ userXp = 0, streak = 0, userName = "Learner" }: Sideba
   }
 
   return (
-    <aside className="flex w-16 flex-col h-screen bg-sidebar border-r border-sidebar-border items-center py-3">
+    <TooltipProvider delayDuration={300}>
+      <aside className="flex w-16 flex-col h-screen bg-sidebar border-r border-sidebar-border items-center py-3">
 
-      {/* ── Brand ──────────────────────────────────────────────────────────── */}
-      <Link
-        href="/dashboard"
-        className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 border border-primary/20 shrink-0 mb-4"
-      >
-        <BookOpen className="h-4 w-4 text-primary" />
-      </Link>
-
-      <div className="w-8 h-px bg-sidebar-border shrink-0 mb-2" />
-
-      {/* ── Navigation ─────────────────────────────────────────────────────── */}
-      <nav className="flex-1 flex flex-col items-center gap-1 w-full px-2">
-        {navItems.map(({ href, label, icon: Icon }) => {
-          const active = isActive(href);
-          return (
+        {/* ── Brand ──────────────────────────────────────────────────────────── */}
+        <Tooltip>
+          <TooltipTrigger asChild>
             <Link
-              key={href}
-              href={href}
-              className={cn(
-                "group relative flex flex-col items-center justify-center gap-0.5 rounded-lg py-2 w-full transition-colors duration-100",
-                active
-                  ? "text-sidebar-foreground"
-                  : "text-sidebar-foreground/40 hover:text-sidebar-foreground/70"
-              )}
+              href="/dashboard"
+              className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 border border-primary/20 shrink-0 mb-3"
             >
-              {active && (
-                <span className="absolute left-0 top-1/2 h-5 w-[2px] -translate-y-1/2 rounded-r-full bg-primary" />
-              )}
-              <Icon className={cn(
-                "h-[18px] w-[18px] shrink-0",
-                active ? "text-primary" : "text-muted-foreground/50 group-hover:text-sidebar-foreground/70"
-              )} />
-              <span className="text-[9px] font-medium leading-none">{label}</span>
+              <BookOpen className="h-4 w-4 text-primary" />
             </Link>
-          );
-        })}
-      </nav>
+          </TooltipTrigger>
+          <TooltipContent side="right" className="ml-1">Personal Learning OS</TooltipContent>
+        </Tooltip>
 
-      <div className="w-8 h-px bg-sidebar-border shrink-0 mb-2" />
+        <div className="w-8 h-px bg-sidebar-border shrink-0 mb-2" />
 
-      {/* ── Bottom actions ─────────────────────────────────────────────────── */}
-      <div className="flex flex-col items-center gap-1 w-full px-2">
-        <Link
-          href="/settings"
-          className={cn(
-            "group relative flex flex-col items-center justify-center gap-0.5 rounded-lg py-2 w-full transition-colors duration-100",
-            isActive("/settings")
-              ? "text-sidebar-foreground"
-              : "text-sidebar-foreground/40 hover:text-sidebar-foreground/70"
-          )}
-        >
-          {isActive("/settings") && (
-            <span className="absolute left-0 top-1/2 h-5 w-[2px] -translate-y-1/2 rounded-r-full bg-primary" />
-          )}
-          <Settings className="h-[18px] w-[18px] text-muted-foreground/50 group-hover:text-sidebar-foreground/70" />
-          <span className="text-[9px] font-medium leading-none">Settings</span>
-        </Link>
+        {/* ── Navigation ─────────────────────────────────────────────────────── */}
+        <nav className="flex-1 flex flex-col items-center gap-1 w-full px-2">
+          {navItems.map(({ href, label, icon: Icon }) => {
+            const active = isActive(href);
+            return (
+              <Tooltip key={href}>
+                <TooltipTrigger asChild>
+                  <Link
+                    href={href}
+                    className={cn(
+                      "group relative flex flex-col items-center justify-center gap-0.5 rounded-lg py-2 w-full transition-colors duration-100",
+                      active
+                        ? "text-sidebar-foreground"
+                        : "text-sidebar-foreground/40 hover:text-sidebar-foreground/70"
+                    )}
+                  >
+                    {active && (
+                      <span className="absolute left-0 top-1/2 h-5 w-[2px] -translate-y-1/2 rounded-r-full bg-primary" />
+                    )}
+                    <Icon className={cn(
+                      "h-[18px] w-[18px] shrink-0",
+                      active ? "text-primary" : "text-muted-foreground/50 group-hover:text-sidebar-foreground/70"
+                    )} />
+                    <span className="text-[10px] font-medium leading-none">{label}</span>
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent side="right" className="ml-1">{label}</TooltipContent>
+              </Tooltip>
+            );
+          })}
+        </nav>
 
-        <button
-          onClick={() => signOut({ callbackUrl: "/login" })}
-          className="group relative flex flex-col items-center justify-center gap-0.5 rounded-lg py-2 w-full transition-colors duration-100 text-sidebar-foreground/40 hover:text-[var(--token-red)]"
-          title="Sign out"
-        >
-          <LogOut className="h-[18px] w-[18px] text-muted-foreground/50 group-hover:text-[var(--token-red)]" />
-          <span className="text-[9px] font-medium leading-none">Exit</span>
-        </button>
-      </div>
+        {/* ── User profile compact ────────────────────────────────────────────── */}
+        <div className="flex flex-col items-center gap-1.5 w-full px-2 mb-2">
+          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 border border-primary/20 text-[11px] font-semibold text-primary">
+            {userName.charAt(0)}
+          </div>
+          <div className="flex flex-col items-center gap-0.5">
+            {userXp > 0 && (
+              <span className="flex items-center gap-0.5 text-[9px] text-muted-foreground">
+                <Zap className="h-2.5 w-2.5 text-primary" />
+                {userXp.toLocaleString()}
+              </span>
+            )}
+            {streak > 0 && (
+              <span className="flex items-center gap-0.5 text-[9px] text-[var(--token-amber)]">
+                <Flame className="h-2.5 w-2.5" />
+                {streak}d
+              </span>
+            )}
+          </div>
+        </div>
 
-    </aside>
+        <div className="w-8 h-px bg-sidebar-border shrink-0 mb-2" />
+
+        {/* ── Bottom actions ─────────────────────────────────────────────────── */}
+        <div className="flex flex-col items-center gap-1 w-full px-2">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link
+                href="/settings"
+                className={cn(
+                  "group relative flex flex-col items-center justify-center gap-0.5 rounded-lg py-2 w-full transition-colors duration-100",
+                  isActive("/settings")
+                    ? "text-sidebar-foreground"
+                    : "text-sidebar-foreground/40 hover:text-sidebar-foreground/70"
+                )}
+              >
+                {isActive("/settings") && (
+                  <span className="absolute left-0 top-1/2 h-5 w-[2px] -translate-y-1/2 rounded-r-full bg-primary" />
+                )}
+                <Settings className="h-[18px] w-[18px] text-muted-foreground/50 group-hover:text-sidebar-foreground/70" />
+                <span className="text-[10px] font-medium leading-none">Settings</span>
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent side="right" className="ml-1">Settings</TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                onClick={() => signOut({ callbackUrl: "/login" })}
+                className="group relative flex flex-col items-center justify-center gap-0.5 rounded-lg py-2 w-full transition-colors duration-100 text-sidebar-foreground/40 hover:text-[var(--token-red)]"
+              >
+                <LogOut className="h-[18px] w-[18px] text-muted-foreground/50 group-hover:text-[var(--token-red)]" />
+                <span className="text-[10px] font-medium leading-none">Exit</span>
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="right" className="ml-1">Sign out</TooltipContent>
+          </Tooltip>
+        </div>
+
+      </aside>
+    </TooltipProvider>
   );
 }

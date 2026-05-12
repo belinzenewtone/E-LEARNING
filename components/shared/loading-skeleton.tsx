@@ -1,4 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
+import { StatCardSkeleton } from "@/components/shared/stat-card";
 
 // ── DashboardSkeleton ─────────────────────────────────────────────────────────
 
@@ -12,21 +13,9 @@ export function DashboardSkeleton() {
       </div>
 
       {/* Stats row */}
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div
-            key={i}
-            className="rounded-xl border border-border/50 bg-card/60 p-5"
-          >
-            <div className="flex items-start gap-4">
-              <Skeleton className="h-11 w-11 rounded-lg" />
-              <div className="flex-1 space-y-2">
-                <Skeleton className="h-3 w-20" />
-                <Skeleton className="h-7 w-16" />
-                <Skeleton className="h-3 w-24" />
-              </div>
-            </div>
-          </div>
+          <StatCardSkeleton key={i} />
         ))}
       </div>
 

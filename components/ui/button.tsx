@@ -2,7 +2,7 @@ import * as React from "react"
 import { Button as ButtonPrimitive } from "@base-ui/react/button"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
-
+import { Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
@@ -10,7 +10,7 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground [a]:hover:bg-primary/80",
+        default: "bg-primary text-primary-foreground hover:bg-primary/85",
         outline:
           "border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground",
         secondary:
@@ -46,6 +46,7 @@ interface ButtonProps
   extends ButtonPrimitive.Props,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
+  isLoading?: boolean;
 }
 
 function Button({
@@ -53,15 +54,23 @@ function Button({
   variant = "default",
   size = "default",
   asChild = false,
+  isLoading = false,
+  children,
+  disabled,
   ...props
 }: ButtonProps) {
+  const isDisabled = disabled || isLoading;
+
   if (asChild) {
     return (
       <Slot
         data-slot="button"
         className={cn(buttonVariants({ variant, size, className }))}
+        aria-disabled={isDisabled}
         {...(props as React.HTMLAttributes<HTMLElement>)}
-      />
+      >
+        {children}
+      </Slot>
     )
   }
 
@@ -69,8 +78,12 @@ function Button({
     <ButtonPrimitive
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
+      disabled={isDisabled}
       {...props}
-    />
+    >
+      {isLoading && <Loader2 className="animate-spin" />}
+      {children}
+    </ButtonPrimitive>
   )
 }
 

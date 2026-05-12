@@ -15,7 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { LessonSkeleton } from "@/components/shared/loading-skeleton";
-import { cn, minutesToHours, getDifficultyColor, getStatusColor } from "@/lib/utils";
+import { cn, minutesToHours, getDifficultyColor, getStatusColor, getStatusBadgeVariant, getDifficultyBadgeVariant } from "@/lib/utils";
 import { LessonStudyArea } from "./lesson-study-area";
 import { ProgressRing } from "@/components/shared/progress-ring";
 import { StudyTimer } from "@/components/shared/study-timer";
@@ -161,14 +161,9 @@ function LessonInfoPanel({ lesson }: { lesson: LessonFull }) {
       <Card className="border-border/40 bg-card/60">
         <CardHeader className="pb-3">
           <div className="flex flex-wrap gap-1.5">
-            <span
-              className={cn(
-                "inline-flex rounded-full border px-2.5 py-0.5 text-xs font-semibold capitalize",
-                getDifficultyColor(lesson.difficulty)
-              )}
-            >
+            <Badge variant={getDifficultyBadgeVariant(lesson.difficulty)} size="sm" className="capitalize">
               {lesson.difficulty}
-            </span>
+            </Badge>
             <Badge variant="outline" className="text-xs">
               {lesson.module.track.name}
             </Badge>

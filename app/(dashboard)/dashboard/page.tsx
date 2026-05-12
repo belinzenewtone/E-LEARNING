@@ -99,17 +99,6 @@ async function DashboardContent({ userId, userName }: { userId: string; userName
               </span>
             </div>
           )}
-          <div className="flex items-center gap-1 rounded-full border border-border/40 bg-muted/20 px-2 py-1 text-[11px]">
-            <Zap className="h-3 w-3 text-primary" />
-            <span className="font-semibold text-foreground">{stats.totalXp.toLocaleString()}</span>
-            <span className="text-muted-foreground">XP</span>
-          </div>
-          {stats.streak > 0 && (
-            <div className="flex items-center gap-1 rounded-full border border-border/40 bg-muted/20 px-2 py-1 text-[11px]">
-              <Flame className="h-3 w-3 text-[var(--token-amber)]" />
-              <span className="font-semibold text-[var(--token-amber)]">{stats.streak}d streak</span>
-            </div>
-          )}
           <div className="flex items-center gap-1 rounded-full border border-border/40 bg-muted/20 px-2 py-1 text-[11px] text-muted-foreground">
             Lv {Math.floor(stats.totalXp / 500) + 1}
           </div>
@@ -145,7 +134,7 @@ async function DashboardContent({ userId, userName }: { userId: string; userName
         </div>
 
       {/* ── Stat cards ────────────────────────────────────────────────────────── */}
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
         <StatCard title="Total XP" value={stats.totalXp.toLocaleString()} subtitle="Experience points" icon={Zap} color="primary" />
         <StatCard title="Streak" value={`${stats.streak}d`} subtitle={stats.streak > 0 ? "Keep it up!" : "Start today"} icon={Flame} color="warning" />
         <StatCard title="Study Time" value={`${(stats.studyMinutesThisWeek / 60).toFixed(1)}h`} subtitle="This week" icon={Clock} color="success" />
@@ -186,7 +175,7 @@ async function DashboardContent({ userId, userName }: { userId: string; userName
             </Badge>
           )}
         </div>
-        <div className="grid gap-4 xl:grid-cols-3">
+        <div className="grid gap-4 lg:grid-cols-3">
           <Card className="xl:col-span-2">
             <CardContent className="p-4">
             {todaysTasks.length === 0 ? (
@@ -368,7 +357,7 @@ async function DashboardContent({ userId, userName }: { userId: string; userName
 
         <Card>
           <CardContent className="p-4">
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {[
                 { href: "/lessons", icon: PlayCircle, label: "Start Lesson", color: "text-primary", bg: "bg-primary/8 hover:bg-primary/15" },
                 { href: "/study-log", icon: Clock, label: "Log Study", color: "text-[var(--token-amber)]", bg: "bg-[var(--token-amber)]/8 hover:bg-[var(--token-amber)]/15" },
