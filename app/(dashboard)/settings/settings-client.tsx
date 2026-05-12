@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { User, Shield, Target, AlertTriangle, Loader2 } from "lucide-react";
+import { User, Shield, Target, AlertTriangle, Loader2, Eye, EyeOff } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { updateProfile, updatePassword, resetAllProgress } from "@/server/actions/settings";
 
@@ -31,6 +31,10 @@ export function SettingsClient({ user, goals, xpTotal }: SettingsClientProps) {
   const [avatar, setAvatar] = useState<string | null>(null);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showCurrent, setShowCurrent] = useState(false);
+  const [showNew, setShowNew] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [isProfilePending, startProfile] = useTransition();
   const [isPasswordPending, startPassword] = useTransition();
   const [isResetPending, startReset] = useTransition();
@@ -52,8 +56,12 @@ export function SettingsClient({ user, goals, xpTotal }: SettingsClientProps) {
   }
 
   function handlePasswordUpdate() {
-    if (!currentPassword || !newPassword) {
-      toast.error("Please fill in both password fields.");
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      toast.error("Please fill in all password fields.");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      toast.error("New passwords do not match.");
       return;
     }
     const formData = new FormData();
@@ -65,6 +73,7 @@ export function SettingsClient({ user, goals, xpTotal }: SettingsClientProps) {
         toast.success("Password updated successfully.");
         setCurrentPassword("");
         setNewPassword("");
+        setConfirmPassword("");
       } else {
         toast.error(result.error ?? "Failed to update password.");
       }
@@ -246,25 +255,65 @@ export function SettingsClient({ user, goals, xpTotal }: SettingsClientProps) {
             <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
               Change Password
             </Label>
-            <div className="grid gap-3 sm:grid-cols-2">
-              <Input
-                type="password"
-                placeholder="Current password"
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
-                className="bg-muted/20"
-              />
-              <Input
-                type="password"
-                placeholder="New password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                className="bg-muted/20"
-              />
+            <div className="grid gap-3">
+              <div className="relative">
+                <Input
+                  type={showCurrent ? "text" : "password"}
+                  placeholder="Current password"
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  className="bg-muted/20 pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowCurrent((v) => !v)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  tabIndex={-1}
+                >
+                  {showCurrent ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+              <div className="relative">
+                <Input
+                  type={showNew ? "text" : "password"}
+                  placeholder="New password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  className="bg-muted/20 pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowNew((v) => !v)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  tabIndex={-1}
+                >
+                  {showNew ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+              <div className="relative">
+                <Input
+                  type={showConfirm ? "text" : "password"}
+                  placeholder="Confirm new password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className={`bg-muted/20 pr-10 ${confirmPassword && confirmPassword !== newPassword ? "border-red-400/60 focus:border-red-400" : ""}`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirm((v) => !v)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  tabIndex={-1}
+                >
+                  {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+              {confirmPassword && confirmPassword !== newPassword && (
+                <p className="text-xs text-red-400">Passwords do not match.</p>
+              )}
             </div>
             <Button
               onClick={handlePasswordUpdate}
-              disabled={isPasswordPending || !currentPassword || !newPassword}
+              disabled={isPasswordPending || !currentPassword || !newPassword || !confirmPassword}
               variant="outline"
             >
               {isPasswordPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Update Password"}
