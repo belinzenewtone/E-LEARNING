@@ -59,8 +59,12 @@ export function CommandSearch() {
     }
 
     startTransition(async () => {
-      const data = await globalSearch(query);
-      setResults(data);
+      try {
+        const data = await globalSearch(query);
+        setResults(data);
+      } catch {
+        setResults({ lessons: [], assignments: [], notes: [] });
+      }
     });
   }, [query]);
 

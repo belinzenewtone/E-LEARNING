@@ -13,7 +13,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -97,7 +96,7 @@ export function Topbar({ title, subtitle, breadcrumbs, actions }: TopbarProps) {
             {userName.charAt(0).toUpperCase()}
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-52">
-            <DropdownMenuLabel className="pb-1">
+            <div className="px-1.5 py-1 pb-1">
               <p className="font-medium text-sm text-foreground truncate">{userName}</p>
               <div className="flex items-center gap-2 mt-0.5">
                 <span className="flex items-center gap-0.5 text-[11px] text-muted-foreground">
@@ -111,7 +110,7 @@ export function Topbar({ title, subtitle, breadcrumbs, actions }: TopbarProps) {
                   </span>
                 )}
               </div>
-            </DropdownMenuLabel>
+            </div>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => router.push("/settings")} className="cursor-pointer">
               <Settings className="h-4 w-4" />
