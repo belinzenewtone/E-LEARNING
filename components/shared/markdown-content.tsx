@@ -25,7 +25,7 @@ const components: Components = {
   ),
   h2: ({ children, ...props }) => (
     <h2
-      className="mt-7 mb-3 scroll-m-20 text-xl font-semibold tracking-tight text-foreground border-b border-border/40 pb-1.5 first:mt-0"
+      className="mt-7 mb-3 scroll-m-20 text-xl font-semibold tracking-tight text-foreground border-b border-border pb-1.5 first:mt-0"
       {...props}
     >
       {children}
@@ -133,7 +133,7 @@ const components: Components = {
     }
     return (
       <code
-        className="rounded border border-border/50 bg-muted px-[0.35em] py-[0.1em] text-[0.875em] font-mono text-foreground"
+        className="rounded border border-border bg-muted px-[0.35em] py-[0.1em] text-[0.875em] font-mono text-foreground"
         {...props}
       >
         {children}
@@ -144,7 +144,7 @@ const components: Components = {
   // Code blocks (wraps <code> with a language class)
   pre: ({ children, ...props }) => (
     <pre
-      className="mb-4 overflow-x-auto rounded-lg border border-border/50 bg-[#0d1117] p-4 text-sm leading-relaxed"
+      className="mb-4 overflow-x-auto rounded-lg border border-border bg-[#0d1117] p-4 text-sm leading-relaxed"
       {...props}
     >
       {children}
@@ -153,7 +153,7 @@ const components: Components = {
 
   // Horizontal rule
   hr: ({ ...props }) => (
-    <hr className="my-6 border-border/40" {...props} />
+    <hr className="my-6 border-border" {...props} />
   ),
 
   // Strong / em
@@ -170,7 +170,7 @@ const components: Components = {
 
   // Tables (GFM)
   table: ({ children, ...props }) => (
-    <div className="mb-4 w-full overflow-x-auto rounded-lg border border-border/40">
+    <div className="mb-4 w-full overflow-x-auto rounded-lg border border-border">
       <table
         className="w-full text-sm text-left"
         {...props}
@@ -227,7 +227,7 @@ const components: Components = {
     <img
       src={src}
       alt={alt ?? ""}
-      className="my-4 max-w-full rounded-lg border border-border/40"
+      className="my-4 max-w-full rounded-lg border border-border"
       loading="lazy"
       {...props}
     />

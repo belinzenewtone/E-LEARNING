@@ -23,7 +23,7 @@ export function LessonsPageSkeleton() {
             {Array.from({ length: 3 }).map((_, j) => (
               <div
                 key={j}
-                className="rounded-xl border border-border/40 bg-card/60 p-4 space-y-3"
+                className="rounded-xl border border-border bg-card p-4 space-y-3"
               >
                 <div className="flex gap-1.5">
                   <Skeleton className="h-4 w-16 rounded-full" />

@@ -5,7 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 function InfoPanelSkeleton() {
   return (
     <div className="space-y-4">
-      <div className="rounded-xl border border-border/40 bg-card/60 p-4 space-y-4">
+      <div className="rounded-xl border border-border bg-card p-4 space-y-4">
         {/* Badges */}
         <div className="flex gap-1.5">
           <Skeleton className="h-5 w-20 rounded-full" />
@@ -64,12 +64,12 @@ function StudyAreaSkeleton() {
   return (
     <div className="space-y-5">
       {/* Source review toggle */}
-      <div className="rounded-xl border border-border/40 bg-card/60 p-4">
+      <div className="rounded-xl border border-border bg-card p-4">
         <Skeleton className="h-10 w-full rounded-lg" />
       </div>
 
       {/* Personal notes */}
-      <div className="rounded-xl border border-border/40 bg-card/60 p-4 space-y-3">
+      <div className="rounded-xl border border-border bg-card p-4 space-y-3">
         <div className="flex items-center gap-2">
           <Skeleton className="h-4 w-4" />
           <Skeleton className="h-4 w-28" />
@@ -81,7 +81,7 @@ function StudyAreaSkeleton() {
       </div>
 
       {/* Checkpoint questions */}
-      <div className="rounded-xl border border-border/40 bg-card/60 p-4 space-y-5">
+      <div className="rounded-xl border border-border bg-card p-4 space-y-5">
         <div className="flex items-center gap-2">
           <Skeleton className="h-4 w-4" />
           <Skeleton className="h-4 w-40" />
@@ -95,7 +95,7 @@ function StudyAreaSkeleton() {
       </div>
 
       {/* Reflection */}
-      <div className="rounded-xl border border-border/40 bg-card/60 p-4 space-y-4">
+      <div className="rounded-xl border border-border bg-card p-4 space-y-4">
         <div className="flex items-center gap-2">
           <Skeleton className="h-4 w-4" />
           <Skeleton className="h-4 w-20" />
@@ -121,13 +121,13 @@ function ProgressSidebarSkeleton() {
   return (
     <div className="space-y-4">
       {/* Status card */}
-      <div className="rounded-xl border border-border/40 bg-card/60 p-4 space-y-3">
+      <div className="rounded-xl border border-border bg-card p-4 space-y-3">
         <Skeleton className="h-4 w-24" />
         <Skeleton className="h-5 w-20 rounded-full" />
       </div>
 
       {/* Week progress */}
-      <div className="rounded-xl border border-border/40 bg-card/60 p-4 space-y-3">
+      <div className="rounded-xl border border-border bg-card p-4 space-y-3">
         <Skeleton className="h-3 w-28" />
         <div className="flex items-center gap-3">
           {/* Progress ring placeholder */}
@@ -140,7 +140,7 @@ function ProgressSidebarSkeleton() {
       </div>
 
       {/* Assignment link */}
-      <div className="rounded-xl border border-border/40 bg-card/60 p-4 space-y-3">
+      <div className="rounded-xl border border-border bg-card p-4 space-y-3">
         <Skeleton className="h-3 w-32" />
         <Skeleton className="h-4 w-full" />
         <Skeleton className="h-4 w-4/5" />
@@ -148,7 +148,7 @@ function ProgressSidebarSkeleton() {
       </div>
 
       {/* Next lesson */}
-      <div className="rounded-xl border border-border/40 bg-card/60 p-4 space-y-3">
+      <div className="rounded-xl border border-border bg-card p-4 space-y-3">
         <Skeleton className="h-3 w-24" />
         <Skeleton className="h-4 w-full" />
         <Skeleton className="h-4 w-3/5" />

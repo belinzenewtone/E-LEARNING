@@ -82,7 +82,7 @@ export function AssignmentsClient({ assignments }: AssignmentsClientProps) {
   return (
     <div className="space-y-4">
       {/* Filter tabs */}
-      <div className="flex flex-wrap gap-1 rounded-lg border border-border/50 bg-muted/30 p-1 w-fit">
+      <div className="flex flex-wrap gap-1 rounded-lg border border-border bg-muted/30 p-1 w-fit">
         {TABS.map((tab) => (
           <button
             key={tab}
@@ -121,7 +121,7 @@ export function AssignmentsClient({ assignments }: AssignmentsClientProps) {
               <Card
                 key={a.id}
                 className={cn(
-                  "border-border/40 bg-card/60 transition-shadow hover:shadow-md hover:shadow-black/20",
+                  "border-border bg-card transition-shadow hover:shadow-md hover:shadow-black/20",
                   overdue && "border-red-400/30"
                 )}
               >

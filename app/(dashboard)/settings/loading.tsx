@@ -10,7 +10,7 @@ export default function SettingsLoading() {
       </div>
 
       {/* Profile card */}
-      <div className="rounded-xl border border-border/40 bg-card/60 p-5 space-y-4">
+      <div className="rounded-xl border border-border bg-card p-5 space-y-4">
         <Skeleton className="h-4 w-20" />
         <div className="flex items-center gap-4">
           <Skeleton className="h-14 w-14 rounded-2xl" />
@@ -23,7 +23,7 @@ export default function SettingsLoading() {
       </div>
 
       {/* Appearance card */}
-      <div className="rounded-xl border border-border/40 bg-card/60 p-5 space-y-3">
+      <div className="rounded-xl border border-border bg-card p-5 space-y-3">
         <Skeleton className="h-4 w-24" />
         <div className="flex items-center justify-between">
           <div className="space-y-1">
@@ -35,10 +35,10 @@ export default function SettingsLoading() {
       </div>
 
       {/* Goals card */}
-      <div className="rounded-xl border border-border/40 bg-card/60 p-5 space-y-4">
+      <div className="rounded-xl border border-border bg-card p-5 space-y-4">
         <Skeleton className="h-4 w-28" />
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="rounded-lg border border-border/40 bg-muted/20 p-3 space-y-2">
+          <div key={i} className="rounded-lg border border-border bg-muted/20 p-3 space-y-2">
             <Skeleton className="h-4 w-2/3" />
             <Skeleton className="h-3 w-1/2" />
           </div>
@@ -47,7 +47,7 @@ export default function SettingsLoading() {
       </div>
 
       {/* Danger zone */}
-      <div className="rounded-xl border border-red-400/20 bg-card/60 p-5 space-y-3">
+      <div className="rounded-xl border border-red-400/20 bg-card p-5 space-y-3">
         <Skeleton className="h-4 w-28" />
         <Skeleton className="h-4 w-full" />
         <Skeleton className="h-3 w-3/4" />

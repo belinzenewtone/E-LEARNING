@@ -79,7 +79,7 @@ export function StudyLogForm({ tracks }: StudyLogFormProps) {
   }
 
   return (
-    <Card className="border-border/40 bg-card/60">
+    <Card className="border-border bg-card">
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-sm">
           <ClipboardList className="h-4 w-4 text-primary" />
@@ -149,7 +149,7 @@ export function StudyLogForm({ tracks }: StudyLogFormProps) {
                   "flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm transition-colors",
                   mood === m.value
                     ? "border-primary bg-primary/10 text-primary"
-                    : "border-border/50 text-muted-foreground hover:border-border hover:text-foreground"
+                    : "border-border text-muted-foreground hover:border-border hover:text-foreground"
                 )}
               >
                 {m.emoji}

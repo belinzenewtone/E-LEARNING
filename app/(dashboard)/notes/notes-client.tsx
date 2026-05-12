@@ -88,7 +88,7 @@ export function NotesClient({ notes, tracks }: NotesClientProps) {
               "rounded-full border px-3 py-1 text-xs font-medium transition-colors",
               activeFilter === chip
                 ? "border-primary bg-primary/10 text-primary"
-                : "border-border/50 bg-muted/20 text-muted-foreground hover:border-border hover:text-foreground"
+                : "border-border bg-muted/20 text-muted-foreground hover:border-border hover:text-foreground"
             )}
           >
             {chip}
@@ -110,7 +110,7 @@ export function NotesClient({ notes, tracks }: NotesClientProps) {
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {filtered.map((note) => (
             <Link key={note.id} href={`/notes/${note.id}`}>
-              <Card className="h-full cursor-pointer border-border/40 bg-card/60 transition-shadow hover:shadow-md hover:shadow-black/20">
+              <Card className="h-full cursor-pointer border-border bg-card transition-shadow hover:shadow-md hover:shadow-black/20">
                 <CardContent className="p-4">
                   {/* Title + flags */}
                   <div className="mb-1.5 flex items-start justify-between gap-2">
@@ -141,7 +141,7 @@ export function NotesClient({ notes, tracks }: NotesClientProps) {
                       {note.tags.slice(0, 4).map((tag) => (
                         <span
                           key={tag}
-                          className="rounded-full bg-muted/40 px-2 py-0.5 text-[10px] text-muted-foreground border border-border/40"
+                          className="rounded-full bg-muted/40 px-2 py-0.5 text-[10px] text-muted-foreground border border-border"
                         >
                           {tag}
                         </span>

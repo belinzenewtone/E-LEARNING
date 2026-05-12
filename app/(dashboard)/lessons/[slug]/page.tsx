@@ -76,7 +76,7 @@ function ProgressSidebar({ lesson }: { lesson: LessonFull }) {
       <StudyTimer />
 
       {/* Status card */}
-      <Card className="border-border/40 bg-card/60">
+      <Card className="border-border bg-card">
         <CardHeader className="pb-3">
           <CardTitle className="text-sm">Lesson Status</CardTitle>
         </CardHeader>
@@ -93,7 +93,7 @@ function ProgressSidebar({ lesson }: { lesson: LessonFull }) {
       </Card>
 
       {/* Week progress */}
-      <Card className="border-border/40 bg-card/60">
+      <Card className="border-border bg-card">
         <CardContent className="p-4">
           <p className="mb-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
             Week {lesson.week.weekNumber} Progress
@@ -112,7 +112,7 @@ function ProgressSidebar({ lesson }: { lesson: LessonFull }) {
 
       {/* Assignment link */}
       {currentAssignment && (
-        <Card className="border-border/40 bg-card/60">
+        <Card className="border-border bg-card">
           <CardContent className="p-4">
             <p className="mb-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
               Week Assignment
@@ -132,7 +132,7 @@ function ProgressSidebar({ lesson }: { lesson: LessonFull }) {
 
       {/* Next lesson */}
       {nextLesson && (
-        <Card className="border-border/40 bg-card/60">
+        <Card className="border-border bg-card">
           <CardContent className="p-4">
             <p className="mb-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
               Next Lesson
@@ -158,7 +158,7 @@ function ProgressSidebar({ lesson }: { lesson: LessonFull }) {
 function LessonInfoPanel({ lesson }: { lesson: LessonFull }) {
   return (
     <div className="space-y-4">
-      <Card className="border-border/40 bg-card/60">
+      <Card className="border-border bg-card">
         <CardHeader className="pb-3">
           <div className="flex flex-wrap gap-1.5">
             <Badge variant={getDifficultyBadgeVariant(lesson.difficulty)} size="sm" className="capitalize">
@@ -218,7 +218,7 @@ function LessonInfoPanel({ lesson }: { lesson: LessonFull }) {
                   {lesson.keyConcepts.map((concept) => (
                     <span
                       key={concept}
-                      className="rounded-full bg-muted/40 px-2 py-0.5 text-xs text-muted-foreground border border-border/40"
+                      className="rounded-full bg-muted/40 px-2 py-0.5 text-xs text-muted-foreground border border-border"
                     >
                       {concept}
                     </span>
@@ -283,7 +283,7 @@ async function LessonContent({ slug, userId }: { slug: string; userId: string })
 
         <main className="space-y-5">
           {lesson.content && (
-            <Card className="border-border/40 bg-card/60">
+            <Card className="border-border bg-card">
               <CardContent className="p-5">
                 <MarkdownContent content={lesson.content} />
               </CardContent>

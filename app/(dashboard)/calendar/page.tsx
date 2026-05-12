@@ -94,7 +94,7 @@ function WeekCard({
     "relative flex flex-col gap-1.5 rounded-xl border p-3 transition-all duration-200",
     "min-h-[100px]",
     isLocked
-      ? "opacity-50 cursor-default bg-muted/10 border-border/30"
+      ? "opacity-50 cursor-default bg-muted/10 border-border"
       : "hover:-translate-y-0.5 hover:shadow-md cursor-pointer",
     isActive &&
       cn(
@@ -102,7 +102,7 @@ function WeekCard({
         phase.glow
       ),
     isDone && "border-emerald-500/25 bg-emerald-500/5",
-    !isActive && !isDone && !isLocked && "border-border/40 bg-card/50",
+    !isActive && !isDone && !isLocked && "border-border bg-card",
     isToday &&
       "ring-2 ring-primary/30"
   );
@@ -125,7 +125,7 @@ function WeekCard({
               ? "bg-primary/15 text-primary border border-primary/20"
               : isDone
               ? "bg-[var(--token-emerald)]/10 text-[var(--token-emerald)] border border-[var(--token-emerald)]/20"
-              : "bg-muted/30 text-muted-foreground border border-border/30"
+              : "bg-muted/30 text-muted-foreground border border-border"
           )}
         >
           {week.weekNumber}
@@ -204,7 +204,7 @@ export default async function CalendarPage() {
       <div className="space-y-8 p-4 sm:p-6 lg:p-8">
 
         {/* ── Progress summary ─────────────────────────────────────────────── */}
-        <div className="flex flex-wrap items-center gap-3 rounded-xl border border-border/50 bg-card/60 px-5 py-4">
+        <div className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-card px-5 py-4">
           <div className="flex items-center gap-2">
             <CalendarDays className="h-4 w-4 text-primary" />
             <span className="text-sm font-semibold text-foreground">22-Week Roadmap</span>
@@ -270,7 +270,7 @@ export default async function CalendarPage() {
                   >
                     {phase.label}
                   </span>
-                  <span className="rounded-md border px-2 py-0.5 text-[10px] font-medium text-muted-foreground border-border/40 bg-muted/20">
+                  <span className="rounded-md border px-2 py-0.5 text-[10px] font-medium text-muted-foreground border-border bg-muted/20">
                     W{phase.range[0]}–W{phase.range[1]}
                   </span>
                 </div>

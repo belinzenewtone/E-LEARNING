@@ -22,7 +22,7 @@ export function DashboardSkeleton() {
       {/* Two-column section */}
       <div className="grid gap-4 lg:grid-cols-3">
         {/* Today's tasks */}
-        <div className="lg:col-span-2 rounded-xl border border-border/50 bg-card/60 p-5 space-y-4">
+        <div className="lg:col-span-2 rounded-xl border border-border bg-card p-5 space-y-4">
           <Skeleton className="h-5 w-40" />
           {Array.from({ length: 3 }).map((_, i) => (
             <div key={i} className="flex items-center gap-3">
@@ -37,7 +37,7 @@ export function DashboardSkeleton() {
         </div>
 
         {/* Current week */}
-        <div className="rounded-xl border border-border/50 bg-card/60 p-5 space-y-4">
+        <div className="rounded-xl border border-border bg-card p-5 space-y-4">
           <Skeleton className="h-5 w-32" />
           <Skeleton className="h-4 w-full" />
           <Skeleton className="h-4 w-3/4" />
@@ -51,7 +51,7 @@ export function DashboardSkeleton() {
         {Array.from({ length: 2 }).map((_, i) => (
           <div
             key={i}
-            className="rounded-xl border border-border/50 bg-card/60 p-5 space-y-3"
+            className="rounded-xl border border-border bg-card p-5 space-y-3"
           >
             <div className="flex items-center justify-between">
               <Skeleton className="h-4 w-28" />
@@ -67,7 +67,7 @@ export function DashboardSkeleton() {
         {Array.from({ length: 2 }).map((_, i) => (
           <div
             key={i}
-            className="rounded-xl border border-border/50 bg-card/60 p-5 space-y-3"
+            className="rounded-xl border border-border bg-card p-5 space-y-3"
           >
             <Skeleton className="h-5 w-36" />
             {Array.from({ length: 4 }).map((_, j) => (
@@ -116,13 +116,13 @@ export function LessonSkeleton() {
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Main content */}
         <div className="lg:col-span-2 space-y-4">
-          <div className="rounded-xl border border-border/50 bg-card/60 p-5 space-y-3">
+          <div className="rounded-xl border border-border bg-card p-5 space-y-3">
             <Skeleton className="h-5 w-24" />
             {Array.from({ length: 5 }).map((_, i) => (
               <Skeleton key={i} className="h-4 w-full" />
             ))}
           </div>
-          <div className="rounded-xl border border-border/50 bg-card/60 p-5 space-y-4">
+          <div className="rounded-xl border border-border bg-card p-5 space-y-4">
             <Skeleton className="h-5 w-32" />
             {Array.from({ length: 3 }).map((_, i) => (
               <div key={i} className="space-y-2">
@@ -135,7 +135,7 @@ export function LessonSkeleton() {
 
         {/* Sidebar */}
         <div className="space-y-4">
-          <div className="rounded-xl border border-border/50 bg-card/60 p-5 space-y-3">
+          <div className="rounded-xl border border-border bg-card p-5 space-y-3">
             <Skeleton className="h-5 w-24" />
             {Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className="flex items-center gap-2">
@@ -174,13 +174,13 @@ export function AssignmentSkeleton() {
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Brief + rubric */}
         <div className="lg:col-span-2 space-y-4">
-          <div className="rounded-xl border border-border/50 bg-card/60 p-5 space-y-3">
+          <div className="rounded-xl border border-border bg-card p-5 space-y-3">
             <Skeleton className="h-5 w-20" />
             {Array.from({ length: 6 }).map((_, i) => (
               <Skeleton key={i} className="h-4 w-full" />
             ))}
           </div>
-          <div className="rounded-xl border border-border/50 bg-card/60 p-5 space-y-4">
+          <div className="rounded-xl border border-border bg-card p-5 space-y-4">
             <Skeleton className="h-5 w-16" />
             {Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className="flex items-start gap-3">
@@ -196,7 +196,7 @@ export function AssignmentSkeleton() {
 
         {/* Submission form */}
         <div className="space-y-4">
-          <div className="rounded-xl border border-border/50 bg-card/60 p-5 space-y-4">
+          <div className="rounded-xl border border-border bg-card p-5 space-y-4">
             <Skeleton className="h-5 w-24" />
             {Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className="space-y-1.5">

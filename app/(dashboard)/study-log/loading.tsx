@@ -12,7 +12,7 @@ export default function StudyLogLoading() {
       {/* Stats */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-3">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="rounded-xl border border-border/50 bg-card/60 p-5">
+          <div key={i} className="rounded-xl border border-border bg-card p-5">
             <div className="flex items-start gap-4">
               <Skeleton className="h-11 w-11 rounded-lg" />
               <div className="flex-1 space-y-2">
@@ -26,7 +26,7 @@ export default function StudyLogLoading() {
       </div>
 
       {/* Form skeleton */}
-      <div className="rounded-xl border border-border/40 bg-card/60 p-5 space-y-4">
+      <div className="rounded-xl border border-border bg-card p-5 space-y-4">
         <Skeleton className="h-5 w-36" />
         <div className="grid gap-3 sm:grid-cols-3">
           <Skeleton className="h-9 rounded-lg" />
@@ -42,7 +42,7 @@ export default function StudyLogLoading() {
       <div className="space-y-3">
         <Skeleton className="h-4 w-40" />
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="flex items-start gap-4 rounded-lg border border-border/40 bg-card/40 p-3">
+          <div key={i} className="flex items-start gap-4 rounded-lg border border-border bg-card p-3">
             <Skeleton className="h-9 w-9 rounded-lg shrink-0" />
             <div className="flex-1 space-y-2">
               <Skeleton className="h-3.5 w-48" />

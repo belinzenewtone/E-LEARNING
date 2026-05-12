@@ -99,7 +99,7 @@ async function DashboardContent({ userId, userName }: { userId: string; userName
               </span>
             </div>
           )}
-          <div className="flex items-center gap-1 rounded-full border border-border/40 bg-muted/20 px-2 py-1 text-[11px] text-muted-foreground">
+          <div className="flex items-center gap-1 rounded-full border border-border bg-muted/20 px-2 py-1 text-[11px] text-muted-foreground">
             Lv {Math.floor(stats.totalXp / 500) + 1}
           </div>
         </div>
@@ -195,7 +195,7 @@ async function DashboardContent({ userId, userName }: { userId: string; userName
                         href={`/lessons/${lesson.slug}`}
                         className={cn(
                           "flex items-center gap-3 rounded-lg border p-3 transition-all hover:shadow-sm",
-                          isDone ? "border-[var(--token-emerald)]/20 bg-[var(--token-emerald)]/5" : "border-border/40 bg-muted/10 hover:bg-muted/20 hover:border-primary/30"
+                          isDone ? "border-[var(--token-emerald)]/20 bg-[var(--token-emerald)]/5" : "border-border bg-muted/10 hover:bg-muted/20 hover:border-primary/30"
                         )}
                       >
                         <div className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-lg", isDone ? "bg-[var(--token-emerald)]/10" : "bg-primary/10")}>
@@ -340,7 +340,7 @@ async function DashboardContent({ userId, userName }: { userId: string; userName
               <ul className="space-y-3">
                 {(recentActivity as ActivityEvent[]).map((event) => (
                   <li key={event.id} className="flex items-center gap-3">
-                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-border/40 bg-muted/20">
+                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-border bg-muted/20">
                       {eventIcon(event.type)}
                     </div>
                     <div className="min-w-0 flex-1">
@@ -364,7 +364,7 @@ async function DashboardContent({ userId, userName }: { userId: string; userName
                 { href: "/roadmap", icon: Map, label: "Roadmap", color: "text-[var(--token-emerald)]", bg: "bg-[var(--token-emerald)]/8 hover:bg-[var(--token-emerald)]/15" },
                 { href: "/notes/new", icon: NotebookPen, label: "Add Note", color: "text-[var(--token-purple)]", bg: "bg-[var(--token-purple)]/8 hover:bg-[var(--token-purple)]/15" },
               ].map(({ href, icon: Icon, label, color, bg }) => (
-                <Button key={href} variant="ghost" className={cn("h-auto flex-col gap-2 py-4 rounded-xl border border-border/40 transition-all", bg)} asChild>
+                <Button key={href} variant="ghost" className={cn("h-auto flex-col gap-2 py-4 rounded-xl border border-border transition-all", bg)} asChild>
                   <Link href={href}>
                     <Icon className={cn("h-5 w-5", color)} />
                     <span className="text-xs text-foreground">{label}</span>

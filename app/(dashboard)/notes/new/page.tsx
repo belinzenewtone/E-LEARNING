@@ -48,7 +48,7 @@ export default async function NewNotePage() {
         ]}
       />
       <div className="mx-auto max-w-2xl p-4 sm:p-6 lg:p-8 space-y-6">
-        <Card className="border-border/40 bg-card/60">
+        <Card className="border-border bg-card">
           <CardHeader className="pb-3">
             <CardTitle className="text-base">Create a New Note</CardTitle>
           </CardHeader>

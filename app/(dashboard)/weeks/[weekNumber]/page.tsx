@@ -67,7 +67,7 @@ export default async function WeekDetailPage({ params }: WeekDetailPageProps) {
       </nav>
 
       {/* Sprint header */}
-      <div className="rounded-xl border border-border/50 bg-card/60 p-4 sm:p-6">
+      <div className="rounded-xl border border-border bg-card p-4 sm:p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="space-y-2 min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
@@ -122,7 +122,7 @@ export default async function WeekDetailPage({ params }: WeekDetailPageProps) {
 
       {/* Goals */}
       {week.goals.length > 0 && (
-        <Card className="border-border/40 bg-card/60">
+        <Card className="border-border bg-card">
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-sm">
               <Target className="h-4 w-4 text-primary" />
@@ -155,7 +155,7 @@ export default async function WeekDetailPage({ params }: WeekDetailPageProps) {
           </h2>
 
           {week.lessons.length === 0 ? (
-            <p className="rounded-lg border border-dashed border-border/40 p-6 text-center text-sm text-muted-foreground">
+            <p className="rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
               No lessons for this week yet.
             </p>
           ) : (
@@ -171,7 +171,7 @@ export default async function WeekDetailPage({ params }: WeekDetailPageProps) {
                       "flex items-center gap-3 rounded-lg border p-3 transition-all duration-150 hover:bg-muted/20",
                       isDone
                         ? "border-emerald-500/20 bg-emerald-500/5"
-                        : "border-border/40 bg-card/40 hover:border-primary/30"
+                        : "border-border bg-card hover:border-primary/30"
                     )}
                   >
                     <div className="shrink-0">
@@ -212,7 +212,7 @@ export default async function WeekDetailPage({ params }: WeekDetailPageProps) {
           </h2>
 
           {week.assignments.length === 0 ? (
-            <p className="rounded-lg border border-dashed border-border/40 p-6 text-center text-sm text-muted-foreground">
+            <p className="rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
               No assignments for this week yet.
             </p>
           ) : (
@@ -221,7 +221,7 @@ export default async function WeekDetailPage({ params }: WeekDetailPageProps) {
                 const submitted = assignment.submissions.length > 0;
                 const sub = assignment.submissions[0];
                 return (
-                  <Card key={assignment.id} className={cn("border-border/40", submitted && "border-emerald-500/20 bg-emerald-500/5")}>
+                  <Card key={assignment.id} className={cn("border-border", submitted && "border-emerald-500/20 bg-emerald-500/5")}>
                     <CardContent className="p-4">
                       <div className="mb-2 flex flex-wrap items-center gap-1.5">
                         {assignment.track && (

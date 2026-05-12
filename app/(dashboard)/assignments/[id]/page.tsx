@@ -136,7 +136,7 @@ async function AssignmentContent({
         {/* Left: brief + rubric + deliverables + notes */}
         <div className="space-y-5">
           {/* Brief */}
-          <Card className="border-border/40 bg-card/60">
+          <Card className="border-border bg-card">
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-sm">
                 <FileText className="h-4 w-4 text-primary" />
@@ -152,7 +152,7 @@ async function AssignmentContent({
 
           {/* Rubric */}
           {rubric.length > 0 && (
-            <Card className="border-border/40 bg-card/60">
+            <Card className="border-border bg-card">
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm">Grading Rubric</CardTitle>
               </CardHeader>
@@ -160,7 +160,7 @@ async function AssignmentContent({
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b border-border/40">
+                      <tr className="border-b border-border">
                         <th className="pb-2 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                           Criterion
                         </th>
@@ -188,7 +188,7 @@ async function AssignmentContent({
                       ))}
                     </tbody>
                     <tfoot>
-                      <tr className="border-t border-border/40">
+                      <tr className="border-t border-border">
                         <td
                           colSpan={2}
                           className="pt-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground"
@@ -208,7 +208,7 @@ async function AssignmentContent({
 
           {/* Required deliverables */}
           {deliverables.length > 0 && (
-            <Card className="border-border/40 bg-card/60">
+            <Card className="border-border bg-card">
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-sm">
                   <CheckSquare className="h-4 w-4 text-[var(--token-emerald)]" />
@@ -219,7 +219,7 @@ async function AssignmentContent({
                 <ul className="space-y-2">
                   {deliverables.map((d, i) => (
                     <li key={i} className="flex items-start gap-2.5 text-sm">
-                      <div className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded border border-border/50">
+                      <div className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded border border-border">
                         <span className="text-[10px] text-muted-foreground">
                           {i + 1}
                         </span>
@@ -243,7 +243,7 @@ async function AssignmentContent({
 
           {/* Notes on this assignment */}
           {assignment.notes.length > 0 && (
-            <Card className="border-border/40 bg-card/60">
+            <Card className="border-border bg-card">
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-sm">
                   <BookOpen className="h-4 w-4 text-[var(--token-blue)]" />
@@ -254,7 +254,7 @@ async function AssignmentContent({
                 {assignment.notes.map((note) => (
                   <div
                     key={note.id}
-                    className="rounded-lg border border-border/40 bg-muted/20 p-3"
+                    className="rounded-lg border border-border bg-muted/20 p-3"
                   >
                     <div className="mb-1 flex items-center justify-between gap-2">
                       <p className="text-sm font-medium text-foreground">
@@ -281,7 +281,7 @@ async function AssignmentContent({
           {alreadySubmitted ? (
             <div className="space-y-4">
               {/* Submission header */}
-              <Card className="border-[var(--token-emerald)]/20 bg-card/60">
+              <Card className="border-[var(--token-emerald)]/20 bg-card">
                 <CardHeader className="pb-3">
                   <CardTitle className="flex items-center gap-2 text-sm text-[var(--token-emerald)]">
                     <CheckCircle2 className="h-4 w-4" />
@@ -334,7 +334,7 @@ async function AssignmentContent({
                       <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
                         <ImageIcon className="h-3 w-3" /> Screenshot
                       </p>
-                      <a href={submission.screenshotUrl} target="_blank" rel="noopener noreferrer" className="block rounded-lg border border-border/40 overflow-hidden hover:border-primary/40 transition-colors">
+                      <a href={submission.screenshotUrl} target="_blank" rel="noopener noreferrer" className="block rounded-lg border border-border overflow-hidden hover:border-primary/40 transition-colors">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={submission.screenshotUrl}
@@ -348,7 +348,7 @@ async function AssignmentContent({
 
                   {/* Self score */}
                   {submission.selfScore !== null && (
-                    <div className="flex items-center gap-2 rounded-lg border border-border/40 bg-muted/20 px-3 py-2">
+                    <div className="flex items-center gap-2 rounded-lg border border-border bg-muted/20 px-3 py-2">
                       <Star className="h-4 w-4 text-[var(--token-amber)]" />
                       <span className="text-xs text-muted-foreground">Self Score</span>
                       <span className="ml-auto text-sm font-bold text-foreground">{submission.selfScore}/10</span>
@@ -369,7 +369,7 @@ async function AssignmentContent({
 
               {/* Notes & Reflection cards */}
               {submission.notes && (
-                <Card className="border-border/40 bg-card/60">
+                <Card className="border-border bg-card">
                   <CardHeader className="pb-2">
                     <CardTitle className="flex items-center gap-2 text-xs text-muted-foreground">
                       <MessageSquare className="h-3.5 w-3.5" /> Notes
@@ -383,7 +383,7 @@ async function AssignmentContent({
                 </Card>
               )}
               {submission.reflection && (
-                <Card className="border-border/40 bg-card/60">
+                <Card className="border-border bg-card">
                   <CardHeader className="pb-2">
                     <CardTitle className="flex items-center gap-2 text-xs text-muted-foreground">
                       <BookOpen className="h-3.5 w-3.5" /> Reflection

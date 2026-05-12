@@ -57,7 +57,7 @@ function StepBadge({ number, status }: { number: number; status: StepStatus }) {
         status === "active" &&
           "border-[var(--token-cyan)] bg-[var(--token-cyan)]/10 text-[var(--token-cyan)]",
         status === "locked" &&
-          "border-border/50 bg-muted/20 text-muted-foreground/50"
+          "border-border bg-muted/20 text-muted-foreground/50"
       )}
     >
       {status === "done" ? <Check className="h-3.5 w-3.5" /> : number}
@@ -172,7 +172,7 @@ export function LessonStudyArea({
   return (
     <div className="space-y-4">
       {/* Step progress header */}
-      <Card className="border-border/40 bg-card/60">
+      <Card className="border-border bg-card">
         <CardContent className="p-4">
           <p className="mb-3 text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
             Study Steps
@@ -219,7 +219,7 @@ export function LessonStudyArea({
             "flex w-full items-center gap-3 rounded-lg border px-4 py-3 text-sm font-medium transition-all",
             sourceReviewed
               ? "border-[var(--token-emerald)]/30 bg-[var(--token-emerald)]/10 text-[var(--token-emerald)]"
-              : "border-border/50 bg-muted/20 text-muted-foreground hover:border-border hover:text-foreground"
+              : "border-border bg-muted/20 text-muted-foreground hover:border-border hover:text-foreground"
           )}
         >
           {sourceReviewed ? (
@@ -384,9 +384,9 @@ function StepCard({ number, title, icon, status, iconColor, children }: StepCard
     <Card
       className={cn(
         "border transition-all",
-        status === "done" && "border-[var(--token-emerald)]/25 bg-card/60",
-        status === "active" && "border-[var(--token-cyan)]/30 bg-card/80 shadow-sm",
-        status === "locked" && "border-border/30 bg-card/40 opacity-60"
+        status === "done" && "border-[var(--token-emerald)]/25 bg-card",
+        status === "active" && "border-[var(--token-cyan)]/30 bg-card shadow-sm",
+        status === "locked" && "border-border bg-card opacity-60"
       )}
     >
       <CardHeader className="pb-3">

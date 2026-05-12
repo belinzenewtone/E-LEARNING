@@ -42,7 +42,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex bg-background">
       {/* ── Left panel — branding ─────────────────────────────────────────── */}
-      <div className="hidden lg:flex lg:w-[55%] flex-col justify-between p-12 bg-card/50 border-r border-border/60 relative overflow-hidden">
+      <div className="hidden lg:flex lg:w-[55%] flex-col justify-between p-12 bg-card border-r border-border/60 relative overflow-hidden">
         {/* Background decoration */}
         <div className="absolute inset-0 bg-gradient-to-br from-primary/3 via-transparent to-secondary/3 pointer-events-none" />
         <div className="absolute top-0 right-0 h-96 w-96 rounded-full bg-primary/3 blur-3xl pointer-events-none" />
@@ -71,7 +71,7 @@ export default function LoginPage() {
           {/* Feature grid */}
           <div className="grid grid-cols-2 gap-3">
             {FEATURES.map(({ icon: Icon, label, desc }) => (
-              <div key={label} className="flex items-start gap-3 rounded-xl border border-border/50 bg-background/40 p-4 backdrop-blur-sm">
+              <div key={label} className="flex items-start gap-3 rounded-xl border border-border bg-background/40 p-4 backdrop-blur-sm">
                 <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10">
                   <Icon className="h-4 w-4 text-primary" />
                 </div>
@@ -156,7 +156,7 @@ export default function LoginPage() {
           </form>
 
           {/* Progress indicator */}
-          <div className="rounded-xl border border-border/40 bg-muted/10 p-4 space-y-3">
+          <div className="rounded-xl border border-border bg-muted/10 p-4 space-y-3">
             <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Your 22-week journey</p>
             <div className="space-y-2">
               {[

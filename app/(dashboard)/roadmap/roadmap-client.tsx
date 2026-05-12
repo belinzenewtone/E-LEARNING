@@ -112,10 +112,10 @@ function ModuleCard({
   return (
     <div
       className={cn(
-        "rounded-xl border bg-card/40 transition-all",
+        "rounded-xl border bg-card transition-all",
         isLocked
-          ? "border-border/30 opacity-60"
-          : "border-border/50 hover:border-border/80 hover:shadow-sm"
+          ? "border-border opacity-60"
+          : "border-border hover:border-border/80 hover:shadow-sm"
       )}
     >
       {/* Module header */}
@@ -209,7 +209,7 @@ function ModuleCard({
             transition={{ duration: 0.25, ease: "easeInOut" }}
             className="overflow-hidden"
           >
-            <div className="border-t border-border/30 px-4 pb-3 pt-2">
+            <div className="border-t border-border px-4 pb-3 pt-2">
               {module.lessons.map((lesson) => (
                 <LessonRow key={lesson.id} lesson={lesson} />
               ))}
@@ -297,7 +297,7 @@ function TrackColumn({
               <div key={phase} className="space-y-3">
                 <div className="flex items-center gap-2">
                   <div className="h-px flex-1 bg-border/50" />
-                  <span className="shrink-0 rounded-full border border-border/50 bg-muted/30 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  <span className="shrink-0 rounded-full border border-border bg-muted/30 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                     {PHASE_LABELS[phase] ?? `Phase ${phase}`}
                   </span>
                   <div className="h-px flex-1 bg-border/50" />
@@ -345,7 +345,7 @@ export function RoadmapClient({ webTrack, dataTrack }: RoadmapClientProps) {
       {/* Filter bar */}
       <div className="flex flex-wrap items-center gap-2 sm:gap-3">
         {/* Status filter */}
-        <div className="flex items-center gap-1.5 rounded-lg border border-border/50 bg-muted/20 p-1">
+        <div className="flex items-center gap-1.5 rounded-lg border border-border bg-muted/20 p-1">
           {statusOptions.map((opt) => (
             <button
               key={opt.value}
@@ -364,7 +364,7 @@ export function RoadmapClient({ webTrack, dataTrack }: RoadmapClientProps) {
         </div>
 
         {/* Track filter */}
-        <div className="flex items-center gap-1.5 rounded-lg border border-border/50 bg-muted/20 p-1">
+        <div className="flex items-center gap-1.5 rounded-lg border border-border bg-muted/20 p-1">
           {trackOptions.map((opt) => (
             <button
               key={opt.value}

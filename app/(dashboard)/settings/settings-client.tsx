@@ -163,7 +163,7 @@ export function SettingsClient({ user, goals, xpTotal }: SettingsClientProps) {
                   className={`flex h-9 w-9 items-center justify-center rounded-lg border text-lg transition-all ${
                     avatar === emoji
                       ? "border-primary bg-primary/10"
-                      : "border-border/50 bg-muted/20 hover:border-border hover:bg-muted/40"
+                      : "border-border bg-muted/20 hover:border-border hover:bg-muted/40"
                   }`}
                 >
                   {emoji}
@@ -175,7 +175,7 @@ export function SettingsClient({ user, goals, xpTotal }: SettingsClientProps) {
                 className={`flex h-9 w-9 items-center justify-center rounded-lg border text-sm font-bold transition-all ${
                   avatar === null
                     ? "border-primary bg-primary/10"
-                    : "border-border/50 bg-muted/20 hover:border-border hover:bg-muted/40"
+                    : "border-border bg-muted/20 hover:border-border hover:bg-muted/40"
                 }`}
               >
                 {user?.name?.[0]?.toUpperCase() ?? "L"}

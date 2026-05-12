@@ -137,7 +137,7 @@ export function NoteDetailClient({ note: initialNote }: NoteDetailClientProps) {
             {note.tags.map((tag) => (
               <span
                 key={tag}
-                className="rounded-full bg-muted/40 px-2.5 py-0.5 text-xs text-muted-foreground border border-border/40"
+                className="rounded-full bg-muted/40 px-2.5 py-0.5 text-xs text-muted-foreground border border-border"
               >
                 {tag}
               </span>
@@ -162,7 +162,7 @@ export function NoteDetailClient({ note: initialNote }: NoteDetailClientProps) {
             "flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors",
             note.pinned
               ? "border-[var(--token-amber)]/30 bg-[var(--token-amber)]/10 text-[var(--token-amber)]"
-              : "border-border/50 text-muted-foreground hover:text-foreground"
+              : "border-border text-muted-foreground hover:text-foreground"
           )}
         >
           <Pin className="h-3 w-3" />
@@ -176,7 +176,7 @@ export function NoteDetailClient({ note: initialNote }: NoteDetailClientProps) {
             "flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors",
             note.reviewLater
               ? "border-[var(--token-cyan)]/30 bg-[var(--token-cyan)]/10 text-[var(--token-cyan)]"
-              : "border-border/50 text-muted-foreground hover:text-foreground"
+              : "border-border text-muted-foreground hover:text-foreground"
           )}
         >
           <BookmarkCheck className="h-3 w-3" />
@@ -190,7 +190,7 @@ export function NoteDetailClient({ note: initialNote }: NoteDetailClientProps) {
             "flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors",
             note.confusing
               ? "border-[var(--token-red)]/30 bg-[var(--token-red)]/10 text-[var(--token-red)]"
-              : "border-border/50 text-muted-foreground hover:text-foreground"
+              : "border-border text-muted-foreground hover:text-foreground"
           )}
         >
           <AlertCircle className="h-3 w-3" />
@@ -250,7 +250,7 @@ export function NoteDetailClient({ note: initialNote }: NoteDetailClientProps) {
           />
         </div>
       ) : (
-        <Card className="border-border/40 bg-card/60">
+        <Card className="border-border bg-card">
           <CardContent className="p-5">
             <div className="prose prose-sm prose-invert max-w-none">
               <ReactMarkdown>{note.content}</ReactMarkdown>

@@ -10,7 +10,7 @@ export default function PortfolioLoading() {
       </div>
 
       {/* Profile card */}
-      <div className="rounded-xl border border-border/40 bg-card/60 p-6">
+      <div className="rounded-xl border border-border bg-card p-6">
         <div className="flex items-center gap-4">
           <Skeleton className="h-14 w-14 rounded-2xl" />
           <div className="flex-1 space-y-2">
@@ -34,7 +34,7 @@ export default function PortfolioLoading() {
         <Skeleton className="h-5 w-48" />
         <div className="grid gap-4 md:grid-cols-2">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="rounded-xl border border-border/40 bg-card/60 p-5 space-y-3">
+            <div key={i} className="rounded-xl border border-border bg-card p-5 space-y-3">
               <Skeleton className="h-5 w-3/4" />
               <Skeleton className="h-4 w-full" />
               <Skeleton className="h-3 w-full" />

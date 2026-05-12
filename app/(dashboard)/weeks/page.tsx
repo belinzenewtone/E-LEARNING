@@ -53,24 +53,24 @@ export default async function WeeksPage() {
       <div className="space-y-8 p-4 sm:p-6 lg:p-8">
         {/* Stats row */}
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-          <div className="rounded-xl border border-border/50 bg-card/60 p-4">
+          <div className="rounded-xl border border-border bg-card p-4">
             <p className="text-xs text-muted-foreground uppercase tracking-wider">Overall</p>
             <p className="mt-1 text-2xl font-bold text-foreground">{overallProgress}%</p>
             <Progress value={overallProgress} className="mt-2 h-1" />
           </div>
-          <div className="rounded-xl border border-border/50 bg-card/60 p-4">
+          <div className="rounded-xl border border-border bg-card p-4">
             <p className="text-xs text-muted-foreground uppercase tracking-wider">Completed</p>
             <p className="mt-1 text-2xl font-bold text-[var(--token-emerald)]">{completedWeeks}</p>
             <p className="text-xs text-muted-foreground">of {totalWeeks} weeks</p>
           </div>
-          <div className="rounded-xl border border-border/50 bg-card/60 p-4">
+          <div className="rounded-xl border border-border bg-card p-4">
             <p className="text-xs text-muted-foreground uppercase tracking-wider">Active Sprint</p>
             <p className="mt-1 text-2xl font-bold text-[var(--token-cyan)]">
               {activeWeek ? `W${activeWeek.weekNumber}` : "—"}
             </p>
             {activeWeek && <p className="text-xs text-muted-foreground truncate">{activeWeek.theme}</p>}
           </div>
-          <div className="rounded-xl border border-border/50 bg-card/60 p-4">
+          <div className="rounded-xl border border-border bg-card p-4">
             <p className="text-xs text-muted-foreground uppercase tracking-wider">Remaining</p>
             <p className="mt-1 text-2xl font-bold text-foreground">{totalWeeks - completedWeeks}</p>
             <p className="text-xs text-muted-foreground">weeks to go</p>
@@ -104,7 +104,7 @@ export default async function WeeksPage() {
                     <Card
                       key={week.id}
                       className={cn(
-                        "border-border/40 bg-card/60 transition-all duration-200 hover:shadow-md hover:shadow-black/20 hover:-translate-y-0.5",
+                        "border-border bg-card transition-all duration-200 hover:shadow-md hover:shadow-black/20 hover:-translate-y-0.5",
                         isActive && "border-primary/40 shadow-[0_0_0_1px_rgba(34,211,238,0.15)]",
                         isDone && "border-emerald-500/20 opacity-80"
                       )}
@@ -116,7 +116,7 @@ export default async function WeeksPage() {
                             "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xs font-bold",
                             isActive ? "bg-primary/15 text-primary border border-primary/20"
                             : isDone ? "bg-emerald-500/10 text-[var(--token-emerald)] border border-emerald-500/20"
-                            : "bg-muted/30 text-muted-foreground border border-border/40"
+                            : "bg-muted/30 text-muted-foreground border border-border"
                           )}>
                             W{week.weekNumber}
                           </div>
@@ -156,7 +156,7 @@ export default async function WeeksPage() {
                         )}
 
                         {/* Meta row */}
-                        <div className="flex items-center justify-between text-xs text-muted-foreground pt-1 border-t border-border/30">
+                        <div className="flex items-center justify-between text-xs text-muted-foreground pt-1 border-t border-border">
                           <div className="flex items-center gap-3">
                             <span className="flex items-center gap-1">
                               <Calendar className="h-3 w-3" />

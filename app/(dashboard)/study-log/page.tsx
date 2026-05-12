@@ -95,7 +95,7 @@ export default async function StudyLogPage() {
         <StudyLogForm tracks={tracks} />
 
         {/* This week summary */}
-        <Card className="border-border/40 bg-card/60 self-start">
+        <Card className="border-border bg-card self-start">
           <CardHeader className="pb-3">
             <CardTitle className="text-sm">This Week</CardTitle>
           </CardHeader>
@@ -141,7 +141,7 @@ export default async function StudyLogPage() {
             {allLogs.map((log) => (
               <div
                 key={log.id}
-                className="flex items-start gap-4 rounded-lg border border-border/40 bg-card/40 p-3"
+                className="flex items-start gap-4 rounded-lg border border-border bg-card p-3"
               >
                 {/* Mood */}
                 <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted/30 text-lg">

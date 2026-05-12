@@ -73,7 +73,7 @@ export function LessonsClient({ weekGroups }: LessonsClientProps) {
       {/* Controls */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         {/* Track tabs */}
-        <div className="flex gap-1 rounded-lg border border-border/50 bg-muted/30 p-1">
+        <div className="flex gap-1 rounded-lg border border-border bg-muted/30 p-1">
           {TRACKS.map((track) => (
             <button
               key={track}
@@ -145,7 +145,7 @@ export function LessonsClient({ weekGroups }: LessonsClientProps) {
                 {group.lessons.map((lesson) => (
                   <Card
                     key={lesson.id}
-                    className="border-border/40 bg-card/60 transition-shadow hover:shadow-md hover:shadow-black/20"
+                    className="border-border bg-card transition-shadow hover:shadow-md hover:shadow-black/20"
                   >
                     <CardContent className="p-4">
                       {/* Track + difficulty badges */}

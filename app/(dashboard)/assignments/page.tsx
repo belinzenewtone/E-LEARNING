@@ -57,7 +57,7 @@ export default async function AssignmentsPage() {
 
         {/* Stats */}
         <div className="flex flex-wrap gap-2">
-          <div className="flex items-center gap-1.5 rounded-lg border border-border/40 bg-card/60 px-3 py-1.5 text-sm">
+          <div className="flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-1.5 text-sm">
             <FileText className="h-3.5 w-3.5 text-muted-foreground" />
             <span className="font-semibold text-foreground">{total}</span>
             <span className="text-muted-foreground">total</span>

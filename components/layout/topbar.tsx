@@ -25,7 +25,7 @@ export function Topbar({ title, subtitle, breadcrumbs, actions }: TopbarProps) {
   const hasTitle = !!title;
 
   return (
-    <header className="h-12 border-b border-border/40 bg-background sticky top-0 z-10 flex items-center px-4 gap-3">
+    <header className="h-12 border-b border-border bg-background sticky top-0 z-10 flex items-center px-4 gap-3">
       {/* Mobile hamburger */}
       <MobileNav userXp={nav.userXp} streak={nav.streak} userName={nav.userName} />
 
@@ -63,7 +63,7 @@ export function Topbar({ title, subtitle, breadcrumbs, actions }: TopbarProps) {
       {/* Right actions */}
       <div className="flex items-center gap-1 shrink-0">
         {/* XP chip */}
-        <div className="hidden sm:flex items-center gap-1.5 rounded-full border border-border/40 bg-muted/20 px-2.5 py-1 text-[11px] font-medium text-muted-foreground">
+        <div className="hidden sm:flex items-center gap-1.5 rounded-full border border-border bg-muted/20 px-2.5 py-1 text-[11px] font-medium text-muted-foreground">
           <Zap className="h-3 w-3 text-primary" />
           <span className="text-foreground font-semibold">{userXp.toLocaleString()}</span>
           <span className="text-muted-foreground/60">XP</span>
@@ -71,7 +71,7 @@ export function Topbar({ title, subtitle, breadcrumbs, actions }: TopbarProps) {
 
         {/* Streak chip */}
         {streak > 0 && (
-          <div className="hidden sm:flex items-center gap-1 rounded-full border border-border/40 bg-muted/20 px-2 py-1 text-[11px] font-medium">
+          <div className="hidden sm:flex items-center gap-1 rounded-full border border-border bg-muted/20 px-2 py-1 text-[11px] font-medium">
             <Flame className="h-3 w-3 text-[var(--token-amber)]" />
             <span className="text-[var(--token-amber)] font-semibold">{streak}d</span>
           </div>

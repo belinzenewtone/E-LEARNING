@@ -39,7 +39,7 @@ function SupplementaryCard({
   const [open, setOpen] = useState(defaultOpen);
 
   return (
-    <Card className="border-border/30 bg-card/40">
+    <Card className="border-border bg-card">
       <button
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between p-4 text-left"

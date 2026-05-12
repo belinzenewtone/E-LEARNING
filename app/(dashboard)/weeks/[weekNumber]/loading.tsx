@@ -24,7 +24,7 @@ export default function WeekDetailLoading() {
       <div className="h-px bg-border/40" />
 
       {/* Goals */}
-      <div className="rounded-xl border border-border/40 bg-card/60 p-5 space-y-3">
+      <div className="rounded-xl border border-border bg-card p-5 space-y-3">
         <Skeleton className="h-4 w-28" />
         {Array.from({ length: 4 }).map((_, i) => (
           <Skeleton key={i} className="h-4 w-full" />

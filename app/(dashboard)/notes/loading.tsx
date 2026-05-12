@@ -25,7 +25,7 @@ export default function NotesLoading() {
         {Array.from({ length: 6 }).map((_, i) => (
           <div
             key={i}
-            className="rounded-xl border border-border/40 bg-card/60 p-4 space-y-3"
+            className="rounded-xl border border-border bg-card p-4 space-y-3"
           >
             <Skeleton className="h-4 w-2/3" />
             <div className="space-y-1.5">

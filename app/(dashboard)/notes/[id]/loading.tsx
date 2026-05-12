@@ -30,7 +30,7 @@ export default function NoteDetailLoading() {
       <div className="h-px bg-border/40" />
 
       {/* Content */}
-      <div className="rounded-xl border border-border/40 bg-card/60 p-5 space-y-3">
+      <div className="rounded-xl border border-border bg-card p-5 space-y-3">
         {Array.from({ length: 8 }).map((_, i) => (
           <Skeleton key={i} className={`h-4 ${i % 3 === 2 ? "w-2/3" : "w-full"}`} />
         ))}

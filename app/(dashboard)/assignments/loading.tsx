@@ -24,7 +24,7 @@ export default function AssignmentsLoading() {
         {Array.from({ length: 6 }).map((_, i) => (
           <div
             key={i}
-            className="rounded-xl border border-border/40 bg-card/60 p-4 space-y-3"
+            className="rounded-xl border border-border bg-card p-4 space-y-3"
           >
             <div className="flex gap-1.5">
               <Skeleton className="h-4 w-16 rounded-full" />

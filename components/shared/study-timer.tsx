@@ -205,7 +205,7 @@ export function StudyTimer() {
     mode === "work" ? "text-[var(--token-cyan)]" : "text-[var(--token-emerald)]";
 
   return (
-    <div className="rounded-xl border border-border/40 bg-card/60 p-4 flex flex-col items-center gap-3">
+    <div className="rounded-xl border border-border bg-card p-4 flex flex-col items-center gap-3">
       {/* Mode label */}
       <p className={cn("text-xs font-semibold uppercase tracking-widest", modeColor)}>
         {modeLabel}
@@ -242,7 +242,7 @@ export function StudyTimer() {
         <button
           onClick={handleReset}
           aria-label="Reset timer"
-          className="flex h-8 w-8 items-center justify-center rounded-lg border border-border/50 bg-muted/20 text-muted-foreground transition-colors hover:border-border hover:text-foreground"
+          className="flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-muted/20 text-muted-foreground transition-colors hover:border-border hover:text-foreground"
         >
           <RotateCcw className="h-3.5 w-3.5" />
         </button>

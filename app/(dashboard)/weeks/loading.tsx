@@ -25,7 +25,7 @@ export default function WeeksLoading() {
             {Array.from({ length: 4 }).map((_, j) => (
               <div
                 key={j}
-                className="rounded-xl border border-border/40 bg-card/60 p-4 space-y-3"
+                className="rounded-xl border border-border bg-card p-4 space-y-3"
               >
                 <div className="flex items-start justify-between">
                   <Skeleton className="h-9 w-9 rounded-lg" />
