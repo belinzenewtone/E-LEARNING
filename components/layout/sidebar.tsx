@@ -17,8 +17,6 @@ import {
   Briefcase,
   Settings,
   LogOut,
-  Zap,
-  Flame,
 } from "lucide-react";
 import {
   Tooltip,
@@ -102,27 +100,6 @@ export function Sidebar({ userXp = 0, streak = 0, userName = "Learner" }: Sideba
             );
           })}
         </nav>
-
-        {/* ── User profile compact ────────────────────────────────────────────── */}
-        <div className="flex flex-col items-center gap-1.5 w-full px-2 mb-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 border border-primary/20 text-[11px] font-semibold text-primary">
-            {userName.charAt(0)}
-          </div>
-          <div className="flex flex-col items-center gap-0.5">
-            {userXp > 0 && (
-              <span className="flex items-center gap-0.5 text-[9px] text-muted-foreground">
-                <Zap className="h-2.5 w-2.5 text-primary" />
-                {userXp.toLocaleString()}
-              </span>
-            )}
-            {streak > 0 && (
-              <span className="flex items-center gap-0.5 text-[9px] text-[var(--token-amber)]">
-                <Flame className="h-2.5 w-2.5" />
-                {streak}d
-              </span>
-            )}
-          </div>
-        </div>
 
         <div className="w-8 h-px bg-sidebar-border shrink-0 mb-2" />
 
