@@ -1,22 +1,34 @@
-import { auth } from "@/lib/auth";
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { jwtVerify } from "jose";
 
-export default auth(function middleware(req: NextRequest & { auth: unknown }) {
+const PUBLIC_PATHS = ["/login", "/api/auth"];
+
+export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
-  const isLoggedIn = !!(req as { auth?: { user?: unknown } }).auth?.user;
 
-  if (pathname === "/login" && isLoggedIn) {
-    return NextResponse.redirect(new URL("/dashboard", req.url));
+  if (PUBLIC_PATHS.some((p) => pathname.startsWith(p))) {
+    return NextResponse.next();
   }
 
-  if (pathname !== "/login" && !isLoggedIn && !pathname.startsWith("/api")) {
+  const token = req.cookies.get("auth-token")?.value;
+
+  if (!token) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
-  return NextResponse.next();
-});
+  const secret = process.env.JWT_SECRET;
+  if (!secret) return NextResponse.next();
+
+  try {
+    await jwtVerify(token, new TextEncoder().encode(secret));
+    return NextResponse.next();
+  } catch {
+    const res = NextResponse.redirect(new URL("/login", req.url));
+    res.cookies.delete("auth-token");
+    return res;
+  }
+}
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\.png$).*)"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|public).*)"],
 };
