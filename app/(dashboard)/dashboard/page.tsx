@@ -13,6 +13,7 @@ import {
 } from "@/server/queries/dashboard";
 import { StatCard } from "@/components/shared/stat-card";
 import { DashboardSkeleton } from "@/components/shared/loading-skeleton";
+import { Topbar } from "@/components/layout/topbar";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ProgressRing } from "@/components/shared/progress-ring";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -385,8 +386,11 @@ export default async function DashboardPage() {
   if (!session?.user?.id) redirect("/login");
 
   return (
-    <Suspense fallback={<DashboardSkeleton />}>
-      <DashboardContent userId={session.user.id} userName={session.user.name ?? "Learner"} />
-    </Suspense>
+    <>
+      <Topbar />
+      <Suspense fallback={<DashboardSkeleton />}>
+        <DashboardContent userId={session.user.id} userName={session.user.name ?? "Learner"} />
+      </Suspense>
+    </>
   );
 }

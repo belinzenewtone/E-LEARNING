@@ -6,6 +6,7 @@ import { PenLine, Plus, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/shared/empty-state";
 import { NotesClient } from "./notes-client";
+import { Topbar } from "@/components/layout/topbar";
 
 // ── page ──────────────────────────────────────────────────────────────────────
 
@@ -33,7 +34,9 @@ export default async function NotesPage() {
   });
 
   return (
-    <div className="space-y-6 p-4 sm:p-6 lg:p-8">
+    <div>
+      <Topbar title="Notes" subtitle="Your learning notes and reflections" />
+      <div className="space-y-6 p-4 sm:p-6 lg:p-8">
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div className="space-y-1">
@@ -68,6 +71,7 @@ export default async function NotesPage() {
       ) : (
         <NotesClient notes={notes} tracks={tracks} />
       )}
+      </div>
     </div>
   );
 }

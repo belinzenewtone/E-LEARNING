@@ -21,6 +21,7 @@ import { Progress } from "@/components/ui/progress";
 import { cn, formatDate, getDifficultyColor, getStatusColor, minutesToHours } from "@/lib/utils";
 import { RetroForm } from "./retro-form";
 import { getWeekByNumber } from "@/server/queries/weeks";
+import { Topbar } from "@/components/layout/topbar";
 
 interface WeekDetailPageProps {
   params: Promise<{ weekNumber: string }>;
@@ -56,16 +57,9 @@ export default async function WeekDetailPage({ params }: WeekDetailPageProps) {
   };
 
   return (
-    <div className="space-y-6 p-4 sm:p-6 lg:p-8 max-w-5xl mx-auto">
-      {/* Breadcrumb */}
-      <nav className="flex items-center gap-1.5 text-xs text-muted-foreground">
-        <Link href="/weeks" className="hover:text-foreground transition-colors">
-          Weekly Sprints
-        </Link>
-        <ChevronRight className="h-3 w-3" />
-        <span className="text-foreground">Week {week.weekNumber}</span>
-      </nav>
-
+    <div>
+      <Topbar breadcrumbs={[{ label: "Sprints", href: "/weeks" }, { label: `Week ${week.weekNumber}` }]} />
+      <div className="space-y-6 p-4 sm:p-6 lg:p-8 max-w-5xl mx-auto">
       {/* Sprint header */}
       <div className="rounded-xl border border-border bg-card p-4 sm:p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
@@ -287,6 +281,7 @@ export default async function WeekDetailPage({ params }: WeekDetailPageProps) {
           </section>
         </>
       )}
+      </div>
     </div>
   );
 }

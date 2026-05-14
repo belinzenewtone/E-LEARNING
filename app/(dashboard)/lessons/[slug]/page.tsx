@@ -22,6 +22,7 @@ import { StudyTimer } from "@/components/shared/study-timer";
 import { MarkdownContent } from "@/components/shared/markdown-content";
 import { SupplementarySection } from "@/components/shared/supplementary-section";
 import { getSupplementaryContent } from "@/server/queries/supplementary";
+import { Topbar } from "@/components/layout/topbar";
 
 // ── Prisma result type ────────────────────────────────────────────────────────
 
@@ -265,17 +266,8 @@ async function LessonContent({ slug, userId }: { slug: string; userId: string })
 
   return (
     <div>
-      <nav className="mb-6 flex items-center gap-1.5 text-xs text-muted-foreground">
-        <Link href="/dashboard" className="hover:text-foreground transition-colors">
-          Dashboard
-        </Link>
-        <ChevronRight className="h-3 w-3" />
-        <Link href="/lessons" className="hover:text-foreground transition-colors">
-          Lessons
-        </Link>
-        <ChevronRight className="h-3 w-3" />
-        <span className="text-foreground truncate max-w-[240px]">{lesson.title}</span>
-      </nav>
+      <Topbar breadcrumbs={[{ label: "Lessons", href: "/lessons" }, { label: lesson.title }]} />
+      <div className="p-4 sm:p-6 lg:p-8">
       <div className="grid gap-6 xl:grid-cols-[280px_1fr_220px]">
         <aside>
           <LessonInfoPanel lesson={lesson} />
@@ -307,6 +299,7 @@ async function LessonContent({ slug, userId }: { slug: string; userId: string })
           <ProgressSidebar lesson={lesson} />
         </aside>
       </div>
+      </div>
     </div>
   );
 }
@@ -318,10 +311,8 @@ export default async function LessonPage({ params }: LessonPageProps) {
   const { slug } = await params;
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8">
-      <Suspense fallback={<LessonSkeleton />}>
-        <LessonContent slug={slug} userId={session.user.id} />
-      </Suspense>
-    </div>
+    <Suspense fallback={<LessonSkeleton />}>
+      <LessonContent slug={slug} userId={session.user.id} />
+    </Suspense>
   );
 }

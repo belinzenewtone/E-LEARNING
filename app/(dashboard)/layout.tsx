@@ -2,7 +2,6 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { Sidebar } from "@/components/layout/sidebar";
-import { Topbar } from "@/components/layout/topbar";
 import { DashboardShell } from "@/components/layout/dashboard-shell";
 import { ScrollToTop } from "@/components/shared/scroll-to-top";
 import { syncWeekStatuses } from "@/lib/week-activator";
@@ -99,7 +98,6 @@ export default async function DashboardLayout({
           <Sidebar userXp={userXp} streak={streak} userName={userName} />
         </div>
         <main className="flex-1 min-w-0 overflow-y-auto scrollbar-thin">
-          <Topbar />
           {children}
           <ScrollToTop />
         </main>

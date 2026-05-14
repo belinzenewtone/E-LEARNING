@@ -6,6 +6,7 @@ import { BookOpen } from "lucide-react";
 import { EmptyState } from "@/components/shared/empty-state";
 import { LessonsClient } from "./lessons-client";
 import { LessonsPageSkeleton } from "./loading";
+import { Topbar } from "@/components/layout/topbar";
 
 // ── types ─────────────────────────────────────────────────────────────────────
 
@@ -99,7 +100,9 @@ export default async function LessonsPage() {
   if (!session?.user?.id) redirect("/login");
 
   return (
-    <div className="space-y-6 p-4 sm:p-6 lg:p-8">
+    <div>
+      <Topbar title="Lessons" subtitle="Your full curriculum, grouped by week" />
+      <div className="space-y-6 p-4 sm:p-6 lg:p-8">
       {/* Header */}
       <div className="flex flex-col gap-1">
         <h1 className="text-2xl font-bold tracking-tight text-foreground">
@@ -113,6 +116,7 @@ export default async function LessonsPage() {
       <Suspense fallback={<LessonsPageSkeleton />}>
         <LessonsContent />
       </Suspense>
+      </div>
     </div>
   );
 }

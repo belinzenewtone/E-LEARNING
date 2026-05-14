@@ -9,6 +9,7 @@ import { StatCard } from "@/components/shared/stat-card";
 import { getMoodEmoji, minutesToHours, formatDate, truncate } from "@/lib/utils";
 import { startOfWeek, endOfWeek } from "date-fns";
 import { StudyLogForm } from "./study-log-form";
+import { Topbar } from "@/components/layout/topbar";
 
 // ── page ──────────────────────────────────────────────────────────────────────
 
@@ -47,7 +48,9 @@ export default async function StudyLogPage() {
   ).size;
 
   return (
-    <div className="space-y-6 p-4 sm:p-6 lg:p-8">
+    <div>
+      <Topbar title="Study Log" subtitle="Track your daily study sessions" />
+      <div className="space-y-6 p-4 sm:p-6 lg:p-8">
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div className="space-y-1">
@@ -186,6 +189,7 @@ export default async function StudyLogPage() {
             ))}
           </div>
         )}
+      </div>
       </div>
     </div>
   );

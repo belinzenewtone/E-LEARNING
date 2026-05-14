@@ -31,6 +31,7 @@ import {
   isOverdue,
 } from "@/lib/utils";
 import { SubmissionForm } from "./submission-form";
+import { Topbar } from "@/components/layout/topbar";
 
 // ── types ──────────────────────────────────────────────────────────────────────
 
@@ -419,23 +420,13 @@ export default async function AssignmentDetailPage({
   const { id } = await params;
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8">
-      {/* Breadcrumb */}
-      <nav className="mb-6 flex items-center gap-1.5 text-xs text-muted-foreground">
-        <Link href="/dashboard" className="hover:text-foreground transition-colors">
-          Dashboard
-        </Link>
-        <ChevronRight className="h-3 w-3" />
-        <Link href="/assignments" className="hover:text-foreground transition-colors">
-          Assignments
-        </Link>
-        <ChevronRight className="h-3 w-3" />
-        <span className="text-foreground">Detail</span>
-      </nav>
-
-      <Suspense fallback={<AssignmentSkeleton />}>
-        <AssignmentContent id={id} userId={session.user.id} />
-      </Suspense>
+    <div>
+      <Topbar breadcrumbs={[{ label: "Assignments", href: "/assignments" }, { label: "Detail" }]} />
+      <div className="p-4 sm:p-6 lg:p-8">
+        <Suspense fallback={<AssignmentSkeleton />}>
+          <AssignmentContent id={id} userId={session.user.id} />
+        </Suspense>
+      </div>
     </div>
   );
 }
