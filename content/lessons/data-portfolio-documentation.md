@@ -1,31 +1,29 @@
 # Portfolio Data Project Documentation
 
-## Why This Matters
+## 🎯 By End of This Lesson You Will:
+- Write professional READMEs for data projects
+- Create schema diagrams
+- Structure a GitHub profile that attracts recruiters
 
-Your projects are only as valuable as your ability to communicate them. A hiring manager spends 30 seconds scanning a GitHub repo. Professional documentation — README, schema diagrams, findings summaries — makes those 30 seconds count.
+## 🌍 Real-World Analogy First
 
-## Core Concepts
+Your GitHub is your public resume. A README is the cover letter — it's the first 30 seconds a hiring manager spends on your project. Make them count.
 
-### README Structure
+## 📖 Start From Zero — README Template
 
 ```markdown
 # Project Name
-One-line summary of what this project is and why it matters.
+One-line summary.
 
 ## Quick Links
-- [Live Demo](#) | [SQL Scripts](./queries/) | [Schema Diagram](./schema.png)
+[Live Demo](#) | [SQL Scripts](./queries/) | [Schema](./schema.png)
 
 ## What I Built
-2-3 sentences describing the project. What problem does it solve?
-
-## Technical Stack
-- PostgreSQL 16
-- Window functions, CTEs, recursive queries
-- IQR outlier detection, time-series analysis
+2-3 sentences. What problem does this solve?
 
 ## Key Findings
-1. **Finding headline**: Evidence and implications (1-2 sentences)
-2. **Finding headline**: Evidence and implications
+1. **Headline**: Numbers + implications
+2. **Headline**: Numbers + implications
 
 ## How to Run
 \`\`\`bash
@@ -33,46 +31,32 @@ psql -d mydb -f schema.sql
 psql -d mydb -f analysis.sql
 \`\`\`
 
-## What I Learned
-Honest reflection on challenges and growth.
-
 ## Skills Demonstrated
-- [ ] Complex SQL (window functions, CTEs)
+- [ ] Complex SQL (CTEs, window functions)
 - [ ] Data modeling (star schema)
 - [ ] Data quality (validation, cleaning)
-- [ ] Documentation (README, diagrams)
 ```
 
-### Schema Diagrams
+## 🔨 GitHub Pro Tips
 
-Tools for creating diagrams:
-- **dbdiagram.io** — draw with code (recommended)
-- **Draw.io** — free, visual editor
-- **DBeaver** — auto-generate from existing DB
+- **Pin your 6 best repos** to your profile
+- **Add topics** (sql, data-engineering, postgresql, analytics)
+- **Clean commits** with conventional commit messages
+- **Never commit** credentials, .env, or data files with PII
 
-### Documenting Your Analysis
+## 🧪 Practice — Try Each Step
 
-Every SQL file should have a header:
-```sql
--- ============================================
--- File: analysis/03_trend_analysis.sql
--- Purpose: 7-day moving average of study hours
--- Dependencies: staging.daily_summary
--- Author: Belinze
--- Date: 2026-05-11
--- ============================================
-```
+1. Write a README for your best data project.
+2. Generate a schema diagram (dbdiagram.io or DBeaver).
+3. Add topics to your repos.
+4. Pin your best 3 repos to your GitHub profile.
 
-### GitHub Best Practices
+## 🧠 Mental Model — One Sentence
 
-- **Pin your best repos** to your profile
-- **Use topics** (sql, data-engineering, postgresql, analytics)
-- **Clean commit history** with conventional commits
-- **No credentials** — check .gitignore before pushing
+Professional documentation turns a private project into a public portfolio — it tells the story of what you built, why, and what skills it proves.
 
-## Checkpoint
+## 📝 Check Your Understanding
 
-1. What would you want a hiring manager to see first in your data portfolio?
-2. What makes a README professional vs amateur?
-3. List 3 repos you should pin to your GitHub profile.
-4. **Reflection**: Write the README for your best data project.
+- **Define**: What should a hiring manager see in the first 30 seconds?
+- **Apply it**: Write your README.
+- **Reflect**: What would you want a recruiter to notice first?

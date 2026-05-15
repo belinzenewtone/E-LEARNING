@@ -1,146 +1,357 @@
 # Window Functions: LAG, LEAD & SUM OVER
 
-## Why This Matters
+## 🎯 By End of This Lesson You Will:
+- Use `LAG` and `LEAD` to access previous/next row values
+- Calculate running totals with `SUM() OVER`
+- Use `ROWS BETWEEN` to control window frames
 
-Ranking tells you position. LAG and LEAD tell you change over time — "What was yesterday's study time?" "How did XP grow week-over-week?" Running totals with SUM OVER show cumulative progress. These are the building blocks of every time-series dashboard.
+---
 
-## Core Concepts
+## 🌍 Real-World Analogy First
 
-### LAG — Look Backward
+Imagine your monthly bank statement:
+
+```
+Date         Deposit/Withdraw   Running Balance
+─────────    ────────────────   ───────────────
+Jan 1        +1000              1000
+Jan 5        -200                800
+Jan 10       +500               1300
+Jan 15       -100               1200
+```
+
+The running balance on each line **depends on what was on the line before**. That's what `LAG` (look at previous row) and `SUM() OVER` (running totals) compute.
+
+These functions answer the questions:
+- "What changed from yesterday?" → LAG
+- "How does this compare to last month?" → LAG
+- "What's our cumulative total so far?" → SUM OVER
+- "What's the next event after this?" → LEAD
+
+---
+
+## 🗃️ Practice Data
+
+```
+daily_xp:
+┌──────────┬────────┐
+│   date   │   xp   │
+├──────────┼────────┤
+│ 2026-05-01│   30  │
+│ 2026-05-02│   50  │
+│ 2026-05-03│   40  │
+│ 2026-05-04│   80  │
+│ 2026-05-05│   20  │
+│ 2026-05-06│   90  │
+└──────────┴────────┘
+```
+
+---
+
+## 📖 Start From Zero
+
+### `LAG` — Look at the Previous Row
 
 ```sql
--- Compare each day's study time with the previous day
 SELECT
-  DATE(date) AS study_date,
-  SUM(minutes) AS minutes_today,
-  LAG(SUM(minutes)) OVER (ORDER BY DATE(date)) AS minutes_yesterday,
-  SUM(minutes) - LAG(SUM(minutes)) OVER (ORDER BY DATE(date)) AS change
-FROM study_logs
-GROUP BY DATE(date)
-ORDER BY study_date;
+  date,
+  xp,
+  LAG(xp) OVER (ORDER BY date) AS previous_day_xp
+FROM daily_xp;
 ```
 
+Result:
 ```
-study_date  | today | yesterday | change
-2026-05-11  | 150   | NULL      | NULL
-2026-05-12  | 120   | 150       | -30
-2026-05-13  | 180   | 120       | +60
+date         xp    previous_day_xp
+──────────  ───   ───────────────
+2026-05-01   30      NULL          ← no previous day
+2026-05-02   50       30
+2026-05-03   40       50
+2026-05-04   80       40
+2026-05-05   20       80
+2026-05-06   90       20
 ```
 
-LAG(column, N) — looks N rows back. LAG(column, 1) is the default.
+`LAG(column)` says: "for each row, also show me the value from the row before (in ORDER BY order)."
 
-### LEAD — Look Forward
+---
+
+## 🔨 Level Up
+
+### Step 1: Day-Over-Day Difference
 
 ```sql
--- Show each week with the next week's target
 SELECT
-  week_number,
-  SUM(minutes) AS this_week,
-  LEAD(SUM(minutes)) OVER (ORDER BY week_number) AS next_week
-FROM study_logs
-GROUP BY week_number;
+  date,
+  xp,
+  xp - LAG(xp) OVER (ORDER BY date) AS change_from_yesterday
+FROM daily_xp;
 ```
 
-### Running Totals with SUM OVER
+Result:
+```
+date         xp    change
+──────────  ───   ──────
+2026-05-01   30    NULL
+2026-05-02   50    +20
+2026-05-03   40    -10
+2026-05-04   80    +40
+2026-05-05   20    -60
+2026-05-06   90    +70
+```
+
+This is THE pattern for week-over-week, month-over-month, or year-over-year analysis.
+
+---
+
+### Step 2: LEAD — Look at the Next Row
 
 ```sql
--- Cumulative XP over time
 SELECT
-  created_at::date AS day,
-  points,
-  SUM(points) OVER (ORDER BY created_at) AS cumulative_xp
-FROM xp_events
-WHERE user_id = 1
-ORDER BY created_at;
+  date,
+  xp,
+  LEAD(xp) OVER (ORDER BY date) AS next_day_xp
+FROM daily_xp;
 ```
+
+Result:
+```
+date         xp    next_day_xp
+──────────  ───   ───────────
+2026-05-01   30        50
+2026-05-02   50        40
+2026-05-03   40        80
+2026-05-04   80        20
+2026-05-05   20        90
+2026-05-06   90      NULL    ← no next day
+```
+
+Useful for things like "how long until the user's next action" or "next status change."
+
+---
+
+### Step 3: LAG/LEAD with Offset and Default
 
 ```sql
--- Running total per category
 SELECT
-  track_id,
-  created_at,
-  points,
-  SUM(points) OVER (
-    PARTITION BY track_id
-    ORDER BY created_at
-  ) AS track_cumulative_xp
-FROM xp_events;
+  date,
+  xp,
+  LAG(xp, 1) OVER (ORDER BY date) AS yesterday,     -- default offset=1
+  LAG(xp, 7) OVER (ORDER BY date) AS last_week,     -- 7 rows back
+  LAG(xp, 1, 0) OVER (ORDER BY date) AS yest_or_0   -- default 0 if no row
+FROM daily_xp;
 ```
 
-### Window Frame — ROWS BETWEEN
+`LAG(column, offset, default)` lets you control:
+- How far back to look (offset)
+- What to return if there is no such row (default — instead of NULL)
+
+---
+
+### Step 4: Running Total with SUM() OVER
 
 ```sql
--- Moving average (last 7 days)
 SELECT
-  DATE(date) AS study_date,
-  SUM(minutes) AS daily_minutes,
-  AVG(SUM(minutes)) OVER (
-    ORDER BY DATE(date)
-    ROWS BETWEEN 6 PRECEDING AND CURRENT ROW
-  ) AS moving_avg_7day
-FROM study_logs
-GROUP BY DATE(date);
-
--- Running total from beginning to current
-SUM(points) OVER (
-  ORDER BY created_at
-  ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
-)
+  date,
+  xp,
+  SUM(xp) OVER (ORDER BY date) AS running_total
+FROM daily_xp;
 ```
 
-### Practical Analytics Patterns
+Result:
+```
+date         xp    running_total
+──────────  ───   ─────────────
+2026-05-01   30       30
+2026-05-02   50       80
+2026-05-03   40      120
+2026-05-04   80      200
+2026-05-05   20      220
+2026-05-06   90      310
+```
+
+The running total is "sum of all rows up to and including this one (in date order)."
+
+---
+
+### Step 5: Per-Group Running Total with PARTITION BY
 
 ```sql
--- Week-over-week growth
-WITH weekly AS (
-  SELECT
-    DATE_TRUNC('week', created_at) AS week,
-    SUM(points) AS weekly_xp
-  FROM xp_events
-  GROUP BY DATE_TRUNC('week', created_at)
-)
+-- Imagine xp data has a user_id column too
 SELECT
-  week,
-  weekly_xp,
-  LAG(weekly_xp) OVER (ORDER BY week) AS prev_week_xp,
-  ROUND((weekly_xp - LAG(weekly_xp) OVER (ORDER BY week)) * 100.0 /
-    NULLIF(LAG(weekly_xp) OVER (ORDER BY week), 0), 1) AS growth_pct
-FROM weekly;
-
--- Streak detection
-WITH daily AS (
-  SELECT
-    DATE(date) AS study_date,
-    1 AS studied
-  FROM study_logs
-  WHERE user_id = 1
-  GROUP BY DATE(date)
-)
-SELECT
-  study_date,
-  SUM(studied) OVER (
-    ORDER BY study_date
-    ROWS BETWEEN 6 PRECEDING AND CURRENT ROW
-  ) AS last_7_days
-FROM daily;
+  user_id,
+  date,
+  xp,
+  SUM(xp) OVER (PARTITION BY user_id ORDER BY date) AS user_running_xp
+FROM xp_log;
 ```
 
-## Try It Yourself
+The running total restarts at the beginning of each user's history.
 
-1. Use LAG to calculate day-over-day change in study minutes.
-2. Calculate a 7-day moving average of XP earned.
-3. Use SUM OVER to show cumulative study hours over the entire program.
-4. Compute week-over-week XP growth percentage.
+---
 
-## Common Mistakes
+### Step 6: ROWS BETWEEN — Custom Window Frames
 
-- **Forgetting ORDER BY in LAG/LEAD**: Without ORDER BY, "previous row" is meaningless.
-- **NULL first row**: LAG returns NULL for the first row. Handle with COALESCE or in application code.
-- **Default frame misunderstanding**: SUM OVER with ORDER BY defaults to `RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW` (cumulative). Without ORDER BY, it sums everything.
+You can fine-tune which rows the window includes:
 
-## Checkpoint
+```sql
+-- 3-day moving average (current + 2 previous)
+SELECT
+  date,
+  xp,
+  AVG(xp) OVER (
+    ORDER BY date
+    ROWS BETWEEN 2 PRECEDING AND CURRENT ROW
+  ) AS three_day_avg
+FROM daily_xp;
+```
 
-1. How would you use LAG to calculate week-over-week growth?
-2. What does the window frame `ROWS BETWEEN 6 PRECEDING AND CURRENT ROW` do?
-3. What does LAG return for the first row?
-4. **Reflection**: What time-series analytics would your dashboard need?
+Result:
+```
+date         xp    three_day_avg
+──────────  ───   ─────────────
+2026-05-01   30      30.00
+2026-05-02   50      40.00     ← (30+50)/2
+2026-05-03   40      40.00     ← (30+50+40)/3
+2026-05-04   80      56.67     ← (50+40+80)/3
+2026-05-05   20      46.67     ← (40+80+20)/3
+2026-05-06   90      63.33     ← (80+20+90)/3
+```
+
+**Frame options:**
+```
+ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW   → running total (default for ORDER BY)
+ROWS BETWEEN 2 PRECEDING AND CURRENT ROW          → 3-row moving window
+ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING          → 3-row centered window
+ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING  → tail-end sum
+```
+
+---
+
+### Step 7: First and Last Value in Window
+
+```sql
+SELECT
+  date,
+  xp,
+  FIRST_VALUE(xp) OVER (ORDER BY date) AS first_day_xp,
+  LAST_VALUE(xp) OVER (
+    ORDER BY date
+    ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
+  ) AS last_day_xp
+FROM daily_xp;
+```
+
+Get the first/last value of any column within the window. Useful for "did the value increase since the start?"
+
+---
+
+### Step 8: Real Pattern — Sessions and Gaps
+
+You have a `study_logs` table and want to find the time between each user's sessions:
+
+```sql
+SELECT
+  user_id,
+  date,
+  date - LAG(date) OVER (PARTITION BY user_id ORDER BY date) AS days_since_last
+FROM study_logs;
+```
+
+If `days_since_last > 1`, the user skipped a day (streak broken). Powerful for streak/retention analysis.
+
+---
+
+## 🧪 Practice — Try Each Step
+
+**Exercise 1 — LAG basics:**
+```sql
+-- Show each date, xp, and the previous day's xp
+```
+
+**Exercise 2 — Day-over-day:**
+```sql
+-- Show the change in xp from the previous day
+```
+
+**Exercise 3 — LEAD:**
+```sql
+-- Show each date with the NEXT day's xp
+```
+
+**Exercise 4 — Running total:**
+```sql
+-- Show the cumulative XP earned to date
+```
+
+**Exercise 5 — Moving average:**
+```sql
+-- Compute a 3-day moving average of xp
+```
+
+**Exercise 6 — Per-user running total:**
+```sql
+-- Imagine an xp_log table with user_id, date, xp
+-- Compute each user's running XP total
+```
+
+**Exercise 7 — Streak detection:**
+```sql
+-- Compute days_since_last_session for each row
+-- Flag rows where days_since_last > 1 as "streak break"
+```
+
+**Exercise 8 — Year-over-year comparison:**
+```sql
+-- Given monthly revenue data spanning years, compute the % change
+-- vs the same month last year
+-- Hint: LAG(revenue, 12)
+```
+
+---
+
+## ⚠️ Watch Out For
+
+| Mistake | What Happens | Fix |
+|---|---|---|
+| LAG without ORDER BY | Result is non-deterministic | Always specify ORDER BY in window |
+| Calculating LAG over a unsorted column | Wrong "previous" row | Use the column you care about ordering |
+| Forgetting NULL on first/last row | Calculation includes NULL | Use COALESCE or check for NULL |
+| Using default LAST_VALUE | Default frame stops at current row | Specify UNBOUNDED FOLLOWING for the actual last |
+| Confusing OVER scope | Window applies per-call | Each window function has its own OVER clause |
+
+---
+
+## 🧠 Mental Model
+
+```
+LAG(col, offset, default)  → look BACKWARDS
+LEAD(col, offset, default) → look FORWARDS
+SUM(col) OVER (...)        → running calculation
+FIRST_VALUE / LAST_VALUE   → boundary values
+
+Window frame:
+  ROWS BETWEEN [n] PRECEDING AND [n] FOLLOWING
+  Default with ORDER BY: UNBOUNDED PRECEDING to CURRENT ROW
+
+These functions answer "compared to what came before/after" questions
+WITHOUT collapsing rows like GROUP BY does.
+```
+
+---
+
+## 📝 Check Your Understanding
+
+1. **Define:** What's the difference between `LAG` and `LEAD`?
+2. **Predict:** What does this return for the 2nd row?
+   ```sql
+   SELECT date, xp, LAG(xp, 2) OVER (ORDER BY date) FROM daily_xp;
+   ```
+3. **Find the bug:**
+   ```sql
+   SELECT LAG(amount) OVER () FROM sales;
+   -- What's wrong? Why might results be random?
+   ```
+4. **Write it:** Compute the daily change in XP. Show a `+` or `-` indicator column.
+5. **Apply it:** For an `orders` table, calculate the time between each customer's consecutive orders (days_since_last_order).
+6. **Reflect:** Window functions like LAG are how dashboards compute "WoW change" and "YoY growth." Why can't you do this with GROUP BY alone?

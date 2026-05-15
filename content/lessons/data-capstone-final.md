@@ -1,58 +1,43 @@
 # Data Engineering Capstone Summary
 
-## Why This Matters
+## 🎯 By End of This Lesson You Will:
+- Summarize your full data engineering journey
+- Write CV-ready bullet points
+- Plan your next career steps
 
-This is the finish line. Over 22 weeks, you've built a full-stack learning platform AND a data engineering portfolio. This capstone ties everything together — the skills, the projects, and the story you'll tell about your journey.
+## 🌍 Real-World Analogy First
 
-## What You Built
+You've built the engine, the chassis, and the body. Now step back and look at the car. Write the spec sheet. Take the photos. This is your showroom — where you present everything you've built.
 
-**Learning OS Analytics Pipeline:**
-- OLTP schema (12 tables, Prisma ORM)
-- SQL analysis portfolio (3 projects with documented findings)
-- Star schema design for learning analytics
-- Data quality framework (validation checks, logging)
-- Pipeline design (ETL/ELT, scheduling, orchestration concepts)
+## 📖 What You Built
 
-**Data Engineering Skills Demonstrated:**
-- SQL: SELECT through window functions, CTEs, recursive queries
-- Data modeling: 3NF normalization, star schema, SCD design
-- Data quality: NULL checks, uniqueness, referential integrity, range validation
-- Pipeline: ETL vs ELT, batch scheduling, Airflow/dbt concepts
-- Tools: PostgreSQL, Prisma, dbt concepts, cloud warehouse architecture
+- **SQL portfolio:** 3 documented projects with 15+ queries each
+- **Star schema:** Learning analytics data warehouse design
+- **Data quality:** Validation framework with automated checks
+- **Pipeline design:** ETL/ELT architecture for study data
+- **Learning OS:** Full-stack app with PostgreSQL + Prisma
 
-## Key Projects
+## 🔨 CV Bullet Points
 
-1. **Exploratory Data Analysis** — SQL profiling and insights on real dataset
-2. **Learning Analytics Schema** — Star schema with facts and dimensions
-3. **Full Data Portfolio** — Documented projects on GitHub
+> "Designed a star schema data warehouse for learning analytics, enabling cohort analysis across 22 curriculum modules with 50+ analytical queries"
 
-## CV Bullet Points
+> "Built data quality framework with 20+ validation checks, ensuring pipeline reliability through pre-ingest validation"
 
-Use these on your CV/LinkedIn:
+> "Developed SQL analysis portfolio demonstrating CTEs, window functions, and statistical analysis on real datasets"
 
-- "Designed and implemented a star schema data warehouse for a learning analytics platform, enabling weekly cohort analysis across 22 curriculum modules"
-- "Built data quality framework with 20+ automated validation checks, reducing data pipeline failures by 100% through pre-ingest validation"
-- "Developed SQL analysis portfolio demonstrating window functions, CTEs, and statistical methods on real-world datasets"
+## 🧪 Practice — Try Each Step
 
-## What's Next
+1. List every technical skill you've demonstrated.
+2. Write 3 CV bullet points from your projects.
+3. Identify 3 skills to develop next.
+4. Find one open-source data project to contribute to.
+5. Update your LinkedIn with your projects.
 
-1. Build a real pipeline with Airflow or dbt
-2. Contribute to an open-source data project
-3. Get certified (dbt Analytics Engineer, GCP Data Engineer)
-4. Apply data engineering skills to a new domain (finance, healthcare, climate)
-5. Join a data community and share your projects
+## 🧠 Mental Model — One Sentence
 
-## Reflection Prompts
+Your portfolio proves competence; CV bullet points translate that competence into career opportunities.
 
-1. Write 3 CV bullet points based on your data engineering work.
-2. What project are you most proud of?
-3. What was the hardest concept to learn?
-4. What would you do differently if you started over?
-5. Where do you see your data skills in 6 months?
+## 📝 Check Your Understanding
 
-## Checkpoint
-
-1. Write 3 CV bullet points based on your data engineering work.
-2. List your 3 strongest data engineering skills.
-3. What's your next learning goal?
-4. **Reflection**: Write your 22-week data engineering retrospective.
+- **Write it**: 3 CV bullet points based on your data work.
+- **Reflect**: What's your next learning goal?

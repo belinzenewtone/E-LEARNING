@@ -1,64 +1,67 @@
 # SQL Portfolio Project 3: Full Analysis
 
-## Why This Matters
+## 🎯 By End of This Lesson You Will:
+- Complete a full exploratory data analysis with SQL
+- Document 5+ meaningful findings
+- Publish a professional portfolio project to GitHub
+- Demonstrate SQL skills that hiring managers look for
 
-This is your data engineering showcase. A complete, professional SQL analysis project with documented findings proves you can do the work — not just talk about it. This is the project you send to hiring managers.
+## 🌍 Real-World Analogy First
 
-## Project Specs
+This is your SQL showpiece. Like an artist's portfolio, it proves you can do the work — not just talk about it. When a hiring manager asks "what SQL can you write?", you send them this repo.
 
-### Requirements
-1. Choose a real dataset (Kaggle, government data, or your own Learning OS data)
-2. Write 15+ SQL queries covering: profiling, filtering, aggregation, JOINs, window functions, CTEs
-3. Document 5+ meaningful insights
-4. Write a professional README
-5. Publish to GitHub with clean commit history
+## 📖 Start From Zero
 
-### README Template
+### Project Template
+
 ```markdown
-# [Project Name]: SQL Analysis of [Dataset]
-
-## Dataset
-- Source: [URL]
-- Size: [rows] rows, [columns] columns
-- Description: What this data represents
+# SQL Analysis of [Dataset Name]
+**Dataset:** [source]
+**Rows:** 500+ | **Columns:** 8
 
 ## Questions Explored
-1. [Question 1]
-2. [Question 2]
-3. [Question 3]
+1. Question 1?
+2. Question 2?
 
 ## Key Findings
 ### Finding 1: [Headline]
-[2-3 sentences explaining the finding, with evidence]
-
-### Finding 2: [Headline]
-...
+Evidence and implications (1-2 sentences with numbers)
 
 ## Technical Approach
-- PostgreSQL with window functions, CTEs, and subqueries
-- IQR method for outlier detection
-- 7-day moving averages for trend analysis
+- PostgreSQL with CTEs, window functions, subqueries
+- IQR outlier detection
+- 7-day moving averages
 
 ## Skills Demonstrated
-- Exploratory data analysis
-- Window functions (ROW_NUMBER, LAG, running totals)
-- Data cleaning (NULL handling, deduplication, standardization)
-- Statistical analysis (quartiles, standard deviation, correlation)
-- Professional documentation
+- [ ] Exploratory data analysis
+- [ ] Window functions
+- [ ] Data cleaning
+- [ ] Professional documentation
 ```
 
-### Query Checklist
-- [ ] At least 3 aggregate queries with GROUP BY
-- [ ] At least 2 JOIN queries across related tables
-- [ ] At least 3 window function queries (RANK, LAG, SUM OVER)
-- [ ] At least 2 CTE-based queries
-- [ ] At least 1 subquery
-- [ ] At least 2 data cleaning queries
-- [ ] All queries commented
+## 🔨 Requirements Checklist
 
-## Checkpoint
+- [ ] 15+ SQL queries (SELECT, aggregates, JOINs, CTEs, window functions)
+- [ ] 5+ documented insights with evidence
+- [ ] Data cleaning section (NULLs, duplicates, outliers found and fixed)
+- [ ] Professional README
+- [ ] Published to GitHub with clean commits
 
-1. What dataset did you choose and why?
-2. List your 3 most interesting findings.
-3. What was the hardest query to write?
-4. **Reflection**: What does this project prove about your skills?
+## 🧪 Practice — Try Each Step
+
+1. Choose a dataset (Kaggle, government data, or your study logs).
+2. Run profiling queries: COUNT, DISTINCT, NULL counts, MIN/MAX/AVG.
+3. Find 5 insights: patterns, anomalies, or relationships.
+4. Write window function queries: ranking, running totals, LAG.
+5. Document everything in a README with findings summarized.
+6. Push to GitHub and pin the repo to your profile.
+
+## 🧠 Mental Model — One Sentence
+
+A portfolio project answers "can this person work with real data?" — show the questions you asked, the SQL you wrote, and what you found.
+
+## 📝 Check Your Understanding
+
+- **Define**: What separates a finding from an observation?
+- **Write it**: Draft your project README structure.
+- **Reflect**: What's the most interesting pattern you found?

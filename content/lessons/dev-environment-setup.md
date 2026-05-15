@@ -1,80 +1,100 @@
 # Setting Up Your Dev Environment
 
-## Why This Matters
+## 🎯 By End of This Lesson You Will:
+- Install and verify Node.js, Python, Git, and VS Code
+- Set up a project with version control
+- Understand terminal basics
+- Choose between global and project-level tools
 
-Every line of code you write runs somewhere. Setting up your environment properly means fewer "it works on my machine" moments and more time actually building things. A clean, repeatable dev environment is the first thing hiring managers check when they clone your repo.
+## 🌍 Real-World Analogy First
 
-## Core Concepts
+Your dev environment is like a chef's kitchen. You need the right tools (VS Code), the right ingredients (Node.js, Python), a recipe book (Git for tracking changes), and a clean workspace (terminal). A well-organized kitchen makes cooking — and coding — faster and more enjoyable.
 
-### Node.js & npm
+## 📖 Start From Zero
 
-Node.js lets JavaScript run outside the browser. npm (Node Package Manager) installs libraries your project needs.
+### Node.js — JavaScript Runtime
 
 ```bash
-# Check your version
-node --version  # Should be 18.x or later
-npm --version   # Should be 9.x or later
+# Download from https://nodejs.org (LTS version)
+node --version   # v20.x or later
+npm --version    # 10.x or later
 ```
 
-When you run `npm init`, it creates a `package.json` — the ID card of your project. It tracks dependencies, scripts, and metadata.
+Node.js lets JavaScript run outside the browser. npm installs packages.
 
-### VS Code Extensions
-
-Install these from the Extensions panel (Ctrl+Shift+X):
-
-| Extension | Why |
-|---|---|
-| Prettier | Auto-formats code on save |
-| ESLint | Catches bugs before they run |
-| GitHub Copilot (optional) | AI code suggestions |
-| Live Server | Opens HTML in browser with auto-reload |
-
-### Terminal Basics
-
-The terminal is your most powerful tool. You'll use it to run commands, install packages, and manage git.
+### Python — The Data & Backend Language
 
 ```bash
-pwd              # "print working directory" — where am I?
-ls               # list files
-cd projects      # change into the "projects" folder
+python --version   # 3.10 or later
+pip --version      # package manager
+```
+
+### VS Code — Your Editor
+
+Install extensions: Prettier (formatting), ESLint (JS linting), Python (Python support), Thunder Client (API testing).
+
+### Git — Version Control
+
+```bash
+git config --global user.name "Your Name"
+git config --global user.email "you@example.com"
+```
+
+## 🔨 Level Up
+
+### Project Setup
+
+```bash
+mkdir my-project
+cd my-project
+git init
+echo "node_modules/" > .gitignore
+npm init -y
+```
+
+### Terminal Essentials
+
+```bash
+pwd              # where am I?
+ls               # what's here?
+cd folder        # go into folder
 cd ..            # go up one level
-mkdir my-app     # create a folder
-code .           # open current folder in VS Code
+code .           # open VS Code here
 ```
 
-### Creating Your First Project
+## 🧪 Practice — Try Each Step
 
-```bash
-mkdir js-practice
-cd js-practice
-npm init -y       # creates package.json with defaults
-code .            # open in VS Code
-```
+1. Install Node.js (LTS) from nodejs.org. Verify with `node --version`.
+2. Install Python 3.10+ from python.org. Verify with `python --version`.
+3. Install VS Code and the Prettier extension.
+4. Create a new folder, `git init`, create `.gitignore` with `node_modules/`.
+5. Run `npm init -y` and examine `package.json`.
+6. Run `python --version` and `pip --version`.
+7. Create an `index.js` with `console.log("Ready!")` and run it with `node index.js`.
+8. Open the project in VS Code with `code .`.
 
-Create a `index.js` file with:
+## ⚠️ Common Mistakes — Catch These Early
 
-```javascript
-console.log("Hello, Learning OS!");
-```
+| Mistake | What You See | The Fix |
+|---|---|---|
+| Installing Current instead of LTS Node.js | Unstable features, compatibility issues | Always use LTS (Long Term Support) |
+| Forgetting `.gitignore` | `node_modules/` committed to git | Create `.gitignore` FIRST, before first commit |
+| Running commands in wrong folder | "package.json not found" | `pwd` to verify you're in the right directory |
+| Multiple Python versions | `python` vs `python3` confusion | Use `python3` on Mac/Linux if `python` points to Python 2 |
 
-Run it: `node index.js`
+## 🧠 Mental Model — One Sentence
 
-## Try It Yourself
+Your dev environment is Node.js (for JavaScript) + Python (for everything else) + Git (for tracking changes) + VS Code (for editing) — set up once, use forever.
 
-1. Install Node.js from [nodejs.org](https://nodejs.org) (LTS version)
-2. Create a folder called `week-01-practice` and `npm init` inside it
-3. Write a script that prints your name, today's date, and your learning goal for this week
-4. Open the folder in VS Code and install the Prettier extension
+## 📝 Check Your Understanding
 
-## Common Mistakes
+- **Define**: What's the difference between Node.js and npm?
+- **Predict**: What happens if you run `git init` in a folder that already has a `.git` folder?
+- **Find the bug**: `node_modules/` is missing from `.gitignore`. What's the consequence?
+- **Write it**: Create a new project with git, npm, and a `.gitignore`.
+- **Apply it**: Install 3 VS Code extensions and verify they're enabled.
+- **Reflect**: What surprised you about setting up your environment?
 
-- **Installing the wrong Node version**: Always use the LTS (Long Term Support) version, not the latest. Check with `node --version`.
-- **Running npm in the wrong folder**: `package.json` must be in the root of your project. If `npm install` can't find it, you're in the wrong directory.
-- **Skipping .gitignore**: Create one immediately. Add `node_modules/` to it. Never commit `node_modules`.
+## 🚀 What This Unlocks
 
-## Checkpoint
-
-1. What command creates a new `package.json` file?
-2. Why shouldn't you commit the `node_modules` folder?
-3. What's the difference between `ls` and `pwd` in the terminal?
-4. Reflection: What surprised you about setting up your environment?
+Every project you build starts here. With the environment set up, you can jump into any JavaScript or Python tutorial and start coding immediately.

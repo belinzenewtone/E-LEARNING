@@ -1,61 +1,77 @@
 # SQL Portfolio Project 2: Learning Analytics Schema
 
-## Why This Matters
+## 🎯 By End of This Lesson You Will:
+- Design a star schema for learning analytics
+- Create fact and dimension tables in PostgreSQL
+- Write analytical queries across your schema
+- Document your design decisions
 
-Designing a schema for your own Learning OS is the ultimate test of everything you've learned. You're not working with a made-up dataset — you're building the database that powers your own learning platform. This project demonstrates data modeling skill in a way that generic tutorials never can.
+## 🌍 Real-World Analogy First
 
-## Project Specs
+Your Learning OS has an operational database (transactions: log study, mark done). But for analytics — "how many hours per week per track?" — you need a different structure. It's like the difference between a cash register (item-by-item) and the end-of-day report (totals, trends). The star schema IS that report.
 
-### Deliverables
-1. A star schema design for learning analytics
-2. CREATE TABLE statements (DDL) in PostgreSQL
-3. An ERD or diagram of your schema
-4. A design document explaining your decisions
-5. Sample queries proving the schema works
+## 📖 Start From Zero
 
-### Requirements
+```sql
+-- Fact table: one row per user per day per track
+CREATE TABLE fact_study_sessions (
+  date_id INTEGER REFERENCES dim_date(id),
+  user_id INTEGER REFERENCES dim_user(id),
+  track_id INTEGER REFERENCES dim_track(id),
+  minutes INTEGER NOT NULL,
+  sessions INTEGER DEFAULT 1,
+  xp_earned INTEGER DEFAULT 0,
+  PRIMARY KEY (date_id, user_id, track_id)
+);
 
-Your star schema must include:
+-- Dimension: dates
+CREATE TABLE dim_date (
+  id SERIAL PRIMARY KEY,
+  full_date DATE NOT NULL,
+  day_of_week TEXT,
+  week_number INTEGER,
+  month TEXT,
+  is_weekday BOOLEAN
+);
+```
 
-**Fact Tables** (at least one):
-- `fact_study_sessions` — grain: one row per user per day per track
-- Columns: study_date_id, user_id, track_id, total_minutes, sessions, xp_earned
+## 🔨 Level Up — Key Deliverables
 
-**Dimension Tables** (at least three):
-- `dim_date` — date attributes (day, week, month, quarter, year, is_weekday)
-- `dim_user` — user attributes (name, email, signup_date, current_streak)
-- `dim_track` — track attributes (name, slug, target_hours)
-- `dim_lesson` — lesson attributes (title, difficulty, estimated_minutes)
+1. **Star schema DDL** — CREATE TABLE statements for facts + 4 dimension tables
+2. **ERD diagram** — Visual showing relationships
+3. **Design document** — Explain your grain, SCD choices, indexes
+4. **Sample queries** — 5 queries proving the schema works
+5. **Portfolio README** — Professional documentation
 
-### Design Document Requirements
+## 🧪 Practice — Try Each Step
 
-Answer these questions:
-1. What is the grain of your fact table and why?
-2. Which dimensions are SCD Type 1 vs Type 2?
-3. What indexes would you add for common queries?
-4. What aggregations would you pre-compute?
-5. How does this schema differ from your OLTP schema?
+1. Define the grain of your fact table (one row = what?).
+2. Design 3+ dimension tables that answer analytical questions.
+3. Write CREATE TABLE statements with proper constraints.
+4. Populate dim_date with a year's worth of dates.
+5. Write queries: weekly study hours, XP by track, completion rate.
+6. Add indexes for your most common queries.
 
-### Sample Queries
+## ⚠️ Common Mistakes
 
-Write 5 queries that prove your schema works:
-1. Total study minutes by track and month
-2. Average XP per day, with 7-day moving average
-3. Weekly completion rate by module
-4. Top 5 most active days with study session count
-5. Year-over-year comparison (if you have enough data)
+| Mistake | The Fix |
+|---|---|
+| Unclear grain | Write down: "one row = one user per day per track" |
+| Too many dimensions | Start with 3-4 core dimensions; add more when needed |
+| No indexes | Add indexes on foreign keys and date columns |
+| Mixing grains | Every row in a fact table must represent the same thing |
 
-### Reflection
+## 🧠 Mental Model — One Sentence
 
-Document:
-1. What were the hardest design decisions?
-2. What would you do differently with more time?
-3. What surprised you about schema design?
-4. How does this project demonstrate your data engineering skills?
+Star schema: fact tables store measurements (minutes, XP), dimension tables describe the context (when, who, what track) — join them to answer any analytical question.
 
-## Checkpoint
+## 📝 Check Your Understanding
 
-1. What is the grain of your fact table?
-2. Which dimension is most complex and why?
-3. Write a sample query from your schema.
-4. **Reflection**: What was the hardest design decision in your schema?
+- **Define**: What is the "grain" of a fact table?
+- **Write it**: Create a fact_daily_progress table with appropriate grain.
+- **Apply it**: Design indexes for your 3 most common queries.
+- **Reflect**: What was the hardest design decision in your schema?
+
+## 🚀 What This Unlocks
+
+Every data warehouse uses star schemas. This project proves you can design one — a skill that data engineering interviews test directly.

@@ -1,136 +1,296 @@
 # Dynamic Routes & Params
 
-## Why This Matters
+## 🎯 By End of This Lesson You Will:
+- Build dynamic route segments with `[param]` folders
+- Read URL params and search params in Server Components
+- Use catch-all segments `[...slug]` for nested URLs
 
-Static pages only get you so far. Dynamic routes let you create pages from data — one route template that renders any number of pages. `/lessons/[slug]` becomes `/lessons/js-variables`, `/lessons/sql-joins`, and every other lesson automatically.
+---
 
-## Core Concepts
+## 🌍 Real-World Analogy First
 
-### Dynamic Segments
+Imagine a library:
+
+```
+Without dynamic routes:
+  /book/the-great-gatsby
+  /book/1984
+  /book/dune
+  → would need 1000 separate page.tsx files!
+
+With dynamic routes:
+  /book/[slug]
+  → ONE file that handles all books
+```
+
+Dynamic segments let one file serve infinite URLs by capturing the variable part as a parameter.
+
+---
+
+## 📖 Start From Zero
+
+### Your First Dynamic Route
 
 ```
 app/
-  lessons/
-    [slug]/
-      page.tsx     → /lessons/js-variables, /lessons/sql-joins, ...
-  users/
-    [id]/
-      page.tsx     → /users/1, /users/2, ...
+└── lessons/
+    └── [slug]/
+        └── page.tsx     ← handles /lessons/anything
 ```
 
 ```tsx
 // app/lessons/[slug]/page.tsx
-export default async function LessonPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
+export default async function LessonPage({ 
+  params 
+}: { 
+  params: Promise<{ slug: string }>
 }) {
   const { slug } = await params;
-  const lesson = await db.lesson.findUnique({ where: { slug } });
-
-  if (!lesson) {
-    notFound(); // shows the nearest not-found.tsx
-  }
-
-  return <LessonContent lesson={lesson} />;
+  return <h1>Lesson: {slug}</h1>;
 }
 ```
 
-### generateStaticParams
+Now `/lessons/js-variables`, `/lessons/sql-joins`, `/lessons/anything-at-all` all render this page.
 
-Pre-render known pages at build time for maximum speed:
+> **Note:** In Next.js 15+, `params` is a **Promise** — you must `await` it.
 
-```tsx
-export async function generateStaticParams() {
-  const lessons = await db.lesson.findMany({ select: { slug: true } });
-  return lessons.map((lesson) => ({ slug: lesson.slug }));
-}
+---
 
-// Now /lessons/js-variables, /lessons/sql-joins, etc. are all pre-built.
-// New lessons not in the list are still rendered on-demand.
-```
+## 🔨 Level Up
 
-### Catch-All Routes
+### Step 1: Multiple Dynamic Segments
 
 ```
-app/
-  docs/
-    [...slug]/
-      page.tsx     → /docs, /docs/getting-started, /docs/api/auth
+app/users/[userId]/posts/[postId]/page.tsx   ← /users/123/posts/456
 ```
 
 ```tsx
-// app/docs/[...slug]/page.tsx
-export default async function DocsPage({
-  params,
+export default async function PostPage({
+  params
 }: {
-  params: Promise<{ slug: string[] }>;
+  params: Promise<{ userId: string; postId: string }>
 }) {
-  const { slug } = await params;
-  // slug is ["getting-started"] or ["api", "auth"] or []
+  const { userId, postId } = await params;
+  return <p>User {userId} / Post {postId}</p>;
 }
 ```
 
-### notFound and error Boundaries
+Both params are extracted from the URL.
+
+---
+
+### Step 2: Fetching by Param
 
 ```tsx
 import { notFound } from "next/navigation";
+import { db } from "@/lib/db";
 
-// Show 404 when resource doesn't exist
-export default async function Page({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  const user = await db.user.findUnique({ where: { id } });
-  if (!user) notFound();
-  return <UserProfile user={user} />;
-}
+export default async function LessonPage({ params }) {
+  const { slug } = await params;
 
-// app/lessons/[slug]/not-found.tsx
-export default function NotFound() {
-  return <div>Lesson not found. Maybe try searching?</div>;
-}
+  const lesson = await db.lesson.findUnique({ where: { slug } });
+  if (!lesson) notFound();
 
-// app/lessons/[slug]/error.tsx — catches runtime errors
-"use client";
-export default function Error({ error, reset }: { error: Error; reset: () => void }) {
-  return (
-    <div>
-      <h2>Something went wrong!</h2>
-      <button onClick={reset}>Try again</button>
-    </div>
-  );
+  return <article>{lesson.content}</article>;
 }
 ```
 
-### Metadata from Route Params
+Always handle "not found" cases — never assume the param resolves to a real record.
+
+---
+
+### Step 3: Catch-All Segments — `[...slug]`
+
+```
+app/docs/[...slug]/page.tsx
+```
+
+Matches:
+- `/docs/intro`
+- `/docs/javascript/variables`
+- `/docs/typescript/advanced/generics`
 
 ```tsx
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
-  const lesson = await db.lesson.findUnique({ where: { slug } });
-
-  return {
-    title: lesson?.title ?? "Lesson",
-    description: lesson?.objective,
-  };
+export default async function DocsPage({
+  params
+}: {
+  params: Promise<{ slug: string[] }>
+}) {
+  const { slug } = await params;   // e.g. ["typescript", "advanced", "generics"]
+  const path = slug.join("/");      // "typescript/advanced/generics"
+  return <p>Showing docs for: {path}</p>;
 }
 ```
 
-## Try It Yourself
+### Step 4: Optional Catch-All — `[[...slug]]`
 
-1. Create a dynamic route `/products/[id]` that fetches and displays a product.
-2. Add `generateStaticParams` to pre-render the top 10 products.
-3. Add a `not-found.tsx` and an `error.tsx` for the route.
-4. Add dynamic metadata that changes the page title based on the product name.
+Double brackets make the param optional. Useful for routes where the base URL should also work:
 
-## Common Mistakes
+```
+app/docs/[[...slug]]/page.tsx
+```
 
-- **Not awaiting params**: In Next.js 15+, `params` is a Promise. Must `await` it before accessing properties.
-- **Assuming the route segment is always present**: Always handle the "not found" case — the user might type any slug.
-- **Over-rendering in generateStaticParams**: Only pre-render pages that are frequently accessed. Thousands of static pages slow down builds.
+Matches:
+- `/docs`            (slug = undefined or [])
+- `/docs/intro`
+- `/docs/topic/sub`
 
-## Checkpoint
+---
 
-1. How do you access route params in a Server Component?
-2. What does `generateStaticParams` do?
-3. When does `notFound()` get triggered?
-4. **Reflection**: Which routes in your app should be dynamic?
+### Step 5: Search Params (`?key=value`)
+
+```tsx
+export default async function SearchPage({
+  searchParams
+}: {
+  searchParams: Promise<{ q?: string; page?: string }>
+}) {
+  const { q = "", page = "1" } = await searchParams;
+  // For /search?q=python&page=2 → q="python", page="2"
+  return <p>Search: {q}, Page: {page}</p>;
+}
+```
+
+`searchParams` is also a Promise in Next.js 15+.
+
+---
+
+### Step 6: Linking with Dynamic Params
+
+```tsx
+import Link from "next/link";
+
+<Link href={`/lessons/${lesson.slug}`}>{lesson.title}</Link>
+<Link href={`/users/${user.id}/posts/${post.id}`}>View</Link>
+<Link href={{ pathname: "/search", query: { q: "python", page: "2" } }}>Search</Link>
+```
+
+Templates work, or pass an object with `query` for type safety.
+
+---
+
+### Step 7: generateStaticParams — Pre-render at Build Time
+
+```tsx
+// app/lessons/[slug]/page.tsx
+
+export async function generateStaticParams() {
+  const lessons = await db.lesson.findMany({ select: { slug: true } });
+  return lessons.map(l => ({ slug: l.slug }));
+}
+
+export default async function LessonPage({ params }) {
+  // ...
+}
+```
+
+At build, Next.js calls `generateStaticParams` and renders one static page per result. Future requests serve the pre-built HTML instantly.
+
+---
+
+### Step 8: dynamicParams — Block Unknown Params
+
+```tsx
+export const dynamicParams = false;
+// If a request comes for a slug not in generateStaticParams, return 404
+```
+
+vs the default `true`:
+```tsx
+// Generate the page on-demand for new slugs
+export const dynamicParams = true;
+```
+
+---
+
+## 🧪 Practice — Try Each Step
+
+**Exercise 1 — Basic dynamic:**
+```tsx
+// Create app/posts/[id]/page.tsx
+// Render "Post {id}" for whatever id the user visits
+```
+
+**Exercise 2 — Fetch by param:**
+```tsx
+// Modify the post page to fetch the post from DB
+// Call notFound() if not found
+```
+
+**Exercise 3 — Multiple params:**
+```tsx
+// /users/[userId]/orders/[orderId]
+// Render both params
+```
+
+**Exercise 4 — Catch-all:**
+```tsx
+// /tags/[...slug] — render the tag path joined with /
+```
+
+**Exercise 5 — Search params:**
+```tsx
+// /search page that reads ?q=... and ?sort=...
+// Show both values
+```
+
+**Exercise 6 — Static generation:**
+```tsx
+// generateStaticParams for lesson slugs
+// Build with npm run build — confirm static pages generated
+```
+
+**Exercise 7 — Optional catch-all:**
+```tsx
+// /shop/[[...category]] that:
+// - shows all products at /shop
+// - shows products in /shop/electronics
+// - shows products in /shop/electronics/phones
+```
+
+---
+
+## ⚠️ Watch Out For
+
+| Mistake | What Happens | Fix |
+|---|---|---|
+| Forgetting `await params` | TypeError accessing fields | `const { x } = await params;` |
+| Not handling notFound | Crash or empty page | Always check + call `notFound()` |
+| `params.slug` (without `[...]`) is a string, with `[...]` is array | TypeError | Match destructuring to bracket type |
+| Mixing `[slug]` with `[...slug]` | Build error | Pick one |
+| URL has special chars | Decoded wrong | Use `decodeURIComponent` if needed |
+
+---
+
+## 🧠 Mental Model
+
+```
+File path = URL pattern
+
+[slug]/page.tsx       → /[slug]            (single dynamic segment)
+[...slug]/page.tsx    → /a/b/c (any depth)
+[[...slug]]/page.tsx  → optional catch-all
+
+Accessing:
+  params (path params): Promise<{...}>
+  searchParams (?query):  Promise<{...}>
+  both await-required in Next 15+
+
+generateStaticParams + dynamicParams: pre-render specific routes at build
+```
+
+---
+
+## 📝 Check Your Understanding
+
+1. **Define:** What's the difference between `[slug]` and `[...slug]`?
+2. **Predict:** Given file `app/[a]/[b]/page.tsx`, what URL is `/x/y/z`?
+3. **Find the bug:**
+   ```tsx
+   export default function Page({ params }) {
+     const { slug } = params;   // why might this fail?
+   }
+   ```
+4. **Write it:** A blog where `/blog/[year]/[month]/[slug]` renders post metadata.
+5. **Apply it:** Add `generateStaticParams` to a dynamic route in your project.
+6. **Reflect:** Why does Next 15+ make params a Promise? What does that enable?

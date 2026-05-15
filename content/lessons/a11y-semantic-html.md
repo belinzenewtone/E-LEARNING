@@ -1,150 +1,104 @@
 # Accessibility & Semantic HTML
 
-## Why This Matters
+## 🎯 By End of This Lesson You Will:
+- Write semantic HTML that screen readers understand
+- Use ARIA attributes correctly
+- Test keyboard navigation and color contrast
+- Fix the 5 most common accessibility issues
 
-15% of the world's population has a disability. Accessible websites aren't just ethically right — they're legally required in many jurisdictions and improve SEO, usability, and code quality for everyone. Semantic HTML is free accessibility; ARIA is the fallback when HTML isn't enough.
+## 🌍 Real-World Analogy First
 
-## Core Concepts
+A building without ramps locks out wheelchair users. A website without semantic HTML locks out screen reader users. Accessibility isn't an add-on — it's how you build the entrance. 15% of people have a disability. Building accessibly means you serve everyone.
 
-### Semantic HTML Elements
+## 📖 Start From Zero
 
-```html
-<!-- Use semantic elements instead of div soup -->
-<header>    → page/section header
-<nav>       → navigation links
-<main>      → primary content (one per page)
-<section>   → thematic grouping
-<article>   → self-contained content
-<aside>     → sidebar / complementary content
-<footer>    → page/section footer
-```
+### Semantic HTML — Free Accessibility
 
 ```html
-<!-- Before (bad) -->
-<div class="header">
-  <div class="nav">...</div>
-</div>
-<div class="content">...</div>
+<!-- ❌ Div soup — screen readers see nothing -->
+<div class="header">My Site</div>
+<div class="nav"><div onclick="...">Home</div></div>
+<div class="content">Hello</div>
 
-<!-- After (good) -->
-<header>
-  <nav aria-label="Main navigation">...</nav>
-</header>
-<main>...</main>
+<!-- ✅ Semantic — screen readers navigate easily -->
+<header><h1>My Site</h1></header>
+<nav><a href="/">Home</a></nav>
+<main><p>Hello</p></main>
 ```
 
 ### Heading Hierarchy
 
 ```html
-<!-- One h1 per page, headings must not skip levels -->
-<h1>Dashboard</h1>
-  <h2>Your Progress</h2>
-    <h3>Web Development</h3>
-    <h3>Data Engineering</h3>
-  <h2>Recent Activity</h2>
+<h1>Dashboard</h1>       <!-- One per page -->
+  <h2>Your Progress</h2>  <!-- Sub-sections -->
+    <h3>Web Track</h3>    <!-- Sub-sub-sections -->
+    <h3>Data Track</h3>
 ```
 
-Screen readers use headings to navigate. A broken hierarchy makes your site unnavigable.
+Never skip levels. Screen reader users navigate by headings.
+
+## 🔨 Level Up
 
 ### Keyboard Navigation
 
 ```tsx
-// Interactive elements must be focusable and operable via keyboard
-<button onClick={handleClick}>Click me</button>  // naturally focusable
-<a href="/page">Go to page</a>                    // naturally focusable
+// ✅ Native — free keyboard support
+<button onClick={handleClick}>Submit</button>
+<a href="/page">Go there</a>
 
-// For custom interactive elements, use:
-<div
-  role="button"
-  tabIndex={0}
-  onClick={handleClick}
-  onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") handleClick(); }}
->
-  Custom button
+// ❌ Custom — must add keyboard handling
+<div onClick={handleClick}>  {/* Not focusable, no Enter/Space */}
+```
+
+### ARIA — When HTML Isn't Enough
+
+```tsx
+<button aria-label="Close dialog"><XIcon /></button>
+
+<div role="alert" aria-live="polite">
+  {notification}
 </div>
 
-// But ideally: just use <button> — it handles all of this for free
+<nav aria-label="Main navigation">...</nav>
 ```
 
-### ARIA Labels
+### Color & Contrast Checklist
+- Text: minimum 4.5:1 contrast ratio
+- Never use color alone to convey meaning
+- Test with Chrome DevTools → Lighthouse
 
-```tsx
-// For elements without visible text
-<button aria-label="Close dialog">
-  <XIcon />
-</button>
+## 🧪 Practice — Try Each Step
 
-// Describing complex widgets
-<div role="tablist" aria-label="Settings tabs">
-  <button role="tab" aria-selected={active === "profile"}>Profile</button>
-  <button role="tab" aria-selected={active === "security"}>Security</button>
-</div>
+1. Replace 3 `<div>` elements with semantic HTML in your page.
+2. Add `aria-label` to an icon-only button.
+3. Tab through your entire page — can you reach every interactive element?
+4. Run a Lighthouse accessibility audit and fix all issues.
+5. Test with a screen reader (VoiceOver on Mac, NVDA on Windows).
+6. Check that all images have meaningful `alt` text (or empty `alt=""` for decorative).
 
-// Live regions for dynamic content
-<div aria-live="polite" aria-atomic="true">
-  {notification}  // announced by screen reader when it changes
-</div>
-```
+## ⚠️ Common Mistakes — Catch These Early
 
-### Color and Contrast
+| Mistake | What Happens | The Fix |
+|---|---|---|
+| Missing heading hierarchy | Screen reader can't navigate | Use h1 → h2 → h3 sequentially |
+| `div` with `onClick`, no `tabIndex` | Keyboard users can't click it | Use `<button>` instead |
+| Color-only indicators | Colorblind users miss information | Add icons + text |
+| Missing form labels | Screen reader can't identify fields | Every input needs a `<label>` |
+| `alt="photo"` on images | Useless description | Describe what's meaningful OR use `alt=""` for decoration |
 
-- **Minimum contrast ratio**: 4.5:1 for normal text, 3:1 for large text
-- Never use color alone to convey information — add icons or text
-- Test with Chrome DevTools: Lighthouse → Accessibility audit
+## 🧠 Mental Model — One Sentence
 
-```tsx
-// Bad — color alone
-<span className="text-red-500">Error</span>
+Semantic HTML is 80% of accessibility — use the right elements (`<button>`, `<nav>`, `<main>`) and ARIA fills the remaining gaps where HTML falls short.
 
-// Good — color + icon + text
-<span className="text-red-500 flex items-center gap-1">
-  <AlertCircle className="w-4 h-4" />
-  Error: Invalid email
-</span>
-```
+## 📝 Check Your Understanding
 
-### Focus Management
+- **Define**: What's the difference between `aria-label` and `aria-labelledby`?
+- **Predict**: What happens if you focus a modal but forget to trap focus inside?
+- **Find the bug**: `<img src="chart.png" alt="" />` — when is this correct?
+- **Write it**: Add accessible labels to 3 interactive elements on your page.
+- **Apply it**: Run Lighthouse and fix every accessibility issue.
+- **Reflect**: What are the most common accessibility mistakes in web apps?
 
-```tsx
-// After opening a modal, move focus inside
-const modalRef = useRef<HTMLDivElement>(null);
-useEffect(() => {
-  modalRef.current?.focus();
-}, []);
+## 🚀 What This Unlocks**
 
-// Trap focus inside modal (simplified)
-function handleKeyDown(e: KeyboardEvent) {
-  if (e.key === "Escape") close();
-  // Tab trap logic
-}
-```
-
-### alt Text for Images
-
-```tsx
-// Decorative images: empty alt
-<img src="decorative-line.svg" alt="" />
-
-// Informational images: descriptive alt
-<img src="chart.png" alt="Study hours per week: 15 in Week 1, rising to 22 in Week 4" />
-```
-
-## Try It Yourself
-
-1. Run a Lighthouse accessibility audit on your dashboard.
-2. Replace 3 `<div>` elements with semantic HTML equivalents.
-3. Add keyboard navigation to a custom interactive component.
-4. Check all color combinations in your app for contrast compliance.
-
-## Common Mistakes
-
-- **Missing heading hierarchy**: Jumping from h1 to h3 breaks screen reader navigation.
-- **div with onClick but no keyboard support**: Only `<button>` and `<a>` get keyboard events for free. Custom elements need `tabIndex` and `onKeyDown`.
-- **Color-only error indicators**: Add icons and text alongside colored elements.
-
-## Checkpoint
-
-1. What are the most common accessibility mistakes in web apps?
-2. When is an empty alt attribute appropriate?
-3. How do you make a custom interactive element keyboard-accessible?
-4. **Reflection**: Audit your dashboard for accessibility issues.
+Inclusive products. Accessibility improves SEO, usability for everyone, and ensures you're not excluding 1 billion people with disabilities.

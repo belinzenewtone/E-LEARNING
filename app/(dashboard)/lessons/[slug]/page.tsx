@@ -20,6 +20,7 @@ import { LessonStudyArea } from "./lesson-study-area";
 import { ProgressRing } from "@/components/shared/progress-ring";
 import { StudyTimer } from "@/components/shared/study-timer";
 import { MarkdownContent } from "@/components/shared/markdown-content";
+import { LessonToc } from "@/components/shared/lesson-toc";
 import { SupplementarySection } from "@/components/shared/supplementary-section";
 import { getSupplementaryContent } from "@/server/queries/supplementary";
 import { Topbar } from "@/components/layout/topbar";
@@ -92,6 +93,9 @@ function ProgressSidebar({ lesson }: { lesson: LessonFull }) {
           </span>
         </CardContent>
       </Card>
+
+      {/* Table of Contents — section navigation + completion tracking */}
+      <LessonToc lessonSlug={lesson.slug} />
 
       {/* Week progress */}
       <Card className="border-border bg-card">
@@ -268,15 +272,15 @@ async function LessonContent({ slug, userId }: { slug: string; userId: string })
     <div>
       <Topbar breadcrumbs={[{ label: "Lessons", href: "/lessons" }, { label: lesson.title }]} />
       <div className="p-4 sm:p-6 lg:p-8">
-      <div className="grid gap-6 xl:grid-cols-[280px_1fr_220px]">
-        <aside>
+      <div className="grid gap-6 xl:grid-cols-[260px_1fr_280px]">
+        <aside className="xl:sticky xl:top-20 xl:self-start xl:max-h-[calc(100vh-6rem)] xl:overflow-y-auto">
           <LessonInfoPanel lesson={lesson} />
         </aside>
 
-        <main className="space-y-5">
+        <main className="space-y-5 min-w-0">
           {lesson.content && (
             <Card className="border-border bg-card">
-              <CardContent className="p-5">
+              <CardContent className="p-5" data-lesson-body>
                 <MarkdownContent content={lesson.content} />
               </CardContent>
             </Card>
@@ -295,7 +299,8 @@ async function LessonContent({ slug, userId }: { slug: string; userId: string })
           />
         </main>
 
-        <aside>
+        <aside className="xl:sticky xl:top-20 xl:self-start xl:max-h-[calc(100vh-6rem)] xl:overflow-y-auto space-y-4">
+          <LessonToc lessonSlug={lesson.slug} />
           <ProgressSidebar lesson={lesson} />
         </aside>
       </div>

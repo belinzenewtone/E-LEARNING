@@ -1,117 +1,313 @@
 # Star Schema: Facts & Dimensions
 
-## Why This Matters
+## 🎯 By End of This Lesson You Will:
+- Identify fact tables and dimension tables for an analytical use case
+- Define the "grain" of a fact table
+- Design a star schema for the Learning OS analytics
 
-The star schema is the standard pattern for analytical databases. It organizes data into facts (measurable events you want to analyze) and dimensions (descriptive attributes you want to slice by). Every data warehouse at every company uses this pattern.
+---
 
-## Core Concepts
+## 🌍 Real-World Analogy First
 
-### Fact Tables
+A star schema is **one central table surrounded by lookup tables** that describe its rows:
 
-Facts are the events you measure — orders, study sessions, XP events:
+```
+                  ┌──────────────┐
+                  │  dim_date    │
+                  └──────┬───────┘
+                         │
+       ┌─────────────────┴──────────────────┐
+       │                                     │
+┌──────┴──────┐                       ┌──────┴──────┐
+│  dim_user   │  ◄── fact_study ──►   │ dim_lesson  │
+└─────────────┘                       └─────────────┘
+                         │
+                  ┌──────┴───────┐
+                  │  dim_track   │
+                  └──────────────┘
+```
+
+The center (the "fact") is the thing you measure. The points of the star (the "dimensions") are what you filter and group by.
+
+---
+
+## 📖 Start From Zero
+
+### Two Kinds of Tables
+
+| Type | Holds | Example |
+|---|---|---|
+| **Fact** | Numeric measurements + foreign keys to dimensions | study minutes per session |
+| **Dimension** | Descriptive attributes | user info, lesson info, dates |
+
+```
+fact_study_sessions:
+  date_id, user_id, lesson_id, track_id, minutes, xp_earned
+
+dim_user:    id, name, country, joined_at
+dim_lesson:  id, slug, title, difficulty
+dim_track:   id, name, color
+dim_date:    id, year, quarter, month, day, day_of_week
+```
+
+You query: "minutes studied per track per month" → JOIN fact ← dim_track + dim_date, GROUP BY track + month.
+
+---
+
+## 🔨 Level Up
+
+### Step 1: Defining the Grain
+
+**Grain** = what one row in the fact table represents.
+
+```
+Examples of different grains:
+  - One row per STUDY SESSION         (most detailed)
+  - One row per USER PER DAY           (rolled up)
+  - One row per USER PER WEEK          (more rolled up)
+```
+
+The grain decides everything else:
+- Finer grain (per session) → more rows, more flexibility, more storage
+- Coarser grain (per week) → fewer rows, faster queries, less flexibility
+
+> **Rule:** Declare the grain in writing BEFORE designing anything else. "One row per X."
+
+---
+
+### Step 2: Choosing Measurements
+
+In a fact table, **measurements** are numeric columns you'll aggregate (SUM, AVG, COUNT):
+
+```
+fact_study_sessions
+  measurements:
+    minutes              (SUM, AVG)
+    xp_earned            (SUM)
+    questions_answered   (SUM)
+    questions_correct    (SUM)
+```
+
+Plus foreign keys to dimensions:
+```
+  date_id     → dim_date
+  user_id     → dim_user
+  lesson_id   → dim_lesson
+  track_id    → dim_track
+```
+
+---
+
+### Step 3: Designing Dimensions
+
+Each dimension table:
+- Has a surrogate key (e.g., `id`)
+- Has descriptive attributes
+- Often denormalized (track name in dim_lesson, not a separate dim_track)
+
+**dim_user:**
+```
+id, name, country, signup_cohort, primary_track, current_streak
+```
+
+Include user attributes that you might want to filter/group by. Yes, this duplicates some data from the OLTP source — that's the point.
+
+**dim_lesson:**
+```
+id, slug, title, module, track_name, difficulty, estimated_minutes
+```
+
+`track_name` is included even though we have `dim_track` separately — it makes ad-hoc queries simpler.
+
+**dim_date** is special:
+```
+id, date, year, quarter, month, month_name, week, day_of_week, is_weekend, is_holiday
+```
+
+One row per day. Always pre-built so queries can filter on "weekends only" or "Q1 2026" without complex date math.
+
+---
+
+### Step 4: A Real Query Example
 
 ```sql
-CREATE TABLE fact_study_sessions (
-  study_date_id INTEGER REFERENCES dim_date(id),
-  user_id INTEGER REFERENCES dim_user(id),
-  track_id INTEGER REFERENCES dim_track(id),
-  minutes INTEGER NOT NULL,     -- measure
-  xp_earned INTEGER DEFAULT 0,  -- measure
-  sessions INTEGER DEFAULT 1    -- measure
-);
-```
-
-**Key properties of fact tables**:
-- Contains quantitative measures (numbers you can sum, average, count)
-- Mostly foreign keys to dimensions
-- Usually very large (millions/billions of rows)
-- Each row = one event or one aggregation
-
-### Dimension Tables
-
-Dimensions describe the "who, what, where, when" of your facts:
-
-```sql
-CREATE TABLE dim_date (
-  id INTEGER PRIMARY KEY,
-  full_date DATE NOT NULL,
-  day_of_week TEXT,
-  week_number INTEGER,
-  month TEXT,
-  quarter INTEGER,
-  year INTEGER,
-  is_weekday BOOLEAN
-);
-
-CREATE TABLE dim_user (
-  id INTEGER PRIMARY KEY,
-  name TEXT,
-  email TEXT,
-  signup_date DATE,
-  track TEXT  -- 'web' or 'data'
-);
-
-CREATE TABLE dim_track (
-  id INTEGER PRIMARY KEY,
-  name TEXT,
-  slug TEXT
-);
-```
-
-### The Grain
-
-The **grain** is what one row in the fact table represents. It's the most important decision in star schema design:
-
-- Grain = "one study session" → row per session, millions of rows
-- Grain = "one user per day" → row per user per day, thousands of rows
-- Grain = "one user per week" → row per user per week, hundreds of rows
-
-```sql
--- Grain: user per day per track
--- This means there can be at most one row per (user, date, track) combination
-CREATE UNIQUE INDEX ON fact_study_sessions (user_id, study_date_id, track_id);
-```
-
-### A Star Schema for Learning Analytics
-
-```
-         dim_date
-             ↓
-dim_user → fact_study_sessions ← dim_track
-             ↓
-       dim_lesson
-```
-
-```sql
--- Query: total study minutes by track and month
+-- "Total study minutes per track per month"
 SELECT
-  t.name AS track,
-  d.month,
-  SUM(f.minutes) AS total_minutes,
-  AVG(f.minutes) AS avg_minutes_per_session
+  d.year,
+  d.month_name,
+  l.track_name,
+  SUM(f.minutes) AS total_minutes
 FROM fact_study_sessions f
-JOIN dim_date d ON f.study_date_id = d.id
-JOIN dim_track t ON f.track_id = t.id
-GROUP BY t.name, d.month, d.month_order
-ORDER BY d.month_order;
+JOIN dim_date d   ON f.date_id   = d.id
+JOIN dim_lesson l ON f.lesson_id = l.id
+GROUP BY d.year, d.month_name, l.track_name
+ORDER BY d.year, d.month_name;
 ```
 
-## Try It Yourself
+The star structure makes this query simple — one JOIN per dimension.
 
-1. Define the grain for a study analytics fact table.
-2. Design 3 dimension tables that describe your facts.
-3. Write a query across your star schema.
-4. Draw your star schema as a diagram.
+---
 
-## Common Mistakes
+### Step 5: Star vs Snowflake
 
-- **Unclear grain**: If you can't say what one row means in one sentence, your grain needs work.
-- **Mixing grains**: Some rows = daily, some = weekly. Inconsistent grain = wrong aggregations.
-- **Dimensions without all attributes**: Date dimension without week_number means you can't aggregate by week.
+```
+STAR SCHEMA:                    SNOWFLAKE SCHEMA:
+  fact ── dim_lesson              fact ── dim_lesson ── dim_track
+                                                    └── dim_difficulty
+```
 
-## Checkpoint
+In a snowflake, dimensions are further normalized (dim_track is separate from dim_lesson).
 
-1. What is the 'grain' of a fact table and why does it matter?
-2. What's the difference between a fact and a dimension?
-3. Design a star schema for your Learning OS analytics.
-4. **Reflection**: What grain is right for your study analytics?
+**Star is usually preferred** because:
+- Fewer joins → faster queries
+- Easier for analysts to understand
+- Modern columnar DBs handle the redundancy fine
+
+Snowflake is occasionally used for huge dimensions that benefit from sub-tables.
+
+---
+
+### Step 6: Slowly Changing Dimensions (SCD)
+
+What if a user's `country` changes? Three strategies:
+
+```
+SCD Type 1 — Overwrite (history lost)
+  Just update dim_user.country. Past facts now appear in the new country.
+
+SCD Type 2 — Add a new row (history preserved)
+  dim_user gets a new row with the new country + valid_from/valid_to dates.
+  Each fact links to the version active at that time.
+
+SCD Type 3 — Add a column (limited history)
+  dim_user has columns: current_country, previous_country.
+```
+
+Type 2 is the most common for analytics where history matters.
+
+---
+
+### Step 7: Designing for the Learning OS
+
+**Goal:** "Study minutes per user per week per track."
+
+**Grain:** one row per study session.
+
+**fact_study_sessions:**
+```
+date_id, user_id, lesson_id, track_id, minutes, xp_earned, mood
+```
+
+**dim_user:** id, name, country, current_track, joined_at
+**dim_lesson:** id, slug, title, module_name, track_name, difficulty
+**dim_track:** id, name, target_hours
+**dim_date:** id, date, year, week_of_year, day_of_week, is_weekend
+
+With this design, you can answer:
+- "Hours studied this week by track"
+- "Most-studied lessons this month"
+- "Weekend vs weekday study patterns"
+- "User retention by signup cohort"
+
+All with simple GROUP BYs.
+
+---
+
+## 🧪 Practice — Try Each Step
+
+**Exercise 1 — Define the grain:**
+```
+"I want to analyze sales by region, product, and date."
+What's the grain of your fact table?
+```
+
+**Exercise 2 — Identify facts vs dimensions:**
+```
+For an e-commerce data warehouse, label each as F or D:
+- order amount
+- customer name
+- order date
+- product price
+- shipping country
+- order_id
+```
+
+**Exercise 3 — Design fact:**
+```
+Design fact_orders for a sales warehouse.
+What measurements? What FKs?
+```
+
+**Exercise 4 — Design dim_date:**
+```
+Write the columns you'd want in dim_date.
+Why include redundant fields like both month_number AND month_name?
+```
+
+**Exercise 5 — Query practice:**
+```sql
+-- Write a query using the fact_study + dim_date + dim_track schema:
+-- "Average study minutes per session, by track, by month"
+```
+
+**Exercise 6 — Slowly changing:**
+```
+A user's currentTrack changes from "web" to "data". How would SCD Type 2 handle this?
+Sketch the new dim_user rows.
+```
+
+**Exercise 7 — Real design:**
+```
+Design a star schema for a streaming platform:
+"What videos do users watch by genre, by day, by device?"
+Identify fact, dimensions, grain.
+```
+
+---
+
+## ⚠️ Watch Out For
+
+| Mistake | What Happens | Fix |
+|---|---|---|
+| Mixing levels of grain | Inconsistent aggregations | One grain per fact table |
+| Forgetting dim_date | Date arithmetic everywhere | Always have a dim_date |
+| Overly normalized dimensions | Snowflake, slow queries | Denormalize for the star |
+| Updates that lose history | Past facts become wrong | Use SCD Type 2 |
+| Including non-additive measures unmarked | Wrong SUMs | Note semi/non-additive fields explicitly |
+
+---
+
+## 🧠 Mental Model
+
+```
+FACT TABLE (center):
+  - One row per [grain]
+  - Numeric measurements you'll aggregate
+  - Foreign keys to dimensions
+
+DIMENSION TABLES (points of the star):
+  - One row per item being described
+  - Descriptive text/categorical data
+  - Often denormalized
+
+ALWAYS:
+  1. Declare the grain in writing first
+  2. Always include dim_date
+  3. Star (not snowflake) for most cases
+  4. SCD Type 2 if history matters
+```
+
+---
+
+## 📝 Check Your Understanding
+
+1. **Define:** What is the "grain" of a fact table and why does it matter?
+2. **Predict:** Which table holds the customer name in a star schema — fact or dim?
+3. **Find the bug:**
+   ```
+   fact_orders: date, customer_name, country, amount
+   ```
+   What's wrong with this design?
+4. **Write it:** Design a star schema for "user logins by country by hour."
+5. **Apply it:** Sketch the Learning OS analytics star schema.
+6. **Reflect:** Why does OLAP duplicate data on purpose, when OLTP works so hard to avoid duplication?
