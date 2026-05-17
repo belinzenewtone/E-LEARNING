@@ -7,7 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { User, Shield, Target, AlertTriangle, Loader2, Eye, EyeOff } from "lucide-react";
+import { User, Shield, Target, AlertTriangle, Loader2, Eye, EyeOff, ChevronRight } from "lucide-react";
+import Link from "next/link";
 import { formatDate } from "@/lib/utils";
 import { updateProfile, updatePassword, resetAllProgress } from "@/server/actions/settings";
 
@@ -250,6 +251,16 @@ export function SettingsClient({ user, goals, xpTotal }: SettingsClientProps) {
           <p className="text-sm text-muted-foreground">
             Authentication uses NextAuth credentials. Your password is stored as a bcrypt hash.
           </p>
+          <Link
+            href="/settings/security"
+            className="flex items-center justify-between rounded-lg border border-border bg-muted/20 px-4 py-3 text-sm hover:bg-muted/40 transition-colors"
+          >
+            <div className="flex items-center gap-2">
+              <Shield className="w-4 h-4 text-muted-foreground" />
+              <span>Login history &amp; session management</span>
+            </div>
+            <ChevronRight className="w-4 h-4 text-muted-foreground" />
+          </Link>
           <Separator />
           <div className="space-y-3">
             <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">

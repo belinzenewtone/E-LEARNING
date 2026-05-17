@@ -7,16 +7,17 @@ datasource db {
 }
 
 model User {
-  id             String    @id @default(cuid())
-  name           String
-  email          String    @unique
-  passwordHash   String
-  avatarUrl      String?
-  theme          String    @default("dark")
-  loginAttempts  Int       @default(0)
-  lockedUntil    DateTime?
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  id                   String    @id @default(cuid())
+  name                 String
+  email                String    @unique
+  passwordHash         String
+  avatarUrl            String?
+  theme                String    @default("dark")
+  loginAttempts        Int       @default(0)
+  lockedUntil          DateTime?
+  sessionRevokedBefore DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
 
   notes             Note[]
   studyLogs         StudyLog[]
@@ -28,6 +29,24 @@ model User {
   blockers          Blocker[]
   checkpointAnswers LessonCheckpointAnswer[]
   notifications     Notification[]
+  securityEvents    SecurityEvent[]
+}
+
+model SecurityEvent {
+  id        String   @id @default(cuid())
+  userId    String?
+  type      String
+  ip        String?
+  userAgent String?
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([createdAt])
+  @@index([type])
+  @@index([ip])
 }
 
 model Track {

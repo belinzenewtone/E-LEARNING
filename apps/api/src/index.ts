@@ -18,6 +18,7 @@ import searchRoutes from "./routes/search";
 import settingsRoutes from "./routes/settings";
 import exportRoutes from "./routes/export";
 import { errorHandler } from "./middleware/error";
+import { requestLogger, logger } from "./lib/logger";
 
 const app = express();
 const PORT = process.env.PORT ?? 3001;
@@ -25,6 +26,7 @@ const PORT = process.env.PORT ?? 3001;
 const allowedOrigins = (process.env.ALLOWED_ORIGINS ?? "http://localhost:3000").split(",");
 
 app.use(helmet());
+app.use(requestLogger);
 app.use(cors({
   origin: (origin, cb) => {
     if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
@@ -57,7 +59,7 @@ app.get("/api/health", (_req, res) => {
 app.use(errorHandler);
 
 app.listen(PORT, () => {
-  console.log(`API server running on http://localhost:${PORT}`);
+  logger.info("API server started", { port: PORT, env: process.env.NODE_ENV ?? "development" });
 });
 
 export default app;

@@ -2,15 +2,27 @@
 
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { logSecurityEvent } from "@/lib/security-event";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
+import { headers } from "next/headers";
 
 async function requireUserId(): Promise<string> {
   const session = await auth();
   if (!session?.user?.id) redirect("/login");
   return session.user.id;
+}
+
+async function getRequestMeta() {
+  const h = await headers();
+  const ip =
+    h.get("x-forwarded-for")?.split(",")[0].trim() ??
+    h.get("x-real-ip") ??
+    "unknown";
+  const userAgent = h.get("user-agent") ?? "unknown";
+  return { ip, userAgent };
 }
 
 const UpdateProfileSchema = z.object({
@@ -81,6 +93,23 @@ export async function updatePassword(formData: FormData) {
     where: { id: userId },
     data: { passwordHash: newHash },
   });
+
+  const { ip, userAgent } = await getRequestMeta();
+  await logSecurityEvent({ type: "PASSWORD_CHANGE", userId, ip, userAgent });
+
+  return { success: true };
+}
+
+export async function revokeAllSessions() {
+  const userId = await requireUserId();
+  const { ip, userAgent } = await getRequestMeta();
+
+  await db.user.update({
+    where: { id: userId },
+    data: { sessionRevokedBefore: new Date() },
+  });
+
+  await logSecurityEvent({ type: "SESSION_REVOKED", userId, ip, userAgent, metadata: { scope: "all" } });
 
   return { success: true };
 }
