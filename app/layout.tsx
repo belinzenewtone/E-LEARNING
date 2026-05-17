@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Personal Learning OS",
-  description: "Your personal 22-week upskilling platform for Data Engineering and JavaScript/TypeScript/Next.js",
+  description: "Your personal 26-week upskilling platform for Web Development, Data Engineering, and Python & FastAPI",
 };
 
 export default function RootLayout({

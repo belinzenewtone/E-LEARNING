@@ -29,12 +29,12 @@ export default async function AssignmentsPage() {
   if (assignments.length === 0) {
     return (
       <div>
-        <Topbar title="Assignments" subtitle="All assignments across both tracks" />
+        <Topbar title="Assignments" subtitle="All assignments across all tracks" />
         <div className="p-4 sm:p-6 lg:p-8">
           <div className="mb-6 space-y-1">
             <h1 className="text-2xl font-bold text-foreground">Assignments</h1>
             <p className="text-sm text-muted-foreground">
-              All assignments across both tracks.
+              All assignments across all tracks.
             </p>
           </div>
           <EmptyState
@@ -50,14 +50,14 @@ export default async function AssignmentsPage() {
 
   return (
     <div>
-      <Topbar title="Assignments" subtitle="All assignments across both tracks" />
+      <Topbar title="Assignments" subtitle="All assignments across all tracks" />
       <div className="space-y-6 p-4 sm:p-6 lg:p-8">
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="space-y-1">
           <h1 className="text-2xl font-bold text-foreground">Assignments</h1>
           <p className="text-sm text-muted-foreground">
-            All assignments across both tracks.
+            All assignments across all tracks.
           </p>
         </div>
 

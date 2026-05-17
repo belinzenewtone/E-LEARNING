@@ -59,6 +59,7 @@ export async function getDashboardStats(userId: string) {
     studyLogs30d,
     webTrack,
     dataTrack,
+    pythonTrack,
     currentWeek,
     studyLogsThisWeek,
     lessonsCompletedTodayCount,
@@ -95,6 +96,19 @@ export async function getDashboardStats(userId: string) {
     // data track with lessons (via modules)
     db.track.findFirst({
       where: { slug: "data-engineering" },
+      select: {
+        id: true,
+        modules: {
+          select: {
+            lessons: { select: { id: true, status: true } },
+          },
+        },
+      },
+    }),
+
+    // python & fastapi track with lessons (via modules)
+    db.track.findFirst({
+      where: { slug: "python-fastapi" },
       select: {
         id: true,
         modules: {
@@ -169,8 +183,16 @@ export async function getDashboardStats(userId: string) {
       ? Math.round((dataCompleted / dataLessons.length) * 100)
       : 0;
 
-  const allLessons = webLessons.length + dataLessons.length;
-  const allCompleted = webCompleted + dataCompleted;
+  const pythonLessons: { id: string; status: string }[] =
+    pythonTrack?.modules.flatMap((m) => m.lessons) ?? [];
+  const pythonCompleted = pythonLessons.filter((l) => l.status === "completed").length;
+  const pythonProgress =
+    pythonLessons.length > 0
+      ? Math.round((pythonCompleted / pythonLessons.length) * 100)
+      : 0;
+
+  const allLessons = webLessons.length + dataLessons.length + pythonLessons.length;
+  const allCompleted = webCompleted + dataCompleted + pythonCompleted;
   const overallProgress =
     allLessons > 0 ? Math.round((allCompleted / allLessons) * 100) : 0;
 
@@ -235,6 +257,7 @@ export async function getDashboardStats(userId: string) {
     streak,
     webProgress,
     dataProgress,
+    pythonProgress,
     overallProgress,
     studyMinutesThisWeek,
     weeklyScore,

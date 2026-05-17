@@ -107,7 +107,7 @@ async function DashboardContent({ userId, userName }: { userId: string; userName
       </div>
 
       {/* Mini progress row */}
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
           <div className="space-y-1">
             <div className="flex justify-between text-xs text-muted-foreground">
               <span>Overall</span><span className="font-medium text-foreground">{stats.overallProgress}%</span>
@@ -128,9 +128,15 @@ async function DashboardContent({ userId, userName }: { userId: string; userName
           </div>
           <div className="space-y-1">
             <div className="flex justify-between text-xs text-muted-foreground">
+              <span>Python Track</span><span className="font-medium text-foreground">{stats.pythonProgress}%</span>
+            </div>
+            <Progress value={stats.pythonProgress} className="h-1.5 [&>div]:bg-[var(--token-amber)]" />
+          </div>
+          <div className="space-y-1">
+            <div className="flex justify-between text-xs text-muted-foreground">
               <span>Weekly Score</span><span className="font-medium text-foreground">{stats.weeklyScore}%</span>
             </div>
-            <Progress value={stats.weeklyScore} className="h-1.5 [&>div]:bg-[var(--token-amber)]" />
+            <Progress value={stats.weeklyScore} className="h-1.5 [&>div]:bg-[var(--token-purple)]" />
           </div>
         </div>
 
@@ -292,7 +298,7 @@ async function DashboardContent({ userId, userName }: { userId: string; userName
     {/* ── Track Progress ─────────────────────────────────────────────────────── */}
     <div>
       <h2 className="text-sm font-medium text-foreground mb-3">Track Progress</h2>
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-3">
         <Card>
           <CardContent className="p-5">
             <div className="flex items-center gap-4">
@@ -319,6 +325,23 @@ async function DashboardContent({ userId, userName }: { userId: string; userName
                 <p className="mt-0.5 text-lg font-semibold text-foreground">{stats.dataProgress}%</p>
                 <p className="text-xs text-muted-foreground">SQL · dbt · Airflow · BigQuery</p>
                 <Progress value={stats.dataProgress} className="mt-2 h-1.5 [&>div]:bg-[var(--token-emerald)]" />
+              </div>
+              <Button size="sm" variant="ghost" className="shrink-0" asChild>
+                <Link href="/roadmap"><ChevronRight className="h-4 w-4" /></Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-5">
+            <div className="flex items-center gap-4">
+              <ProgressRing value={stats.pythonProgress} size={72} color="var(--token-amber)" />
+              <div className="min-w-0 flex-1">
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Python & FastAPI</p>
+                <p className="mt-0.5 text-lg font-semibold text-foreground">{stats.pythonProgress}%</p>
+                <p className="text-xs text-muted-foreground">Python · FastAPI · SQLAlchemy · Docker</p>
+                <Progress value={stats.pythonProgress} className="mt-2 h-1.5 [&>div]:bg-[var(--token-amber)]" />
               </div>
               <Button size="sm" variant="ghost" className="shrink-0" asChild>
                 <Link href="/roadmap"><ChevronRight className="h-4 w-4" /></Link>

@@ -7,21 +7,22 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { BookOpen, Zap, Database, Code2, Loader2, ArrowRight, Eye, EyeOff, Target, Map, CalendarRange } from "lucide-react";
+import { BookOpen, Zap, Database, Code2, Loader2, ArrowRight, Eye, EyeOff, Target, Map, CalendarRange, Terminal } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const FEATURES = [
-  { icon: Code2,    title: "Web Track",   detail: "JS → TS → Next.js → Node.js",         color: "var(--token-cyan)" },
-  { icon: Database, title: "Data Track",  detail: "SQL → dbt → Airflow → BigQuery",        color: "var(--token-emerald)" },
-  { icon: Zap,      title: "XP & Streaks", detail: "Earn points, build habits, stay sharp", color: "var(--token-amber)" },
-  { icon: CalendarRange, title: "22 Weeks",  detail: "May 11 → Oct 11, 2026",              color: "var(--token-purple)" },
+  { icon: Code2,    title: "Web Track",       detail: "JS → TS → Next.js → Node.js",           color: "var(--token-cyan)" },
+  { icon: Database, title: "Data Track",      detail: "SQL → dbt → Airflow → BigQuery",         color: "var(--token-emerald)" },
+  { icon: Terminal, title: "Python & FastAPI", detail: "Python → FastAPI → SQLAlchemy → Docker", color: "var(--token-amber)" },
+  { icon: Zap,      title: "XP & Streaks",    detail: "Earn points, build habits, stay sharp",   color: "var(--token-purple)" },
 ];
 
 const PHASES = [
-  { label: "Phase 1: Foundations", weeks: "Weeks 1–4",  progress: 100, color: "var(--token-emerald)" },
-  { label: "Phase 2: Deep Dive",   weeks: "Weeks 5–8",  progress: 100, color: "var(--token-cyan)" },
-  { label: "Phase 3: Advanced",    weeks: "Weeks 9–13", progress: 60,  color: "var(--token-purple)" },
-  { label: "Phase 4: Production",  weeks: "Weeks 14+",  progress: 30,  color: "var(--token-amber)" },
+  { label: "Phase 1: Foundations", weeks: "Weeks 1–4",   progress: 100, color: "var(--token-emerald)" },
+  { label: "Phase 2: Deep Dive",   weeks: "Weeks 5–8",   progress: 100, color: "var(--token-cyan)" },
+  { label: "Phase 3: Advanced",    weeks: "Weeks 9–13",  progress: 60,  color: "var(--token-purple)" },
+  { label: "Phase 4: Production",  weeks: "Weeks 14–22", progress: 30,  color: "var(--token-amber)" },
+  { label: "Phase 6: Python",      weeks: "Weeks 23–26", progress: 0,   color: "var(--token-amber)" },
 ];
 
 export default function LoginPage() {
@@ -70,8 +71,8 @@ export default function LoginPage() {
         <div className="relative space-y-10">
           <div>
             <h1 className="text-5xl font-semibold leading-tight tracking-tight text-foreground">
-              22 weeks.<br />
-              <span className="text-primary">Two tracks.</span><br />
+              26 weeks.<br />
+              <span className="text-primary">Three tracks.</span><br />
               One mission.
             </h1>
             <p className="mt-5 text-sm text-muted-foreground leading-relaxed max-w-md">
@@ -171,7 +172,7 @@ export default function LoginPage() {
           <div className="rounded-xl border border-border/40 bg-card/60 p-4 space-y-3">
             <div className="flex items-center gap-2 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
               <Target className="h-3 w-3" />
-              Your 22-week journey
+              Your 26-week journey
             </div>
             <div className="space-y-2.5">
               {PHASES.map(({ label, weeks, progress, color }) => (

@@ -16,6 +16,7 @@ const PHASES: { label: string; range: [number, number]; color: string; bg: strin
   { label: "Phase 3 — Advanced Topics", range: [9, 13],  color: "text-[var(--token-purple)]",  bg: "bg-[var(--token-purple)]/10 border-[var(--token-purple)]/20" },
   { label: "Phase 4 — Build",           range: [14, 17], color: "text-[var(--token-amber)]",   bg: "bg-[var(--token-amber)]/10 border-[var(--token-amber)]/20"  },
   { label: "Phase 5 — Capstone",        range: [18, 22], color: "text-[var(--token-emerald)]", bg: "bg-[var(--token-emerald)]/10 border-[var(--token-emerald)]/20" },
+  { label: "Phase 6 — Python & FastAPI", range: [23, 26], color: "text-[var(--token-amber)]",  bg: "bg-[var(--token-amber)]/10 border-[var(--token-amber)]/20"  },
 ];
 
 function getPhase(weekNumber: number) {
@@ -48,7 +49,7 @@ export default async function WeeksPage() {
 
   return (
     <div className="min-h-full">
-      <Topbar title="Weekly Sprints" subtitle="22 weeks · 5 phases · 2 tracks" />
+      <Topbar title="Weekly Sprints" subtitle="26 weeks · 6 phases · 3 tracks" />
 
       <div className="space-y-8 p-4 sm:p-6 lg:p-8">
         {/* Stats row */}

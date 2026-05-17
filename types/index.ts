@@ -1,4 +1,4 @@
-export type TrackSlug = "web" | "data-engineering";
+export type TrackSlug = "web" | "data-engineering" | "python-fastapi";
 
 export type LessonStatus = "locked" | "available" | "in-progress" | "completed";
 export type ModuleStatus = "locked" | "active" | "completed";
@@ -39,6 +39,7 @@ export type DashboardStats = {
   streak: number;
   webProgress: number;
   dataProgress: number;
+  pythonProgress: number;
   overallProgress: number;
   studyMinutesThisWeek: number;
   weeklyScore: number;
