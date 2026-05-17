@@ -9,6 +9,8 @@ const router = Router();
 
 const COOKIE_NAME = "auth-token";
 const COOKIE_MAX_AGE = 7 * 24 * 60 * 60 * 1000; // 7 days
+const MAX_ATTEMPTS = 5;
+const LOCK_DURATION_MS = 30 * 60 * 1000; // 30 minutes
 
 function issueToken(userId: string): string {
   const secret = process.env.JWT_SECRET!;
@@ -34,6 +36,7 @@ router.post("/login", async (req: Request, res: Response): Promise<void> => {
     return;
   }
 
+  // IP-level rate limit: 10 attempts per 15 minutes
   const allowed = checkRateLimit(`auth:${email}`, 10, 15 * 60 * 1000);
   if (!allowed) {
     res.status(429).json({ error: "Too many login attempts. Try again in 15 minutes." });
@@ -43,15 +46,48 @@ router.post("/login", async (req: Request, res: Response): Promise<void> => {
   const user = await db.user.findUnique({ where: { email } });
 
   if (!user) {
+    // Generic error — don't reveal whether email exists
     res.status(401).json({ error: "Invalid email or password" });
     return;
   }
 
-  const valid = await bcrypt.compare(password, user.passwordHash);
-  if (!valid) {
-    res.status(401).json({ error: "Invalid email or password" });
+  // Account lockout check
+  if (user.lockedUntil && user.lockedUntil > new Date()) {
+    const minutesLeft = Math.ceil((user.lockedUntil.getTime() - Date.now()) / 60000);
+    res.status(423).json({
+      error: `Account locked due to too many failed attempts. Try again in ${minutesLeft} minute${minutesLeft !== 1 ? "s" : ""}.`,
+    });
     return;
   }
+
+  const valid = await bcrypt.compare(password, user.passwordHash);
+
+  if (!valid) {
+    const attempts = user.loginAttempts + 1;
+    const shouldLock = attempts >= MAX_ATTEMPTS;
+    await db.user.update({
+      where: { id: user.id },
+      data: {
+        loginAttempts: attempts,
+        lockedUntil: shouldLock ? new Date(Date.now() + LOCK_DURATION_MS) : null,
+      },
+    });
+
+    if (shouldLock) {
+      res.status(423).json({ error: "Account locked for 30 minutes due to too many failed attempts." });
+    } else {
+      res.status(401).json({
+        error: `Invalid email or password. ${MAX_ATTEMPTS - attempts} attempt${MAX_ATTEMPTS - attempts !== 1 ? "s" : ""} remaining.`,
+      });
+    }
+    return;
+  }
+
+  // Successful login — reset lockout counters
+  await db.user.update({
+    where: { id: user.id },
+    data: { loginAttempts: 0, lockedUntil: null },
+  });
 
   const token = issueToken(user.id);
   setCookie(res, token);
