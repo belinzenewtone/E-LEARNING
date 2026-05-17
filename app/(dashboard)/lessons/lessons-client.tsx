@@ -39,7 +39,7 @@ interface LessonsClientProps {
   weekGroups: WeekGroup[];
 }
 
-const TRACKS = ["All", "Web", "Data Engineering"] as const;
+const TRACKS = ["All", "Web", "Data Engineering", "Python & FastAPI"] as const;
 type TrackFilter = (typeof TRACKS)[number];
 
 export function LessonsClient({ weekGroups }: LessonsClientProps) {
@@ -58,8 +58,8 @@ export function LessonsClient({ weekGroups }: LessonsClientProps) {
           const matchesTrack =
             activeTrack === "All" ||
             (activeTrack === "Web" && l.module.track.slug === "web") ||
-            (activeTrack === "Data Engineering" &&
-              l.module.track.slug === "data-engineering");
+            (activeTrack === "Data Engineering" && l.module.track.slug === "data-engineering") ||
+            (activeTrack === "Python & FastAPI" && l.module.track.slug === "python-fastapi");
           return matchesSearch && matchesTrack;
         }),
       }))
