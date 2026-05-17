@@ -97,7 +97,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
     }),
   ],
-  session: { strategy: "jwt" },
+  session: {
+    strategy: "jwt",
+    maxAge: 8 * 60 * 60,    // expire after 8 h of inactivity
+    updateAge: 60 * 60,     // slide the expiry forward every 1 h of active use
+  },
   pages: { signIn: "/login" },
   callbacks: {
     async jwt({ token, user }) {
