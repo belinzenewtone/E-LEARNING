@@ -31,8 +31,7 @@ const securityHeaders = [
       "object-src 'none'",
       // No embedding other sites
       "frame-src 'none'",
-      // Block mixed content
-      "upgrade-insecure-requests",
+      // NOTE: upgrade-insecure-requests omitted — re-add only after SSL is configured
     ].join("; "),
   },
 ];
