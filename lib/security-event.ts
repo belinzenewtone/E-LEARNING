@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import type { Prisma } from "@prisma/client";
 
 export type SecurityEventType =
   | "LOGIN_SUCCESS"
@@ -30,7 +31,7 @@ export async function logSecurityEvent({
         userId: userId ?? null,
         ip: ip ?? null,
         userAgent: userAgent ?? null,
-        metadata: metadata ?? undefined,
+        metadata: metadata as Prisma.InputJsonValue | undefined,
       },
     });
   } catch {
