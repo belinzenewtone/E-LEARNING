@@ -15,25 +15,6 @@ export type GoalStatus = "active" | "completed" | "paused" | "abandoned";
 export type BlockerStatus = "open" | "resolved" | "ignored";
 export type Mood = "great" | "good" | "neutral" | "tired" | "frustrated";
 
-export type XpEventType =
-  | "lesson-complete"
-  | "checkpoint"
-  | "assignment-submit"
-  | "retro"
-  | "study-log"
-  | "capstone"
-  | "note-added";
-
-export const XP_VALUES: Record<XpEventType, number> = {
-  "lesson-complete": 20,
-  checkpoint: 10,
-  "assignment-submit": 80,
-  retro: 30,
-  "study-log": 10,
-  capstone: 150,
-  "note-added": 5,
-};
-
 export type DashboardStats = {
   totalXp: number;
   streak: number;
