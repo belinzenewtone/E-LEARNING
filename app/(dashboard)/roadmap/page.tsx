@@ -7,12 +7,13 @@ import { DashboardSkeleton } from "@/components/shared/loading-skeleton";
 import { Topbar } from "@/components/layout/topbar";
 
 async function RoadmapContent({ userId }: { userId: string }) {
-  const [webTrack, dataTrack] = await Promise.all([
+  const [webTrack, dataTrack, pythonTrack] = await Promise.all([
     getModulesWithLessons("web", userId),
     getModulesWithLessons("data-engineering", userId),
+    getModulesWithLessons("python-fastapi", userId),
   ]);
 
-  return <RoadmapClient webTrack={webTrack} dataTrack={dataTrack} />;
+  return <RoadmapClient webTrack={webTrack} dataTrack={dataTrack} pythonTrack={pythonTrack} />;
 }
 
 export default async function RoadmapPage() {
@@ -21,7 +22,7 @@ export default async function RoadmapPage() {
 
   return (
     <>
-      <Topbar title="Roadmap" subtitle="Your learning path across both tracks" />
+      <Topbar title="Roadmap" subtitle="Your learning path across all tracks" />
       <Suspense fallback={<DashboardSkeleton />}>
         <RoadmapContent userId={session.user.id} />
       </Suspense>

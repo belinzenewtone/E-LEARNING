@@ -64,12 +64,13 @@ type TrackData = {
 interface RoadmapClientProps {
   webTrack: TrackData | null;
   dataTrack: TrackData | null;
+  pythonTrack: TrackData | null;
 }
 
 // ── Status filter options ─────────────────────────────────────────────────────
 
 type StatusFilter = "all" | "active" | "completed" | "locked";
-type TrackFilter = "both" | "web" | "data";
+type TrackFilter = "all" | "web" | "data" | "python";
 
 // ── Module card ───────────────────────────────────────────────────────────────
 
@@ -315,9 +316,9 @@ function TrackColumn({
 
 // ── Main client component ─────────────────────────────────────────────────────
 
-export function RoadmapClient({ webTrack, dataTrack }: RoadmapClientProps) {
+export function RoadmapClient({ webTrack, dataTrack, pythonTrack }: RoadmapClientProps) {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
-  const [trackFilter, setTrackFilter] = useState<TrackFilter>("both");
+  const [trackFilter, setTrackFilter] = useState<TrackFilter>("all");
 
   const statusOptions: { value: StatusFilter; label: string }[] = [
     { value: "all", label: "All" },
@@ -327,9 +328,10 @@ export function RoadmapClient({ webTrack, dataTrack }: RoadmapClientProps) {
   ];
 
   const trackOptions: { value: TrackFilter; label: string }[] = [
-    { value: "both", label: "Both Tracks" },
+    { value: "all", label: "All Tracks" },
     { value: "web", label: "Web" },
     { value: "data", label: "Data Eng." },
+    { value: "python", label: "Python & FastAPI" },
   ];
 
   return (
@@ -338,7 +340,7 @@ export function RoadmapClient({ webTrack, dataTrack }: RoadmapClientProps) {
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-foreground">Roadmap</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Your 22-week learning journey across Web Development and Data Engineering.
+          Your 26-week learning journey across Web Development, Data Engineering, and Python & FastAPI.
         </p>
       </div>
 
@@ -393,21 +395,28 @@ export function RoadmapClient({ webTrack, dataTrack }: RoadmapClientProps) {
       <div
         className={cn(
           "grid gap-8",
-          trackFilter === "both" ? "lg:grid-cols-2" : "max-w-2xl"
+          trackFilter === "all" ? "lg:grid-cols-3" : "max-w-2xl"
         )}
       >
-        {(trackFilter === "both" || trackFilter === "web") && webTrack && (
+        {(trackFilter === "all" || trackFilter === "web") && webTrack && (
           <TrackColumn
             track={webTrack}
             statusFilter={statusFilter}
             color="var(--token-cyan)"
           />
         )}
-        {(trackFilter === "both" || trackFilter === "data") && dataTrack && (
+        {(trackFilter === "all" || trackFilter === "data") && dataTrack && (
           <TrackColumn
             track={dataTrack}
             statusFilter={statusFilter}
             color="var(--token-emerald)"
+          />
+        )}
+        {(trackFilter === "all" || trackFilter === "python") && pythonTrack && (
+          <TrackColumn
+            track={pythonTrack}
+            statusFilter={statusFilter}
+            color="var(--token-amber, #f59e0b)"
           />
         )}
       </div>
