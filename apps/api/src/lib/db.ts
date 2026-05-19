@@ -13,5 +13,11 @@ const pool = new Pool({
   connectionTimeoutMillis: 5_000,
 });
 
+pool.on("error", (err) => {
+  // Log but don't crash — pool will try to recover
+  console.error("[db] pool error:", err.message);
+});
+
 const adapter = new PrismaPg(pool);
 export const db = new PrismaClient({ adapter });
+export { pool };
