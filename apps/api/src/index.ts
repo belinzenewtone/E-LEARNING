@@ -75,7 +75,7 @@ app.use("/api/export", exportRoutes);
 // Health check — verifies DB connectivity, not just process liveness
 app.get("/api/health", async (_req, res) => {
   try {
-    await db.$queryRaw`SELECT 1`;
+    await pool.query("SELECT 1");
     res.json({ status: "ok", db: "ok", timestamp: new Date().toISOString() });
   } catch (err) {
     logger.error("health check failed", { message: (err as Error).message });
