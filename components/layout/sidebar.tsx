@@ -12,9 +12,7 @@ import {
   FileText,
   ClipboardList,
   NotebookPen,
-  Clock,
   BarChart3,
-  Briefcase,
   Settings,
   LogOut,
   Brain,
@@ -34,9 +32,7 @@ const navItems = [
   { href: "/review",      label: "Review",  icon: Brain           },
   { href: "/assignments", label: "Tasks",   icon: ClipboardList   },
   { href: "/notes",       label: "Notes",   icon: NotebookPen     },
-  { href: "/study-log",   label: "Log",     icon: Clock           },
   { href: "/analytics",   label: "Stats",   icon: BarChart3       },
-  { href: "/portfolio",   label: "Work",    icon: Briefcase       },
 ];
 
 interface SidebarProps {

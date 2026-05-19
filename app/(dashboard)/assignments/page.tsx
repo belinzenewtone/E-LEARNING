@@ -1,25 +1,26 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import Link from "next/link";
-import { FileText, Calendar, AlertCircle, CheckCircle2 } from "lucide-react";
+import { FileText, AlertCircle, CheckCircle2 } from "lucide-react";
 import { getAssignments, getOverdueAssignments } from "@/server/queries/assignments";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { db } from "@/lib/db";
 import { EmptyState } from "@/components/shared/empty-state";
 import { AssignmentsClient } from "./assignments-client";
+import { AssignmentsTabs } from "./assignments-tabs";
 import { Topbar } from "@/components/layout/topbar";
-
-// ── page ──────────────────────────────────────────────────────────────────────
 
 export default async function AssignmentsPage() {
   const session = await auth();
   if (!session?.user?.id) redirect("/login");
   const userId = session.user.id;
 
-  const [assignments, overdue] = await Promise.all([
+  const [assignments, overdue, portfolioSubmissions] = await Promise.all([
     getAssignments(userId),
     getOverdueAssignments(userId),
+    db.submission.findMany({
+      where: { userId, status: { in: ["submitted", "reviewed", "approved"] } },
+      include: { assignment: { include: { week: true, track: true } } },
+      orderBy: { submittedAt: "desc" },
+    }),
   ]);
 
   const total = assignments.length;
@@ -29,14 +30,8 @@ export default async function AssignmentsPage() {
   if (assignments.length === 0) {
     return (
       <div>
-        <Topbar title="Assignments" subtitle="All assignments across all tracks" />
+        <Topbar title="Tasks" subtitle="Assignments and submitted work" />
         <div className="p-4 sm:p-6 lg:p-8">
-          <div className="mb-6 space-y-1">
-            <h1 className="text-2xl font-bold text-foreground">Assignments</h1>
-            <p className="text-sm text-muted-foreground">
-              All assignments across all tracks.
-            </p>
-          </div>
           <EmptyState
             icon={FileText}
             title="No assignments yet"
@@ -50,18 +45,9 @@ export default async function AssignmentsPage() {
 
   return (
     <div>
-      <Topbar title="Assignments" subtitle="All assignments across all tracks" />
-      <div className="space-y-6 p-4 sm:p-6 lg:p-8">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="space-y-1">
-          <h1 className="text-2xl font-bold text-foreground">Assignments</h1>
-          <p className="text-sm text-muted-foreground">
-            All assignments across all tracks.
-          </p>
-        </div>
-
-        {/* Stats */}
+      <Topbar title="Tasks" subtitle="Assignments and submitted work" />
+      <div className="space-y-5 p-4 sm:p-6 lg:p-8">
+        {/* Stats strip */}
         <div className="flex flex-wrap gap-2">
           <div className="flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-1.5 text-sm">
             <FileText className="h-3.5 w-3.5 text-muted-foreground" />
@@ -81,10 +67,11 @@ export default async function AssignmentsPage() {
             </div>
           )}
         </div>
-      </div>
 
-      {/* Client-side filtered list */}
-      <AssignmentsClient assignments={assignments} />
+        <AssignmentsTabs
+          assignmentsContent={<AssignmentsClient assignments={assignments} />}
+          portfolioSubmissions={portfolioSubmissions}
+        />
       </div>
     </div>
   );
