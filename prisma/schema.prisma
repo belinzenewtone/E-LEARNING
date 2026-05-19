@@ -175,6 +175,7 @@ model Submission {
   reflection    String?
   selfScore     Int?
   status        String    @default("submitted")
+  reviewerNotes String?
   submittedAt   DateTime  @default(now())
   reviewedAt    DateTime?
   createdAt     DateTime  @default(now())

@@ -4,18 +4,20 @@ import { startOfWeek, format, subWeeks } from "date-fns";
 export type AnalyticsData = {
   weeklyHours: { week: string; hours: number }[];
   xpOverTime: { date: string; xp: number }[];
+  xpByType: { type: string; points: number }[];
   lessonsOverTime: { date: string; count: number }[];
-  trackProgress: { name: string; slug: string; color: string; total: number; completed: number; percent: number }[];
+  trackProgress: { name: string; slug: string; color: string; total: number; completed: number; percent: number; minutesSpent: number }[];
   activityDays: { date: string; active: boolean; minutes: number }[];
+  moodTrend: { date: string; mood: string; energy: number | null }[];
   summary: { totalMinutes: number; totalXp: number; lessonsCompleted: number; activeDays: number };
 };
 
 export async function getAnalyticsData(userId: string): Promise<AnalyticsData> {
-  const [studyLogs, xpEvents, lessonProgress, tracks] = await Promise.all([
+  const [studyLogs, xpEvents, lessonProgress, tracks, timePerTrack] = await Promise.all([
     db.studyLog.findMany({
       where: { userId },
       orderBy: { date: "asc" },
-      select: { date: true, minutes: true, trackId: true },
+      select: { date: true, minutes: true, trackId: true, mood: true, energy: true },
     }),
     db.xpEvent.findMany({
       where: { userId },
@@ -32,6 +34,12 @@ export async function getAnalyticsData(userId: string): Promise<AnalyticsData> {
         id: true, name: true, slug: true, color: true,
         modules: { select: { _count: { select: { lessons: true } } } },
       },
+    }),
+    // time spent per track from Progress.timeSpentMinutes
+    db.progress.groupBy({
+      by: ["trackId"],
+      where: { userId, timeSpentMinutes: { not: null }, lessonId: { not: null } },
+      _sum: { timeSpentMinutes: true },
     }),
   ]);
 
@@ -69,6 +77,7 @@ export async function getAnalyticsData(userId: string): Promise<AnalyticsData> {
     _count: { id: true },
   });
   const completedMap = new Map(completedByTrack.map((r) => [r.trackId!, r._count.id]));
+  const timeMap = new Map(timePerTrack.map((r) => [r.trackId!, r._sum.timeSpentMinutes ?? 0]));
 
   const trackProgress = tracks.map((track) => {
     const totalLessons = track.modules.reduce((sum, m) => sum + m._count.lessons, 0);
@@ -77,8 +86,36 @@ export async function getAnalyticsData(userId: string): Promise<AnalyticsData> {
       name: track.name, slug: track.slug, color: track.color,
       total: totalLessons, completed: completedLessons,
       percent: totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0,
+      minutesSpent: timeMap.get(track.id) ?? 0,
     };
   });
+
+  // XP breakdown by type
+  const xpByTypeMap = new Map<string, number>();
+  for (const e of xpEvents) {
+    xpByTypeMap.set(e.type, (xpByTypeMap.get(e.type) ?? 0) + e.points);
+  }
+  const XP_TYPE_LABELS: Record<string, string> = {
+    "lesson-complete": "Lessons",
+    "assignment-submit": "Assignments",
+    "study-log": "Study Sessions",
+    "note-added": "Notes",
+    "retro": "Retrospectives",
+  };
+  const xpByType = Array.from(xpByTypeMap.entries()).map(([type, points]) => ({
+    type: XP_TYPE_LABELS[type] ?? type,
+    points,
+  }));
+
+  // Mood trend (last 30 logs with mood data)
+  const moodTrend = studyLogs
+    .filter((l) => l.mood)
+    .slice(-30)
+    .map((l) => ({
+      date: format(new Date(l.date), "MMM d"),
+      mood: l.mood!,
+      energy: l.energy ?? null,
+    }));
 
   // Activity heatmap (last 60 days)
   const activityDays: { date: string; active: boolean; minutes: number }[] = [];
@@ -96,9 +133,11 @@ export async function getAnalyticsData(userId: string): Promise<AnalyticsData> {
   return {
     weeklyHours,
     xpOverTime,
+    xpByType,
     lessonsOverTime,
     trackProgress,
     activityDays,
+    moodTrend,
     summary: {
       totalMinutes: studyLogs.reduce((sum, l) => sum + l.minutes, 0),
       totalXp: xpEvents.reduce((sum, e) => sum + e.points, 0),

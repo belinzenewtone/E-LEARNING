@@ -3,16 +3,22 @@
 import {
   AreaChart, Area, BarChart, Bar, LineChart, Line,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  PieChart, Pie, Cell, Legend,
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatCard } from "@/components/shared/stat-card";
 import { EmptyState } from "@/components/shared/empty-state";
-import { Clock, Zap, BookOpen, Flame, Calendar, BarChart3 } from "lucide-react";
+import { Clock, Zap, BookOpen, Flame, Calendar, BarChart3, Brain } from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import { minutesToHours } from "@/lib/utils";
 import type { AnalyticsData } from "@/server/queries/analytics";
 
 const CYAN = "var(--token-cyan)";
 const EMERALD = "var(--token-emerald)";
+const AMBER = "var(--token-amber)";
+const PURPLE = "var(--token-purple)";
+const XP_TYPE_COLORS = [CYAN, EMERALD, AMBER, PURPLE, "#f43f5e"];
 
 const tooltipStyle = {
   contentStyle: {
@@ -33,7 +39,7 @@ interface AnalyticsChartsProps {
 }
 
 export function AnalyticsCharts({ data }: AnalyticsChartsProps) {
-  const { weeklyHours, xpOverTime, lessonsOverTime, trackProgress, activityDays, summary } = data;
+  const { weeklyHours, xpOverTime, xpByType, lessonsOverTime, trackProgress, activityDays, moodTrend, summary } = data;
 
   return (
     <div className="space-y-6">
@@ -143,7 +149,10 @@ export function AnalyticsCharts({ data }: AnalyticsChartsProps) {
               <div key={track.slug} className="space-y-2">
                 <div className="flex justify-between items-center text-sm">
                   <span className="font-medium" style={{ color: track.color }}>{track.name}</span>
-                  <span className="text-muted-foreground text-xs">{track.completed}/{track.total} · {track.percent}%</span>
+                  <span className="text-muted-foreground text-xs">
+                    {track.completed}/{track.total} · {track.percent}%
+                    {track.minutesSpent > 0 && ` · ${minutesToHours(track.minutesSpent)} spent`}
+                  </span>
                 </div>
                 <div className="w-full bg-muted rounded-full h-2">
                   <div
@@ -159,6 +168,73 @@ export function AnalyticsCharts({ data }: AnalyticsChartsProps) {
           </CardContent>
         </Card>
       </div>
+
+      {/* XP breakdown by type + mood trend */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">XP by Activity Type</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {xpByType.length === 0 ? (
+              <EmptyState icon={Zap} title="No XP yet" description="Complete lessons and log study sessions to start earning XP." action={{ label: "Start Learning", href: "/lessons" }} />
+            ) : (
+              <ResponsiveContainer width="100%" height={220}>
+                <PieChart>
+                  <Pie data={xpByType} dataKey="points" nameKey="type" cx="50%" cy="50%" outerRadius={80} label={(props) => `${(props as { name?: string }).name ?? ""} ${Math.round(((props.percent as number) ?? 0) * 100)}%`} labelLine={false}>
+                    {xpByType.map((_, i) => (
+                      <Cell key={i} fill={XP_TYPE_COLORS[i % XP_TYPE_COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip {...tooltipStyle} formatter={(val) => [`${val} XP`]} />
+                  <Legend wrapperStyle={{ fontSize: 11 }} />
+                </PieChart>
+              </ResponsiveContainer>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base flex items-center gap-2">
+              <Brain className="h-4 w-4 text-muted-foreground" />
+              Spaced Repetition
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col items-center justify-center gap-4 py-6">
+            <p className="text-sm text-muted-foreground text-center">
+              Review checkpoint questions from completed lessons to reinforce long-term memory via the SM-2 algorithm.
+            </p>
+            <Button asChild>
+              <Link href="/review">Go to Review Queue</Link>
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Mood & energy trend */}
+      {moodTrend.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Study Mood Trend</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={180}>
+              <BarChart data={moodTrend} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="oklch(1 0 0 / 6%)" />
+                <XAxis dataKey="date" {...axisProps} />
+                <YAxis {...axisProps} domain={[0, 5]} ticks={[1, 2, 3, 4, 5]} />
+                <Tooltip
+                  {...tooltipStyle}
+                  formatter={(val, name) => [val, name === "energy" ? "Energy (1-5)" : "Mood"]}
+                />
+                <Bar dataKey="energy" fill={AMBER} radius={[3, 3, 0, 0]} name="energy" />
+              </BarChart>
+            </ResponsiveContainer>
+            <p className="mt-2 text-xs text-muted-foreground text-center">Energy level (1–5) logged with study sessions</p>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Activity Heatmap */}
       <Card>

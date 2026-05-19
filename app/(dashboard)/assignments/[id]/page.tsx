@@ -31,6 +31,7 @@ import {
   isOverdue,
 } from "@/lib/utils";
 import { SubmissionForm } from "./submission-form";
+import { ReviewForm } from "./review-form";
 import { Topbar } from "@/components/layout/topbar";
 
 // ── types ──────────────────────────────────────────────────────────────────────
@@ -397,6 +398,27 @@ async function AssignmentContent({
                   </CardContent>
                 </Card>
               )}
+              {/* Reviewer notes — shown when a review has been saved */}
+              {(submission as { reviewerNotes?: string | null }).reviewerNotes && (
+                <Card className="border-[var(--token-cyan)]/20 bg-[var(--token-cyan)]/5">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="flex items-center gap-2 text-xs text-[var(--token-cyan)]">
+                      <Star className="h-3.5 w-3.5" /> Review Notes
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
+                      {(submission as { reviewerNotes?: string | null }).reviewerNotes}
+                    </p>
+                  </CardContent>
+                </Card>
+              )}
+              {/* Self-review form */}
+              <ReviewForm
+                submissionId={submission.id}
+                currentStatus={submission.status}
+                currentReviewerNotes={(submission as { reviewerNotes?: string | null }).reviewerNotes ?? null}
+              />
             </div>
           ) : (
             <SubmissionForm assignmentId={assignment.id} />

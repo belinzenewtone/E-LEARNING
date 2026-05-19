@@ -152,21 +152,20 @@ async function DashboardContent({ userId, userName }: { userId: string; userName
       {dueReviews.length > 0 && (
         <Card className="border-[var(--token-amber)]/20 bg-[var(--token-amber)]/5">
           <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-sm text-[var(--token-amber)]">
-              <BookOpen className="h-4 w-4" />
-              Spaced Repetition — Due for Review ({dueReviews.length})
-            </CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-2 text-sm text-[var(--token-amber)]">
+                <BookOpen className="h-4 w-4" />
+                Spaced Repetition — {dueReviews.length} due
+              </CardTitle>
+              <Button size="sm" variant="outline" asChild className="border-[var(--token-amber)]/20 text-[var(--token-amber)] hover:bg-[var(--token-amber)]/10">
+                <Link href="/review">Start Review</Link>
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
-            <ul className="flex flex-wrap gap-2">
-              {dueReviews.map((r) => (
-                <li key={r.lessonId}>
-                  <Button variant="outline" size="sm" asChild className="border-[var(--token-amber)]/20 text-[var(--token-amber)] hover:bg-[var(--token-amber)]/10">
-                    <Link href={`/lessons/${r.slug}`}>{r.title}</Link>
-                  </Button>
-                </li>
-              ))}
-            </ul>
+            <p className="text-xs text-muted-foreground">
+              Checkpoint questions from {dueReviews.length} lesson{dueReviews.length !== 1 ? "s" : ""} are due: {dueReviews.map(r => r.title).join(", ")}.
+            </p>
           </CardContent>
         </Card>
       )}
