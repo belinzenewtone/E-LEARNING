@@ -24,6 +24,7 @@ const STEPS = [
   "rsync -a content/ /var/www/learning-os/content/ 2>/dev/null || true",
   "cp package.json /var/www/learning-os/",
   "cp .env /var/www/learning-os/.env 2>/dev/null || true",
+  "cp /var/www/learning-os/.env /var/www/learning-os/apps/api/.env",
   "pm2 restart all --update-env",
   "pm2 status",
 ].join(" && ");
