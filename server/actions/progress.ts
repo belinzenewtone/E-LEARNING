@@ -53,7 +53,7 @@ const AssignmentSubmitSchema = z.object({
 
 // ── completeLesson ────────────────────────────────────────────────────────────
 
-export async function completeLesson(lessonId: string) {
+export async function completeLesson(lessonId: string, timeSpentMinutes?: number) {
   const userId = await requireUserId();
 
   const lesson = await db.lesson.findUnique({
@@ -67,12 +67,16 @@ export async function completeLesson(lessonId: string) {
   });
   if (already?.status === "completed") return { success: true, alreadyCompleted: true };
 
+  const now = new Date();
+  const clampedTime =
+    timeSpentMinutes != null ? Math.min(Math.max(1, timeSpentMinutes), 480) : null;
+
   await db.$transaction(async (tx) => {
-    // Upsert lesson progress
+    // Upsert lesson progress — store actual time spent
     await tx.progress.upsert({
       where: { userId_lessonId: { userId, lessonId } },
-      update: { status: "completed", completedAt: new Date() },
-      create: { userId, lessonId, status: "completed", completedAt: new Date() },
+      update: { status: "completed", completedAt: now, timeSpentMinutes: clampedTime },
+      create: { userId, lessonId, status: "completed", completedAt: now, timeSpentMinutes: clampedTime },
     });
 
     // Award XP
@@ -198,12 +202,15 @@ export async function addStudyLog(formData: FormData) {
   const { minutes, date, trackId, mood, energy, learned, blockers, nextStep } = parsed.data;
   const logDate = date ? new Date(date) : new Date();
 
+  // Scale XP: 5 per 10 min, capped at 30 (60+ min)
+  const xpPoints = Math.min(30, Math.max(5, Math.round(minutes / 10) * 5));
+
   await db.$transaction([
     db.studyLog.create({
       data: { userId, date: logDate, trackId, minutes, mood, energy, learned, blockers, nextStep },
     }),
     db.xpEvent.create({
-      data: { userId, trackId, type: "study-log", points: 10, reason: `Logged ${minutes} minutes of study` },
+      data: { userId, trackId, type: "study-log", points: xpPoints, reason: `Logged ${minutes} minutes of study` },
     }),
   ]);
 
@@ -211,6 +218,28 @@ export async function addStudyLog(formData: FormData) {
   revalidatePath("/study-log");
 
   return { success: true };
+}
+
+// ── logStudySession ───────────────────────────────────────────────────────────
+// Lightweight action called automatically by the study timer on session complete.
+
+export async function logStudySession(minutes: number) {
+  const userId = await requireUserId();
+
+  const clampedMinutes = Math.min(Math.max(1, Math.round(minutes)), 120);
+  const xpPoints = Math.min(30, Math.max(5, Math.round(clampedMinutes / 10) * 5));
+
+  await db.$transaction([
+    db.studyLog.create({
+      data: { userId, date: new Date(), minutes: clampedMinutes },
+    }),
+    db.xpEvent.create({
+      data: { userId, type: "study-log", points: xpPoints, reason: `Timer: ${clampedMinutes} min focus session` },
+    }),
+  ]);
+
+  revalidatePath("/dashboard");
+  revalidatePath("/study-log");
 }
 
 // ── completeRetro ─────────────────────────────────────────────────────────────

@@ -292,6 +292,7 @@ async function LessonContent({ slug, userId }: { slug: string; userId: string })
             lessonId={lesson.id}
             lessonSlug={lesson.slug}
             userId={userId}
+            estimatedMinutes={lesson.estimatedMinutes}
             checkpointQuestions={checkpointQuestions}
             existingNotes={lesson.notes}
             existingAnswers={lesson.checkpointAnswers}

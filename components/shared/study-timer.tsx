@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useTransition } from "react";
 import { Play, Pause, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { logStudySession } from "@/server/actions/progress";
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -101,6 +102,7 @@ export function StudyTimer() {
   const [secondsLeft, setSecondsLeft] = useState(WORK_SECONDS);
   const [running, setRunning] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [, startSave] = useTransition();
 
   // Request notification permission once on mount
   useEffect(() => {
@@ -133,7 +135,15 @@ export function StudyTimer() {
     }
 
     if (completedMode === "work") {
-      toast.success("Session complete! Log your study time.", {
+      // Auto-save 25 minutes to the study log
+      startSave(async () => {
+        try {
+          await logStudySession(25);
+        } catch {
+          // silent — don't interrupt the timer UX
+        }
+      });
+      toast.success("Focus session complete! 25 min logged.", {
         description: "Time for a 5-minute break.",
         duration: 6000,
       });

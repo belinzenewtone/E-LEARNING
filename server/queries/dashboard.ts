@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { calculateStreak, calculateWeeklyScore } from "@/lib/progress";
 import { startOfDay, endOfDay, startOfWeek, endOfWeek, subDays } from "date-fns";
 
 // Inline type matching the WeekSprint shape from Prisma schema
@@ -19,36 +20,6 @@ type WeekSprint = {
   updatedAt: Date;
 };
 
-// ── helpers ──────────────────────────────────────────────────────────────────
-
-function calcStreak(logs: { date: Date; minutes: number }[]): number {
-  let streak = 0;
-  const check = startOfDay(new Date());
-
-  for (let i = 0; i < 60; i++) {
-    const dayStart = startOfDay(subDays(check, i));
-    const dayEnd = endOfDay(dayStart);
-
-    const hit = logs.find(
-      (l) =>
-        new Date(l.date) >= dayStart &&
-        new Date(l.date) <= dayEnd &&
-        l.minutes >= 30
-    );
-
-    if (hit) {
-      streak++;
-    } else if (i === 0) {
-      // today not yet logged — don't break the streak
-      continue;
-    } else {
-      break;
-    }
-  }
-
-  return streak;
-}
-
 // ── getDashboardStats ─────────────────────────────────────────────────────────
 
 export async function getDashboardStats(userId: string) {
@@ -56,10 +27,11 @@ export async function getDashboardStats(userId: string) {
 
   const [
     xpAggregate,
-    studyLogs30d,
+    studyLogs60d,
     webTrack,
     dataTrack,
     pythonTrack,
+    completedProgress,
     currentWeek,
     studyLogsThisWeek,
     lessonsCompletedTodayCount,
@@ -80,43 +52,37 @@ export async function getDashboardStats(userId: string) {
       select: { date: true, minutes: true },
     }),
 
-    // web track with lessons (via modules)
+    // web track — lesson IDs only (totals)
     db.track.findUnique({
       where: { slug: "web" },
       select: {
         id: true,
-        modules: {
-          select: {
-            lessons: { select: { id: true, status: true } },
-          },
-        },
+        modules: { select: { lessons: { select: { id: true } } } },
       },
     }),
 
-    // data track with lessons (via modules)
+    // data track — lesson IDs only (totals)
     db.track.findFirst({
       where: { slug: "data-engineering" },
       select: {
         id: true,
-        modules: {
-          select: {
-            lessons: { select: { id: true, status: true } },
-          },
-        },
+        modules: { select: { lessons: { select: { id: true } } } },
       },
     }),
 
-    // python & fastapi track with lessons (via modules)
+    // python & fastapi track — lesson IDs only (totals)
     db.track.findFirst({
       where: { slug: "python-fastapi" },
       select: {
         id: true,
-        modules: {
-          select: {
-            lessons: { select: { id: true, status: true } },
-          },
-        },
+        modules: { select: { lessons: { select: { id: true } } } },
       },
+    }),
+
+    // user's completed lessons from Progress table (source of truth)
+    db.progress.findMany({
+      where: { userId, status: "completed", lessonId: { not: null } },
+      select: { lessonId: true },
     }),
 
     // current active week sprint
@@ -137,7 +103,7 @@ export async function getDashboardStats(userId: string) {
       _sum: { minutes: true },
     }),
 
-    // lessons completed today
+    // lessons completed today (from Progress, not Lesson.status)
     db.progress.count({
       where: {
         userId,
@@ -165,91 +131,61 @@ export async function getDashboardStats(userId: string) {
   ]);
 
   const totalXp = xpAggregate._sum.points ?? 0;
-  const streak = calcStreak(studyLogs30d);
+  const streak = calculateStreak(studyLogs60d);
 
-  const webLessons: { id: string; status: string }[] =
-    webTrack?.modules.flatMap((m) => m.lessons) ?? [];
-  const webCompleted = webLessons.filter((l) => l.status === "completed").length;
-  const webProgress =
-    webLessons.length > 0
-      ? Math.round((webCompleted / webLessons.length) * 100)
-      : 0;
+  // Use Progress table (per-user) for all completion counts
+  const completedLessonIds = new Set(completedProgress.map((p) => p.lessonId));
 
-  const dataLessons: { id: string; status: string }[] =
-    dataTrack?.modules.flatMap((m) => m.lessons) ?? [];
-  const dataCompleted = dataLessons.filter((l) => l.status === "completed").length;
-  const dataProgress =
-    dataLessons.length > 0
-      ? Math.round((dataCompleted / dataLessons.length) * 100)
-      : 0;
+  const webLessonIds = webTrack?.modules.flatMap((m) => m.lessons.map((l) => l.id)) ?? [];
+  const webCompleted = webLessonIds.filter((id) => completedLessonIds.has(id)).length;
+  const webProgress = webLessonIds.length > 0
+    ? Math.round((webCompleted / webLessonIds.length) * 100) : 0;
 
-  const pythonLessons: { id: string; status: string }[] =
-    pythonTrack?.modules.flatMap((m) => m.lessons) ?? [];
-  const pythonCompleted = pythonLessons.filter((l) => l.status === "completed").length;
-  const pythonProgress =
-    pythonLessons.length > 0
-      ? Math.round((pythonCompleted / pythonLessons.length) * 100)
-      : 0;
+  const dataLessonIds = dataTrack?.modules.flatMap((m) => m.lessons.map((l) => l.id)) ?? [];
+  const dataCompleted = dataLessonIds.filter((id) => completedLessonIds.has(id)).length;
+  const dataProgress = dataLessonIds.length > 0
+    ? Math.round((dataCompleted / dataLessonIds.length) * 100) : 0;
 
-  const allLessons = webLessons.length + dataLessons.length + pythonLessons.length;
+  const pythonLessonIds = pythonTrack?.modules.flatMap((m) => m.lessons.map((l) => l.id)) ?? [];
+  const pythonCompleted = pythonLessonIds.filter((id) => completedLessonIds.has(id)).length;
+  const pythonProgress = pythonLessonIds.length > 0
+    ? Math.round((pythonCompleted / pythonLessonIds.length) * 100) : 0;
+
+  const allLessons = webLessonIds.length + dataLessonIds.length + pythonLessonIds.length;
   const allCompleted = webCompleted + dataCompleted + pythonCompleted;
-  const overallProgress =
-    allLessons > 0 ? Math.round((allCompleted / allLessons) * 100) : 0;
+  const overallProgress = allLessons > 0 ? Math.round((allCompleted / allLessons) * 100) : 0;
 
   const studyMinutesThisWeek = studyLogsThisWeek._sum.minutes ?? 0;
 
   // weekly score calculation (only if there is an active week)
   let weeklyScore = 0;
   if (currentWeek) {
-    const [weekLessons, weekAssignments, todayLog] = await Promise.all([
-      db.lesson.findMany({
-        where: { weekId: currentWeek.id },
-        select: { id: true, status: true },
+    const [weekLessonsTotal, weekLessonsCompleted, weekAssignments, todayLog] = await Promise.all([
+      db.lesson.count({ where: { weekId: currentWeek.id } }),
+      // Count from Progress table — accurate per-user completion
+      db.progress.count({
+        where: { userId, status: "completed", lesson: { weekId: currentWeek.id } },
       }),
       db.assignment.findMany({
         where: { weekId: currentWeek.id },
         select: {
           id: true,
-          submissions: {
-            where: { userId },
-            select: { status: true },
-          },
+          submissions: { where: { userId }, select: { status: true } },
         },
       }),
       db.studyLog.findFirst({
-        where: {
-          userId,
-          date: {
-            gte: startOfDay(now),
-            lte: endOfDay(now),
-          },
-        },
+        where: { userId, date: { gte: startOfDay(now), lte: endOfDay(now) } },
       }),
     ]);
 
-    const lessonsTotal = weekLessons.length;
-    const lessonsCompleted = weekLessons.filter(
-      (l: { id: string; status: string }) => l.status === "completed"
-    ).length;
-    const assignmentsTotal = weekAssignments.length;
-    const assignmentsSubmitted = weekAssignments.filter(
-      (a: { id: string; submissions: { status: string }[] }) =>
-        a.submissions.length > 0
-    ).length;
-    const studiedToday = !!todayLog;
-    const retroCompleted = currentWeek.retrospectiveCompleted;
-
-    const lessonRate =
-      lessonsTotal > 0 ? lessonsCompleted / lessonsTotal : 0;
-    const assignmentRate =
-      assignmentsTotal > 0 ? assignmentsSubmitted / assignmentsTotal : 0;
-
-    weeklyScore = Math.round(
-      lessonRate * 40 +
-        assignmentRate * 40 +
-        (studiedToday ? 10 : 0) +
-        (retroCompleted ? 10 : 0)
-    );
+    weeklyScore = calculateWeeklyScore({
+      lessonsTotal: weekLessonsTotal,
+      lessonsCompleted: weekLessonsCompleted,
+      assignmentsTotal: weekAssignments.length,
+      assignmentsSubmitted: weekAssignments.filter((a) => a.submissions.length > 0).length,
+      studiedToday: !!todayLog,
+      retroCompleted: currentWeek.retrospectiveCompleted,
+    });
   }
 
   return {

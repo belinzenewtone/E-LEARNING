@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, useOptimistic } from "react";
+import { useState, useTransition, useOptimistic, useRef, useEffect } from "react";
 import {
   CheckCircle2,
   Circle,
@@ -10,6 +10,7 @@ import {
   BookOpen,
   Check,
   Trophy,
+  Clock,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -39,6 +40,7 @@ interface LessonStudyAreaProps {
   lessonId: string;
   lessonSlug: string;
   userId: string;
+  estimatedMinutes: number;
   checkpointQuestions: CheckpointQuestion[];
   existingNotes: ExistingNote[];
   existingAnswers: ExistingAnswer[];
@@ -46,6 +48,25 @@ interface LessonStudyAreaProps {
 }
 
 type StepStatus = "done" | "active" | "locked";
+type Quality = 0 | 1 | 2 | 3 | 4 | 5;
+
+const CONFIDENCE_LABELS: { value: Quality; label: string; color: string }[] = [
+  { value: 1, label: "Blank",   color: "border-rose-500/40 bg-rose-500/10 text-rose-400" },
+  { value: 2, label: "Hard",    color: "border-orange-500/40 bg-orange-500/10 text-orange-400" },
+  { value: 3, label: "Ok",      color: "border-yellow-500/40 bg-yellow-500/10 text-yellow-400" },
+  { value: 4, label: "Good",    color: "border-[var(--token-cyan)]/40 bg-[var(--token-cyan)]/10 text-[var(--token-cyan)]" },
+  { value: 5, label: "Easy",    color: "border-[var(--token-emerald)]/40 bg-[var(--token-emerald)]/10 text-[var(--token-emerald)]" },
+];
+
+const MIN_NOTE_CHARS = 10;
+const MIN_REFLECTION_CHARS = 20;
+
+function formatElapsed(seconds: number): string {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  if (m === 0) return `${s}s`;
+  return `${m}m ${String(s).padStart(2, "0")}s`;
+}
 
 function StepBadge({ number, status }: { number: number; status: StepStatus }) {
   return (
@@ -79,29 +100,43 @@ function StepConnector({ done }: { done: boolean }) {
 export function LessonStudyArea({
   lessonId,
   lessonSlug,
+  estimatedMinutes,
   checkpointQuestions,
   existingNotes,
   existingAnswers,
   isCompleted,
 }: LessonStudyAreaProps) {
+  const startTimeRef = useRef<number>(Date.now());
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+
   const [sourceReviewed, setSourceReviewed] = useState(false);
   const [noteContent, setNoteContent] = useState(existingNotes[0]?.content ?? "");
   const [checkpointAnswers, setCheckpointAnswers] = useState<Record<number, string>>(
     Object.fromEntries(existingAnswers.map((a) => [a.questionIndex, a.answer]))
   );
+  const [checkpointConfidence, setCheckpointConfidence] = useState<Record<number, Quality>>({});
   const [reflection, setReflection] = useState({ understood: "", confused: "", apply: "" });
   const [isPending, startTransition] = useTransition();
   const [isSavingNote, startSavingNote] = useTransition();
   const [optimisticCompleted, setOptimisticCompleted] = useOptimistic(isCompleted);
 
-  const hasNote = noteContent.trim().length > 0;
+  // Live elapsed-time counter (pauses once completed)
+  useEffect(() => {
+    if (isCompleted) return;
+    const id = setInterval(() => {
+      setElapsedSeconds(Math.floor((Date.now() - startTimeRef.current) / 1000));
+    }, 5000);
+    return () => clearInterval(id);
+  }, [isCompleted]);
+
+  const hasNote = noteContent.trim().length >= MIN_NOTE_CHARS;
   const hasAnsweredCheckpoint =
     checkpointQuestions.length === 0 ||
     Object.values(checkpointAnswers).some((a) => a.trim().length > 0);
   const hasReflection =
-    reflection.understood.trim().length > 0 ||
-    reflection.confused.trim().length > 0 ||
-    reflection.apply.trim().length > 0;
+    reflection.understood.trim().length >= MIN_REFLECTION_CHARS ||
+    reflection.confused.trim().length >= MIN_REFLECTION_CHARS ||
+    reflection.apply.trim().length >= MIN_REFLECTION_CHARS;
 
   const step1Done = sourceReviewed;
   const step2Done = hasNote;
@@ -126,16 +161,22 @@ export function LessonStudyArea({
     setCheckpointAnswers((prev) => ({ ...prev, [index]: value }));
   }
 
+  function handleConfidenceChange(index: number, value: Quality) {
+    setCheckpointConfidence((prev) => ({ ...prev, [index]: value }));
+  }
+
   function handleCompleteLesson() {
     startTransition(async () => {
       setOptimisticCompleted(true);
       try {
+        const timeSpentMinutes = Math.max(1, Math.round((Date.now() - startTimeRef.current) / 60000));
+
         const answers = Object.entries(checkpointAnswers)
           .filter(([, ans]) => ans.trim().length > 0)
           .map(([idx, answer]) => ({
             questionIndex: Number(idx),
             answer,
-            quality: 4 as const,
+            quality: (checkpointConfidence[Number(idx)] ?? 3) as Quality,
           }));
         if (answers.length > 0) {
           try {
@@ -144,7 +185,7 @@ export function LessonStudyArea({
             /* schema not yet migrated */
           }
         }
-        await completeLesson(lessonId);
+        await completeLesson(lessonId, timeSpentMinutes);
         toast.success("Lesson completed! +20 XP earned.");
       } catch {
         setOptimisticCompleted(false);
@@ -169,14 +210,29 @@ export function LessonStudyArea({
     });
   }
 
+  const elapsedMinutes = Math.floor(elapsedSeconds / 60);
+  const timeColor =
+    elapsedMinutes >= estimatedMinutes
+      ? "text-[var(--token-emerald)]"
+      : "text-muted-foreground";
+
   return (
     <div className="space-y-4">
       {/* Step progress header */}
       <Card className="border-border bg-card">
         <CardContent className="p-4">
-          <p className="mb-3 text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
-            Study Steps
-          </p>
+          <div className="mb-3 flex items-center justify-between">
+            <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
+              Study Steps
+            </p>
+            {!optimisticCompleted && (
+              <span className={cn("flex items-center gap-1 text-[11px]", timeColor)}>
+                <Clock className="h-3 w-3" />
+                {formatElapsed(elapsedSeconds)}
+                <span className="text-muted-foreground/60">/ {estimatedMinutes}m est.</span>
+              </span>
+            )}
+          </div>
           <div className="flex items-center gap-1.5">
             <StepBadge number={1} status={s1} />
             <StepConnector done={step1Done} />
@@ -245,7 +301,10 @@ export function LessonStudyArea({
           onChange={(e) => setNoteContent(e.target.value)}
           className="min-h-[120px] resize-y bg-muted/20 text-sm"
         />
-        <div className="flex justify-end">
+        <div className="flex items-center justify-between">
+          <span className={cn("text-[11px]", noteContent.trim().length >= MIN_NOTE_CHARS ? "text-[var(--token-emerald)]" : "text-muted-foreground/60")}>
+            {noteContent.trim().length}/{MIN_NOTE_CHARS}+ chars
+          </span>
           <Button
             size="sm"
             variant="outline"
@@ -266,7 +325,7 @@ export function LessonStudyArea({
           status={s3}
           iconColor="text-[var(--token-amber)]"
         >
-          <div className="space-y-5">
+          <div className="space-y-6">
             {checkpointQuestions.map((q, i) => (
               <div key={i} className="space-y-2">
                 <Label className="text-sm font-medium text-foreground leading-snug">
@@ -278,6 +337,24 @@ export function LessonStudyArea({
                   onChange={(e) => handleAnswerChange(i, e.target.value)}
                   className="min-h-[80px] resize-y bg-muted/20 text-sm"
                 />
+                {/* Confidence rating */}
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[11px] text-muted-foreground mr-1">Recall:</span>
+                  {CONFIDENCE_LABELS.map(({ value, label, color }) => (
+                    <button
+                      key={value}
+                      onClick={() => handleConfidenceChange(i, value)}
+                      className={cn(
+                        "rounded border px-2 py-0.5 text-[11px] font-medium transition-all",
+                        checkpointConfidence[i] === value
+                          ? color
+                          : "border-border bg-muted/20 text-muted-foreground/60 hover:text-foreground"
+                      )}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
               </div>
             ))}
           </div>
@@ -313,9 +390,16 @@ export function LessonStudyArea({
             ] as const
           ).map(({ key, prompt, placeholder }) => (
             <div key={key} className="space-y-1.5">
-              <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                {prompt}
-              </Label>
+              <div className="flex items-center justify-between">
+                <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  {prompt}
+                </Label>
+                {reflection[key].trim().length > 0 && (
+                  <span className={cn("text-[11px]", reflection[key].trim().length >= MIN_REFLECTION_CHARS ? "text-[var(--token-emerald)]" : "text-muted-foreground/60")}>
+                    {reflection[key].trim().length}/{MIN_REFLECTION_CHARS}+
+                  </span>
+                )}
+              </div>
               <Textarea
                 placeholder={placeholder}
                 value={reflection[key]}
@@ -355,10 +439,10 @@ export function LessonStudyArea({
                 {!step1Done
                   ? "Mark the source reviewed to begin."
                   : !step2Done
-                  ? "Add some notes before continuing."
+                  ? `Add at least ${MIN_NOTE_CHARS} characters of notes before continuing.`
                   : !step3Done
                   ? "Answer at least one checkpoint question."
-                  : "Fill in your reflection to complete."}
+                  : `Write at least ${MIN_REFLECTION_CHARS} characters in one reflection field.`}
               </p>
             )}
           </>
