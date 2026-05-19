@@ -137,6 +137,23 @@
   --token-blue: oklch(0.50 0.18 250);
 }
 
+/* ── Page transition ──────────────────────────────────────────────────────────
+   template.tsx re-renders on every navigation, triggering this animation.
+   Only uses opacity + transform — no layout reflow, GPU-composited. */
+@keyframes page-enter {
+  from { opacity: 0; transform: translateY(7px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+.page-transition {
+  animation: page-enter 0.18s ease-out both;
+}
+
+/* ── CSS accordion — no JS, no layout reflow ──────────────────────────────────
+   Parent: grid-template-rows 0fr → 1fr. Child: overflow-hidden + min-height 0.
+   transition-[grid-template-rows] set inline via Tailwind arbitrary value. */
+.accordion        { display: grid; }
+.accordion > *    { overflow: hidden; min-height: 0; }
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -144,9 +161,33 @@
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+    /* Sharper text on low-DPI screens */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   html {
     @apply font-sans;
+    /* Smooth hash-link scrolling; disabled for reduced-motion below */
+    scroll-behavior: smooth;
+  }
+  /* Faster tap response — eliminates 300ms delay on mobile/touch */
+  button, a, [role="button"], input, select, textarea {
+    touch-action: manipulation;
+  }
+  /* Subtle press feedback on all interactive elements */
+  button:not(:disabled):active,
+  [role="button"]:not(:disabled):active {
+    transform: scale(0.97);
+  }
+  /* Ensure scale transitions feel snappy */
+  button, [role="button"] {
+    transition: transform 0.08s ease, opacity 0.1s ease;
+  }
+  /* Stable focus rings that don't cause layout shift */
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+    transition: outline-offset 0.1s ease;
   }
 }
 
@@ -286,5 +327,44 @@
   .light h2.text-sm.font-medium {
     color: oklch(0.20 0.015 240);
     font-weight: 600;
+  }
+
+  /* ── Reduced motion: respect OS accessibility preference ───────────────────
+     Disables all animations and transitions — critical for users with motion
+     sensitivity and also speeds up the app on low-tier hardware. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+    html {
+      scroll-behavior: auto !important;
+    }
+    .page-transition {
+      animation: none;
+    }
+  }
+
+  /* ── Backdrop-filter fallback for low-power / older hardware ──────────────
+     Devices that don't accelerate backdrop-filter get a solid fallback
+     instead of a costly software-rendered blur. */
+  @supports not (backdrop-filter: blur(1px)) {
+    .glass {
+      backdrop-filter: none !important;
+      background: oklch(0.14 0.012 240 / 96%) !important;
+      border-color: oklch(1 0 0 / 12%) !important;
+    }
+    .light .glass {
+      background: oklch(0.98 0.003 240 / 98%) !important;
+    }
+  }
+
+  /* ── Paint containment on scrollable lists ─────────────────────────────────
+     Tells the browser each item is independent — reduces repaint area. */
+  [data-list-item] {
+    contain: layout style;
   }
 }

@@ -2,7 +2,6 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, ChevronRight, Lock, BookOpen, CheckCircle2, Circle, Clock, Layers } from "lucide-react";
 import { cn, getStatusColor } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -200,24 +199,23 @@ function ModuleCard({
         )}
       </button>
 
-      {/* Lessons list */}
-      <AnimatePresence initial={false}>
-        {expanded && !isLocked && module.lessons.length > 0 && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25, ease: "easeInOut" }}
-            className="overflow-hidden"
-          >
+      {/* Lessons list — CSS grid accordion, zero JS animation cost */}
+      {!isLocked && module.lessons.length > 0 && (
+        <div
+          className={cn(
+            "accordion transition-[grid-template-rows] duration-[220ms] ease-in-out",
+            expanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+          )}
+        >
+          <div>
             <div className="border-t border-border px-4 pb-3 pt-2">
               {module.lessons.map((lesson) => (
                 <LessonRow key={lesson.id} lesson={lesson} />
               ))}
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
