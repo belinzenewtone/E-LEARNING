@@ -1,11 +1,36 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
+import { unstable_cache } from "next/cache";
 import { Sidebar } from "@/components/layout/sidebar";
 import { DashboardShell } from "@/components/layout/dashboard-shell";
 import { ScrollToTop } from "@/components/shared/scroll-to-top";
 import { syncWeekStatuses } from "@/lib/week-activator";
 import { generateNotifications, getNotifications, getUnreadCount } from "@/server/queries/notifications";
+
+// Cache XP total per user — revalidates every 30 s.
+// Tag 'user-xp-{userId}' is revalidated by server actions that award XP.
+const getCachedUserXp = unstable_cache(
+  (userId: string) =>
+    db.xpEvent.aggregate({ where: { userId }, _sum: { points: true } }),
+  ["layout-user-xp"],
+  { revalidate: 30, tags: ["user-xp"] }
+);
+
+// Cache the 30-day study log used for streak — revalidates every 60 s.
+const getCachedRecentLogs = unstable_cache(
+  (userId: string) =>
+    db.studyLog.findMany({
+      where: {
+        userId,
+        date: { gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) },
+      },
+      orderBy: { date: "desc" },
+      select: { date: true, minutes: true },
+    }),
+  ["layout-recent-logs"],
+  { revalidate: 60, tags: ["study-logs"] }
+);
 
 export default async function DashboardLayout({
   children,
@@ -22,26 +47,17 @@ export default async function DashboardLayout({
 
   if (!user) redirect("/login");
 
-  // Auto-activate/complete weeks based on today's date (lightweight — only runs if status changes)
+  // Sync week statuses — throttled to once/hour in week-activator.ts (near-zero cost)
   await syncWeekStatuses();
 
-  try { await generateNotifications(user.id); } catch (err) {
-    console.error("[layout] generateNotifications failed:", err);
-  }
+  // Fire-and-forget — don't block rendering for notification generation
+  generateNotifications(user.id).catch((err) =>
+    console.error("[layout] generateNotifications failed:", err)
+  );
 
   const [xpAggregate, recentLogs] = await Promise.all([
-    db.xpEvent.aggregate({
-      where: { userId: user.id },
-      _sum: { points: true },
-    }),
-    db.studyLog.findMany({
-      where: {
-        userId: user.id,
-        date: { gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) },
-      },
-      orderBy: { date: "desc" },
-      select: { date: true, minutes: true },
-    }),
+    getCachedUserXp(user.id),
+    getCachedRecentLogs(user.id),
   ]);
 
   // Calculate streak

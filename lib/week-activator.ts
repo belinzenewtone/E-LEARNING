@@ -1,6 +1,14 @@
 import { db } from "@/lib/db";
 
+// Throttle: run at most once per hour per process — week statuses only change daily.
+// In production PM2 keeps the Node process alive, so this persists across requests.
+let lastSyncAt = 0;
+const SYNC_THROTTLE_MS = 60 * 60 * 1000; // 1 hour
+
 export async function syncWeekStatuses(): Promise<void> {
+  if (Date.now() - lastSyncAt < SYNC_THROTTLE_MS) return;
+  lastSyncAt = Date.now();
+
   const now = new Date();
 
   const weeks = await db.weekSprint.findMany({
