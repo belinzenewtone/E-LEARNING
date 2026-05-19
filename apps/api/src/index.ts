@@ -72,10 +72,10 @@ app.use("/api/search", searchRoutes);
 app.use("/api/settings", settingsRoutes);
 app.use("/api/export", exportRoutes);
 
-// Health check — verifies DB connectivity, not just process liveness
+// Health check — verifies DB connectivity via Prisma (same path as all other routes)
 app.get("/api/health", async (_req, res) => {
   try {
-    await pool.query("SELECT 1");
+    await db.user.count();
     res.json({ status: "ok", db: "ok", timestamp: new Date().toISOString() });
   } catch (err) {
     logger.error("health check failed", { message: (err as Error).message });
