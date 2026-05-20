@@ -217,9 +217,8 @@
     background-clip: text;
   }
   .glass {
-    backdrop-filter: blur(12px);
-    background: oklch(1 0 0 / 4%);
-    border: 1px solid oklch(1 0 0 / 8%);
+    background: var(--card);
+    border: 1px solid var(--border);
   }
   /* Styled native form elements */
   .form-select {
@@ -281,8 +280,8 @@
 
   /* Glass card — opaque and bordered */
   .light .glass {
-    background: oklch(0.99 0.003 240);
-    border-color: oklch(0.85 0.01 240);
+    background: var(--card);
+    border-color: var(--border);
   }
 
   /* Form range track */
@@ -295,21 +294,21 @@
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
   }
 
-  /* Cards: depth via shadow + inset highlight */
+  /* Cards: crisp solid layers inspired by high-density professional dashboards */
   [data-slot="card"] {
-    transition: box-shadow 0.2s ease, border-color 0.2s ease;
-    box-shadow: 0 1px 3px oklch(0 0 0 / 50%), inset 0 1px 0 oklch(1 0 0 / 7%);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    box-shadow: 0 1px 2px oklch(0 0 0 / 12%);
   }
   [data-slot="card"]:hover {
-    box-shadow: 0 3px 14px oklch(0 0 0 / 55%), inset 0 1px 0 oklch(1 0 0 / 9%);
+    box-shadow: 0 4px 12px oklch(0 0 0 / 20%);
     border-color: oklch(1 0 0 / 22%);
   }
   .light [data-slot="card"] {
-    box-shadow: 0 1px 3px oklch(0 0 0 / 7%), 0 1px 2px oklch(0 0 0 / 5%);
+    box-shadow: 0 1px 2px oklch(0 0 0 / 4%);
   }
   .light [data-slot="card"]:hover {
-    box-shadow: 0 2px 8px oklch(0 0 0 / 9%), 0 1px 3px oklch(0 0 0 / 6%);
-    border-color: oklch(0.75 0.01 240);
+    box-shadow: 0 4px 12px oklch(0 0 0 / 8%);
+    border-color: oklch(0.70 0.01 240);
   }
 
   /* Topbar: more visible border in light mode */
@@ -351,14 +350,11 @@
   /* ── Backdrop-filter fallback for low-power / older hardware ──────────────
      Devices that don't accelerate backdrop-filter get a solid fallback
      instead of a costly software-rendered blur. */
+  /* Clean fallback */
   @supports not (backdrop-filter: blur(1px)) {
     .glass {
-      backdrop-filter: none !important;
-      background: oklch(0.14 0.012 240 / 96%) !important;
-      border-color: oklch(1 0 0 / 12%) !important;
-    }
-    .light .glass {
-      background: oklch(0.98 0.003 240 / 98%) !important;
+      background: var(--card) !important;
+      border-color: var(--border) !important;
     }
   }
 

@@ -1,37 +1,51 @@
-// Simple in-memory rate limiter — no external dependency required.
-// Resets on server restart; sufficient for a single-user personal app.
+/**
+ * Simple in-memory rate limiter.
+ * Resets automatically per window. Good enough for a single-process Next.js server.
+ * For multi-instance deployments swap this out for a Redis-backed solution.
+ */
 
-interface Bucket {
+interface RateLimitEntry {
   count: number;
-  resetAt: number;
+  resetAt: number; // epoch ms
 }
 
-const store = new Map<string, Bucket>();
+const store = new Map<string, RateLimitEntry>();
 
 interface RateLimitOptions {
+  /** Unique key to track (e.g. "auth:user@example.com") */
   key: string;
+  /** Maximum allowed calls within the window */
   limit: number;
+  /** Window size in milliseconds */
   windowMs: number;
 }
 
-export function checkRateLimit({ key, limit, windowMs }: RateLimitOptions): {
+interface RateLimitResult {
   allowed: boolean;
   remaining: number;
   resetAt: number;
-} {
+}
+
+export function checkRateLimit({
+  key,
+  limit,
+  windowMs,
+}: RateLimitOptions): RateLimitResult {
   const now = Date.now();
-  const bucket = store.get(key);
+  const entry = store.get(key);
 
-  if (!bucket || now >= bucket.resetAt) {
-    const resetAt = now + windowMs;
-    store.set(key, { count: 1, resetAt });
-    return { allowed: true, remaining: limit - 1, resetAt };
+  // Start a fresh window if none exists or the previous window expired
+  if (!entry || now > entry.resetAt) {
+    const newEntry: RateLimitEntry = { count: 1, resetAt: now + windowMs };
+    store.set(key, newEntry);
+    return { allowed: true, remaining: limit - 1, resetAt: newEntry.resetAt };
   }
 
-  if (bucket.count >= limit) {
-    return { allowed: false, remaining: 0, resetAt: bucket.resetAt };
+  entry.count += 1;
+
+  if (entry.count > limit) {
+    return { allowed: false, remaining: 0, resetAt: entry.resetAt };
   }
 
-  bucket.count++;
-  return { allowed: true, remaining: limit - bucket.count, resetAt: bucket.resetAt };
+  return { allowed: true, remaining: limit - entry.count, resetAt: entry.resetAt };
 }

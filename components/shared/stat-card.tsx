@@ -14,10 +14,10 @@ interface StatCardProps {
 }
 
 const colorMap: Record<StatColor, { text: string; bg: string; border: string }> = {
-  primary: { text: "text-[var(--token-cyan)]",    bg: "bg-[var(--token-cyan)]/10",    border: "border-[var(--token-cyan)]/20" },
-  success: { text: "text-[var(--token-emerald)]", bg: "bg-[var(--token-emerald)]/10", border: "border-[var(--token-emerald)]/20" },
-  warning: { text: "text-[var(--token-amber)]",   bg: "bg-[var(--token-amber)]/10",   border: "border-[var(--token-amber)]/20" },
-  danger:  { text: "text-[var(--token-red)]",     bg: "bg-[var(--token-red)]/10",     border: "border-[var(--token-red)]/20" },
+  primary: { text: "text-muted-foreground/80",    bg: "bg-muted/40",    border: "border-border/60" },
+  success: { text: "text-[var(--token-emerald)]", bg: "bg-[var(--token-emerald)]/6", border: "border-[var(--token-emerald)]/15" },
+  warning: { text: "text-[var(--token-amber)]",   bg: "bg-[var(--token-amber)]/6",   border: "border-[var(--token-amber)]/15" },
+  danger:  { text: "text-[var(--token-red)]",     bg: "bg-[var(--token-red)]/6",     border: "border-[var(--token-red)]/15" },
 };
 
 export function StatCard({ title, value, subtitle, icon: Icon, color = "primary", trend }: StatCardProps) {
@@ -25,30 +25,30 @@ export function StatCard({ title, value, subtitle, icon: Icon, color = "primary"
   const trendPositive = trend !== undefined && trend >= 0;
 
   return (
-    <div className="rounded-xl border border-border bg-card p-4 transition-all hover:border-border/80 hover:shadow-sm">
+    <div className="rounded-xl border border-border bg-card p-4 transition-all hover:shadow-sm" data-slot="card">
       <div className="flex items-center justify-between">
         <div className="min-w-0">
-          <p className="text-[11px] font-medium uppercase tracking-widest text-muted-foreground">
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/80">
             {title}
           </p>
-          <p className="mt-1 text-xl font-semibold tracking-tight text-foreground">
+          <p className="mt-1 text-xl font-bold tracking-tight text-foreground font-mono">
             {value}
           </p>
           {(subtitle || trend !== undefined) && (
-            <div className="mt-0.5 flex items-center gap-2">
+            <div className="mt-1 flex items-center gap-1.5">
               {subtitle && (
-                <p className="truncate text-[11px] text-muted-foreground">{subtitle}</p>
+                <p className="truncate text-[10px] text-muted-foreground/70 font-medium">{subtitle}</p>
               )}
               {trend !== undefined && (
-                <span className={cn("inline-flex items-center gap-0.5 text-[11px] font-medium", trendPositive ? "text-[var(--token-emerald)]" : "text-[var(--token-red)]")}>
-                  {trendPositive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
+                <span className={cn("inline-flex items-center gap-0.5 text-[10px] font-semibold", trendPositive ? "text-[var(--token-emerald)]" : "text-[var(--token-red)]")}>
+                  {trendPositive ? <TrendingUp className="h-2.5 w-2.5" /> : <TrendingDown className="h-2.5 w-2.5" />}
                   {Math.abs(trend)}%
                 </span>
               )}
             </div>
           )}
         </div>
-        <div className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border", bg, border, text)}>
+        <div className={cn("flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border", bg, border, text)}>
           <Icon className="h-4 w-4" />
         </div>
       </div>
