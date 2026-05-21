@@ -4,9 +4,9 @@ import { redirect } from "next/navigation";
 import { format } from "date-fns";
 import Link from "next/link";
 import {
-  Zap, Flame, TrendingUp, Clock, BookOpen, AlertCircle, Calendar,
+  Zap, Flame, Clock, BookOpen, AlertCircle, Calendar,
   CheckCircle2, PlayCircle, FileText, PenLine, Map, NotebookPen,
-  ArrowRight, ChevronRight, Target, Activity, LayoutDashboard, Terminal,
+  ChevronRight, Target, Activity, Terminal,
 } from "lucide-react";
 import {
   getDashboardStats, getTodaysTasks, getRecentActivity, getCurrentWeekAssignments, getDueReviews,
@@ -34,11 +34,7 @@ type WeekAssignment = {
 
 type ActivityEvent = { id: string; createdAt: Date; type: string; points: number; reason: string };
 
-function getGreeting(hour: number): string {
-  if (hour < 12) return "Welcome back";
-  if (hour < 17) return "Welcome back";
-  return "Welcome back";
-}
+const greeting = "Welcome back";
 
 function eventLabel(type: string): string {
   const labels: Record<string, string> = {
@@ -64,19 +60,16 @@ function eventIcon(type: string) {
 }
 
 async function DashboardContent({ userId, userName }: { userId: string; userName: string }) {
-  const [stats, todaysTasks, recentActivity, weekAssignments] = await Promise.all([
+  const [stats, todaysTasks, recentActivity, weekAssignments, dueReviews] = await Promise.all([
     getDashboardStats(userId),
     getTodaysTasks(userId),
     getRecentActivity(userId),
     getCurrentWeekAssignments(userId),
+    // getDueReviews requires the nextReview column — falls back to [] until prisma db push is run
+    getDueReviews(userId).catch(() => [] as Awaited<ReturnType<typeof getDueReviews>>),
   ]);
 
-  // getDueReviews requires the nextReview column — guard until prisma db push is run
-  let dueReviews: Awaited<ReturnType<typeof getDueReviews>> = [];
-  try { dueReviews = await getDueReviews(userId); } catch { /* schema not yet migrated */ }
-
   const now = new Date();
-  const greeting = getGreeting(now.getHours());
   const todayLabel = format(now, "EEEE, MMMM dd, yyyy").toUpperCase();
   const firstName = userName.split(" ")[0];
 
@@ -355,8 +348,8 @@ async function DashboardContent({ userId, userName }: { userId: string; userName
               color: "bg-[var(--token-amber)]",
               link: "/roadmap"
             }
-          ].map((track, i) => (
-            <Card key={i} className="border border-border/80 bg-card/60 transition-all" data-slot="card">
+          ].map((track) => (
+            <Card key={track.title} className="border border-border/80 bg-card/60 transition-all" data-slot="card">
               <CardContent className="p-4 space-y-3.5">
                 <div className="flex items-start justify-between">
                   <div className="space-y-0.5">

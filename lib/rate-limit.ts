@@ -41,11 +41,10 @@ export function checkRateLimit({
     return { allowed: true, remaining: limit - 1, resetAt: newEntry.resetAt };
   }
 
-  entry.count += 1;
-
-  if (entry.count > limit) {
+  if (entry.count >= limit) {
     return { allowed: false, remaining: 0, resetAt: entry.resetAt };
   }
 
+  entry.count += 1;
   return { allowed: true, remaining: limit - entry.count, resetAt: entry.resetAt };
 }

@@ -63,7 +63,7 @@ export default function LoginPage() {
     }
   }
 
-    return (
+  return (
     <div className="min-h-screen flex bg-background">
       {/* ── Left panel ──────────────────────────────────────────────────────── */}
       <div className="hidden lg:flex lg:w-[52%] flex-col justify-between p-10 bg-card border-r border-border/40 relative overflow-hidden">
