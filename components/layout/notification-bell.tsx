@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
-import { Bell, CheckCheck } from "lucide-react";
+import { Bell, CheckCheck, BellOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -29,19 +29,15 @@ interface NotificationBellProps {
   userId: string;
 }
 
-function typeColor(type: string): string {
-  switch (type) {
-    case "overdue_assignment":
-      return "bg-[var(--token-red)]";
-    case "streak_risk":
-      return "bg-[var(--token-amber)]";
-    case "week_complete":
-      return "bg-[var(--token-emerald)]";
-    case "milestone":
-      return "bg-primary";
-    default:
-      return "bg-muted-foreground/40";
-  }
+const TYPE_META: Record<string, { label: string; color: string; dot: string }> = {
+  overdue_assignment: { label: "OVERDUE", color: "text-[var(--token-red)]",    dot: "bg-[var(--token-red)]"    },
+  streak_risk:        { label: "STREAK",  color: "text-[var(--token-amber)]",  dot: "bg-[var(--token-amber)]"  },
+  week_complete:      { label: "DONE",    color: "text-[var(--token-emerald)]", dot: "bg-[var(--token-emerald)]" },
+  milestone:          { label: "MILESTONE", color: "text-primary",             dot: "bg-primary"               },
+};
+
+function getMeta(type: string) {
+  return TYPE_META[type] ?? { label: "INFO", color: "text-muted-foreground", dot: "bg-muted-foreground/40" };
 }
 
 export function NotificationBell({
@@ -49,7 +45,15 @@ export function NotificationBell({
   unreadCount,
   userId,
 }: NotificationBellProps) {
-  const [items, setItems] = useState<NotificationItem[]>(notifications);
+  // Deduplicate by id on init to guard against any upstream duplicates
+  const [items, setItems] = useState<NotificationItem[]>(() => {
+    const seen = new Set<string>();
+    return notifications.filter((n) => {
+      if (seen.has(n.id)) return false;
+      seen.add(n.id);
+      return true;
+    });
+  });
   const [count, setCount] = useState(unreadCount);
   const [isPending, startTransition] = useTransition();
 
@@ -58,9 +62,7 @@ export function NotificationBell({
   function handleRead(id: string) {
     startTransition(async () => {
       await markNotificationRead(id);
-      setItems((prev) =>
-        prev.map((n) => (n.id === id ? { ...n, read: true } : n))
-      );
+      setItems((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
       setCount((prev) => Math.max(0, prev - 1));
     });
   }
@@ -77,14 +79,14 @@ export function NotificationBell({
     <Popover>
       <PopoverTrigger
         className={cn(
-          "relative flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground",
-          "hover:bg-accent hover:text-foreground transition-colors"
+          "relative flex h-8 w-8 items-center justify-center rounded-md transition-colors",
+          "text-muted-foreground hover:bg-accent hover:text-foreground"
         )}
         aria-label={`Notifications${count > 0 ? `, ${count} unread` : ""}`}
       >
         <Bell className="h-4 w-4" />
         {count > 0 && (
-          <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[9px] font-bold text-white leading-none">
+          <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-[var(--token-red)] text-[9px] font-bold text-white leading-none">
             {count > 9 ? "9+" : count}
           </span>
         )}
@@ -94,23 +96,26 @@ export function NotificationBell({
         side="bottom"
         align="end"
         alignOffset={-4}
-        className="w-80 p-0"
+        sideOffset={8}
+        className="w-[340px] p-0 shadow-lg border border-border/80 bg-card"
       >
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-border/60 px-3 py-2.5">
-          <span className="text-sm font-semibold text-foreground">
-            Notifications
+        {/* ── Header ──────────────────────────────────────────────── */}
+        <div className="flex items-center justify-between border-b border-border/60 px-3 py-2">
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-mono font-bold tracking-widest text-muted-foreground/80 uppercase">
+              NOTIFICATIONS
+            </span>
             {count > 0 && (
-              <span className="ml-1.5 rounded-full bg-red-500/15 px-1.5 py-0.5 text-[10px] font-bold text-[var(--token-red)]">
+              <span className="inline-flex items-center rounded border border-[var(--token-red)]/30 bg-[var(--token-red)]/10 px-1.5 py-0.5 text-[9px] font-mono font-bold text-[var(--token-red)] uppercase tracking-wider">
                 {count} new
               </span>
             )}
-          </span>
+          </div>
           {count > 0 && (
             <Button
               variant="ghost"
               size="sm"
-              className="h-auto gap-1 px-2 py-1 text-[11px] text-muted-foreground hover:text-foreground"
+              className="h-auto gap-1 px-2 py-1 text-[10px] font-mono uppercase tracking-wider text-muted-foreground hover:text-foreground"
               onClick={handleMarkAllRead}
               disabled={isPending}
             >
@@ -120,81 +125,86 @@ export function NotificationBell({
           )}
         </div>
 
-        {/* List */}
+        {/* ── List ────────────────────────────────────────────────── */}
         {visible.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-2 py-10 text-center">
-            <Bell className="h-8 w-8 text-muted-foreground/20" />
-            <p className="text-sm font-medium text-muted-foreground">
-              All caught up!
+            <BellOff className="h-7 w-7 text-muted-foreground/20" />
+            <p className="text-[11px] font-mono font-semibold uppercase tracking-widest text-muted-foreground/50">
+              All clear
             </p>
-            <p className="text-xs text-muted-foreground/60">
+            <p className="text-[10px] text-muted-foreground/40">
               No notifications right now.
             </p>
           </div>
         ) : (
-          <ScrollArea className="max-h-[360px]">
-            <ul className="divide-y divide-border/40">
-              {visible.map((n) => {
-                const content = (
+          <ScrollArea className="max-h-[380px]">
+            <ul>
+              {visible.map((n, i) => {
+                const meta = getMeta(n.type);
+                const row = (
                   <div
                     className={cn(
-                      "flex cursor-pointer items-start gap-3 px-3 py-3 transition-colors hover:bg-muted/30",
-                      !n.read && "bg-primary/3"
+                      "group flex cursor-pointer items-start gap-3 px-3 py-2.5 transition-colors",
+                      "border-b border-border/30 last:border-b-0",
+                      !n.read ? "bg-primary/[0.03] hover:bg-muted/30" : "hover:bg-muted/20",
+                      isPending && "pointer-events-none opacity-60"
                     )}
-                    onClick={() => {
-                      if (!n.read) handleRead(n.id);
-                    }}
+                    onClick={() => { if (!n.read) handleRead(n.id); }}
                   >
-                    {/* Colored dot */}
-                    <span
-                      className={cn(
-                        "mt-1.5 h-2 w-2 shrink-0 rounded-full",
-                        typeColor(n.type),
-                        n.read && "opacity-30"
-                      )}
-                    />
+                    {/* Type dot */}
+                    <span className={cn("mt-[5px] h-1.5 w-1.5 shrink-0 rounded-full", meta.dot, n.read && "opacity-25")} />
 
-                    {/* Body */}
-                    <div className="min-w-0 flex-1">
-                      <p
-                        className={cn(
-                          "text-[13px] font-medium leading-snug",
-                          n.read
-                            ? "text-muted-foreground"
-                            : "text-foreground"
-                        )}
-                      >
+                    {/* Content */}
+                    <div className="min-w-0 flex-1 space-y-0.5">
+                      <div className="flex items-baseline gap-2">
+                        <span className={cn("text-[9px] font-mono font-bold tracking-widest uppercase", meta.color)}>
+                          {meta.label}
+                        </span>
+                        <span className="text-[9px] font-mono text-muted-foreground/40 ml-auto shrink-0">
+                          {timeAgo(n.createdAt)}
+                        </span>
+                      </div>
+                      <p className={cn(
+                        "text-[12px] font-medium leading-snug",
+                        n.read ? "text-muted-foreground/70" : "text-foreground"
+                      )}>
                         {n.title}
                       </p>
-                      <p className="mt-0.5 text-xs text-muted-foreground leading-relaxed">
-                        {truncate(n.body, 90)}
-                      </p>
-                      <p className="mt-1 text-[10px] text-muted-foreground/50">
-                        {timeAgo(n.createdAt)}
+                      <p className="text-[11px] text-muted-foreground/60 leading-relaxed">
+                        {truncate(n.body, 100)}
                       </p>
                     </div>
 
-                    {/* Unread indicator */}
+                    {/* Unread pip */}
                     {!n.read && (
-                      <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+                      <span className="mt-[5px] h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
                     )}
                   </div>
                 );
 
                 return (
-                  <li key={n.id}>
+                  <li key={`${n.id}-${i}`}>
                     {n.href ? (
                       <Link href={n.href} className="block">
-                        {content}
+                        {row}
                       </Link>
                     ) : (
-                      content
+                      row
                     )}
                   </li>
                 );
               })}
             </ul>
           </ScrollArea>
+        )}
+
+        {/* ── Footer ──────────────────────────────────────────────── */}
+        {visible.length > 0 && (
+          <div className="border-t border-border/40 px-3 py-1.5">
+            <span className="text-[9px] font-mono text-muted-foreground/40 uppercase tracking-widest">
+              SHOWING {visible.length} OF {items.length}
+            </span>
+          </div>
         )}
       </PopoverContent>
     </Popover>

@@ -54,9 +54,12 @@ export function SettingsClient({ user, goals, xpTotal, studyLogs, tracks, weekSt
   const [showCurrent, setShowCurrent] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [resetConfirmText, setResetConfirmText] = useState("");
   const [isProfilePending, startProfile] = useTransition();
   const [isPasswordPending, startPassword] = useTransition();
   const [isResetPending, startReset] = useTransition();
+
+  const RESET_PHRASE = "RESET ALL";
 
   const displayAvatar = avatar ?? user?.name?.[0]?.toUpperCase() ?? "L";
 
@@ -89,12 +92,16 @@ export function SettingsClient({ user, goals, xpTotal, studyLogs, tracks, weekSt
   }
 
   function handleReset() {
-    if (!confirm("WARNING: This will permanently delete ALL your progress, notes, study logs, and submissions. This cannot be undone.")) return;
-    if (!confirm("Final confirmation: press OK to confirm.")) return;
+    if (resetConfirmText !== RESET_PHRASE) return;
     startReset(async () => {
       const result = await resetAllProgress();
-      if (result.success) { toast.success("All progress reset."); window.location.href = "/dashboard"; }
-      else toast.error("Failed to reset progress.");
+      if (result.success) {
+        toast.success("All progress reset.");
+        window.location.href = "/dashboard";
+      } else {
+        toast.error("Failed to reset progress.");
+        setResetConfirmText("");
+      }
     });
   }
 
@@ -351,14 +358,26 @@ export function SettingsClient({ user, goals, xpTotal, studyLogs, tracks, weekSt
             </div>
             <div className="border-t border-[var(--token-red)]/10" />
             <p className="text-xs text-muted-foreground/80">
-              Resetting progress permanently deletes all XP events, study logs, lesson progress, notes, and submissions. This cannot be undone.
+              Resetting progress permanently deletes all XP events, study logs, lesson progress, notes, and submissions. <span className="font-semibold text-foreground/80">This cannot be undone.</span>
             </p>
+            <div className="space-y-2 max-w-xs">
+              <Label className="text-[10px] font-mono font-semibold text-[var(--token-red)]/80 uppercase tracking-widest">
+                TYPE <span className="font-bold text-[var(--token-red)]">{RESET_PHRASE}</span> TO CONFIRM
+              </Label>
+              <Input
+                value={resetConfirmText}
+                onChange={(e) => setResetConfirmText(e.target.value.toUpperCase())}
+                placeholder={RESET_PHRASE}
+                disabled={isResetPending}
+                className="bg-muted/20 border-[var(--token-red)]/20 font-mono text-sm uppercase tracking-wider placeholder:text-muted-foreground/30 focus-visible:ring-[var(--token-red)]/30"
+              />
+            </div>
             <Button
               variant="outline"
               size="sm"
-              className="text-[var(--token-red)] border-[var(--token-red)]/30 hover:bg-[var(--token-red)]/10 font-mono text-xs uppercase tracking-wider"
+              className="text-[var(--token-red)] border-[var(--token-red)]/30 hover:bg-[var(--token-red)]/10 font-mono text-xs uppercase tracking-wider disabled:opacity-40"
               onClick={handleReset}
-              disabled={isResetPending}
+              disabled={isResetPending || resetConfirmText !== RESET_PHRASE}
             >
               {isResetPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "RESET ALL PROGRESS"}
             </Button>
