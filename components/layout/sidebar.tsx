@@ -47,7 +47,7 @@ export function Sidebar({ userXp = 0, streak = 0, userName = "Learner" }: Sideba
   void userName;
 
   return (
-    <aside className="flex w-52 flex-col h-screen bg-sidebar border-r border-sidebar-border/80 py-3">
+    <aside className="flex w-40 flex-col h-screen bg-sidebar border-r border-sidebar-border/80 py-3">
 
         {/* ── Brand ─────────────────────────────────────────────── */}
         <Link
@@ -66,7 +66,7 @@ export function Sidebar({ userXp = 0, streak = 0, userName = "Learner" }: Sideba
         <div className="mx-4 h-px bg-sidebar-border/60 shrink-0 mb-2" />
 
         {/* ── Navigation ─────────────────────────────────────────── */}
-        <nav className="flex-1 flex flex-col gap-0.5 w-full px-2 overflow-y-auto">
+        <nav className="flex-1 flex flex-col gap-1 w-full px-2 overflow-y-auto">
           {navItems.map(({ href, label, icon: Icon }) => {
             const active = isActive(href);
             return (
@@ -101,7 +101,7 @@ export function Sidebar({ userXp = 0, streak = 0, userName = "Learner" }: Sideba
         <div className="mx-4 h-px bg-sidebar-border/60 shrink-0 mb-2" />
 
         {/* ── Bottom actions ─────────────────────────────────────── */}
-        <div className="flex flex-col gap-0.5 w-full px-2">
+        <div className="flex flex-col gap-1 w-full px-2">
           <Link
             href="/settings"
             className={cn(
