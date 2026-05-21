@@ -58,7 +58,7 @@ async function getLessonData(slug: string, userId: string) {
   });
 }
 
-// ── progress sidebar ──────────────────────────────────────────────────────────
+// ── progress sidebar (status + week progress + nav) ───────────────────────────
 
 function ProgressSidebar({ lesson }: { lesson: LessonFull }) {
   const status = lesson.progress[0]?.status ?? "not-started";
@@ -73,16 +73,13 @@ function ProgressSidebar({ lesson }: { lesson: LessonFull }) {
   const currentAssignment = lesson.week.assignments[0];
 
   return (
-    <div className="space-y-4">
-      {/* Study Timer */}
-      <StudyTimer />
-
-      {/* Status card */}
+    <div className="space-y-3">
+      {/* Status */}
       <Card className="border-border bg-card">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm">Lesson Status</CardTitle>
-        </CardHeader>
-        <CardContent>
+        <CardContent className="p-3 flex items-center justify-between">
+          <p className="text-[10px] font-mono font-semibold uppercase tracking-widest text-muted-foreground/70">
+            STATUS
+          </p>
           <span
             className={cn(
               "inline-flex rounded-full border px-2.5 py-0.5 text-xs font-semibold capitalize",
@@ -94,23 +91,18 @@ function ProgressSidebar({ lesson }: { lesson: LessonFull }) {
         </CardContent>
       </Card>
 
-      {/* Table of Contents — section navigation + completion tracking */}
-      <LessonToc lessonSlug={lesson.slug} />
-
       {/* Week progress */}
       <Card className="border-border bg-card">
-        <CardContent className="p-4">
-          <p className="mb-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-            Week {lesson.week.weekNumber} Progress
+        <CardContent className="p-3">
+          <p className="mb-2 text-[10px] font-mono font-semibold uppercase tracking-widest text-muted-foreground/70">
+            WEEK {lesson.week.weekNumber} PROGRESS
           </p>
           <div className="flex items-center gap-3">
-            <ProgressRing value={weekProgress} size={56} color="var(--token-cyan)" />
-            <div>
-              <p className="text-sm font-semibold text-foreground">
-                {completedInWeek}/{weekLessons.length} lessons
-              </p>
-              <p className="text-xs text-muted-foreground">completed</p>
-            </div>
+            <ProgressRing value={weekProgress} size={44} color="var(--token-cyan)" />
+            <p className="text-sm font-semibold text-foreground">
+              {completedInWeek}/{weekLessons.length}
+              <span className="ml-1 text-xs font-normal text-muted-foreground">lessons</span>
+            </p>
           </div>
         </CardContent>
       </Card>
@@ -118,14 +110,14 @@ function ProgressSidebar({ lesson }: { lesson: LessonFull }) {
       {/* Assignment link */}
       {currentAssignment && (
         <Card className="border-border bg-card">
-          <CardContent className="p-4">
-            <p className="mb-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-              Week Assignment
+          <CardContent className="p-3 space-y-2">
+            <p className="text-[10px] font-mono font-semibold uppercase tracking-widest text-muted-foreground/70">
+              WEEK ASSIGNMENT
             </p>
-            <p className="mb-3 text-sm font-medium text-foreground line-clamp-2">
+            <p className="text-sm font-medium text-foreground line-clamp-2">
               {currentAssignment.title}
             </p>
-            <Button size="sm" variant="outline" className="w-full" asChild>
+            <Button size="sm" variant="outline" className="w-full text-xs" asChild>
               <Link href={`/assignments/${currentAssignment.id}`}>
                 View Assignment
                 <ArrowRight className="h-3 w-3" />
@@ -138,14 +130,14 @@ function ProgressSidebar({ lesson }: { lesson: LessonFull }) {
       {/* Next lesson */}
       {nextLesson && (
         <Card className="border-border bg-card">
-          <CardContent className="p-4">
-            <p className="mb-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-              Next Lesson
+          <CardContent className="p-3 space-y-2">
+            <p className="text-[10px] font-mono font-semibold uppercase tracking-widest text-muted-foreground/70">
+              NEXT LESSON
             </p>
-            <p className="mb-3 text-sm font-medium text-foreground line-clamp-2">
+            <p className="text-sm font-medium text-foreground line-clamp-2">
               {nextLesson.title}
             </p>
-            <Button size="sm" variant="default" className="w-full" asChild>
+            <Button size="sm" variant="default" className="w-full text-xs" asChild>
               <Link href={`/lessons/${nextLesson.slug}`}>
                 Next
                 <ChevronRight className="h-3 w-3" />
@@ -272,39 +264,52 @@ async function LessonContent({ slug, userId }: { slug: string; userId: string })
     <div>
       <Topbar breadcrumbs={[{ label: "Lessons", href: "/lessons" }, { label: lesson.title }]} />
       <div className="p-4 sm:p-6 lg:p-8">
-      <div className="grid gap-6 xl:grid-cols-[260px_1fr_280px]">
-        <aside className="xl:sticky xl:top-20 xl:self-start xl:max-h-[calc(100vh-6rem)] xl:overflow-y-auto">
-          <LessonInfoPanel lesson={lesson} />
-        </aside>
+        <div className="grid gap-6 xl:grid-cols-[240px_1fr_300px]">
 
-        <main className="space-y-5 min-w-0">
-          {lesson.content && (
-            <Card className="border-border bg-card">
-              <CardContent className="p-5" data-lesson-body>
-                <MarkdownContent content={lesson.content} />
-              </CardContent>
-            </Card>
-          )}
-          <SupplementarySection
-            items={getSupplementaryContent(lesson.slug)}
-          />
-          <LessonStudyArea
-            lessonId={lesson.id}
-            lessonSlug={lesson.slug}
-            userId={userId}
-            estimatedMinutes={lesson.estimatedMinutes}
-            checkpointQuestions={checkpointQuestions}
-            existingNotes={lesson.notes}
-            existingAnswers={lesson.checkpointAnswers}
-            isCompleted={lesson.progress[0]?.status === "completed"}
-          />
-        </main>
+          {/* ── LEFT: lesson metadata ─────────────────────────────── */}
+          <aside className="xl:sticky xl:top-20 xl:self-start xl:max-h-[calc(100vh-6rem)] xl:overflow-y-auto">
+            <LessonInfoPanel lesson={lesson} />
+          </aside>
 
-        <aside className="xl:sticky xl:top-20 xl:self-start xl:max-h-[calc(100vh-6rem)] xl:overflow-y-auto space-y-4">
-          <LessonToc lessonSlug={lesson.slug} />
-          <ProgressSidebar lesson={lesson} />
-        </aside>
-      </div>
+          {/* ── CENTER: lesson content only ───────────────────────── */}
+          <main className="space-y-5 min-w-0">
+            {lesson.content && (
+              <Card className="border-border bg-card">
+                <CardContent className="p-5" data-lesson-body>
+                  <MarkdownContent content={lesson.content} />
+                </CardContent>
+              </Card>
+            )}
+            <SupplementarySection items={getSupplementaryContent(lesson.slug)} />
+          </main>
+
+          {/* ── RIGHT: study tools — sticky, independently scrollable */}
+          <aside className="xl:sticky xl:top-20 xl:self-start xl:max-h-[calc(100vh-6rem)] xl:overflow-y-auto">
+            <div className="space-y-3">
+              {/* Timer always at the top */}
+              <StudyTimer />
+
+              {/* Study pipeline: Review → Notes → Checkpoint → Reflect */}
+              <LessonStudyArea
+                lessonId={lesson.id}
+                lessonSlug={lesson.slug}
+                userId={userId}
+                estimatedMinutes={lesson.estimatedMinutes}
+                checkpointQuestions={checkpointQuestions}
+                existingNotes={lesson.notes}
+                existingAnswers={lesson.checkpointAnswers}
+                isCompleted={lesson.progress[0]?.status === "completed"}
+              />
+
+              {/* Table of contents for jumping to sections */}
+              <LessonToc lessonSlug={lesson.slug} />
+
+              {/* Status + week progress + next lesson */}
+              <ProgressSidebar lesson={lesson} />
+            </div>
+          </aside>
+
+        </div>
       </div>
     </div>
   );
