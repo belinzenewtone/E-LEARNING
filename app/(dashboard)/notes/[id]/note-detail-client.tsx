@@ -18,15 +18,9 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn, formatDateTime } from "@/lib/utils";
 import { toast } from "sonner";
-
-// ── server actions (inline for notes) ─────────────────────────────────────────
-// These perform raw fetch mutations. Because addNote only creates, we need
-// dedicated update/delete actions — we'll call API routes instead.
 
 interface NoteData {
   id: string;
@@ -77,11 +71,7 @@ export function NoteDetailClient({ note: initialNote }: NoteDetailClientProps) {
     startTransition(async () => {
       try {
         await patchNote({ title: editTitle, content: editContent });
-        setNote((prev) => ({
-          ...prev,
-          title: editTitle,
-          content: editContent,
-        }));
+        setNote((prev) => ({ ...prev, title: editTitle, content: editContent }));
         setEditing(false);
         toast.success("Note updated.");
       } catch {
@@ -117,27 +107,29 @@ export function NoteDetailClient({ note: initialNote }: NoteDetailClientProps) {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-4xl mx-auto">
       {/* Header */}
-      <div className="space-y-2">
+      <div className="space-y-2 border-b border-border/40 pb-6">
+        <p className="text-[10px] font-mono font-semibold tracking-widest text-muted-foreground/80">
+          SYSTEM // NOTE DETAIL
+        </p>
         {editing ? (
           <Input
             value={editTitle}
             onChange={(e) => setEditTitle(e.target.value)}
-            className="text-xl font-bold bg-muted/20"
+            className="text-2xl font-bold bg-muted/20"
             autoFocus
           />
         ) : (
-          <h1 className="text-2xl font-bold text-foreground">{note.title}</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">{note.title}</h1>
         )}
 
-        {/* Tags */}
         {note.tags.length > 0 && (
           <div className="flex flex-wrap gap-1.5">
             {note.tags.map((tag) => (
               <span
                 key={tag}
-                className="rounded-full bg-muted/40 px-2.5 py-0.5 text-xs text-muted-foreground border border-border"
+                className="text-[9px] font-mono font-semibold uppercase tracking-wider px-2 py-0.5 rounded border bg-muted/40 text-muted-foreground border-border"
               >
                 {tag}
               </span>
@@ -145,11 +137,9 @@ export function NoteDetailClient({ note: initialNote }: NoteDetailClientProps) {
           </div>
         )}
 
-        {/* Timestamps */}
-        <p className="text-xs text-muted-foreground">
-          Created {formatDateTime(note.createdAt)}
-          {note.updatedAt !== note.createdAt &&
-            ` · Updated ${formatDateTime(note.updatedAt)}`}
+        <p className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground/60">
+          CREATED {formatDateTime(note.createdAt).toUpperCase()}
+          {note.updatedAt !== note.createdAt && ` · UPDATED ${formatDateTime(note.updatedAt).toUpperCase()}`}
         </p>
       </div>
 
@@ -159,65 +149,57 @@ export function NoteDetailClient({ note: initialNote }: NoteDetailClientProps) {
           onClick={() => handleToggle("pinned")}
           disabled={isPending}
           className={cn(
-            "flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors",
+            "flex items-center gap-1.5 text-[10px] font-mono font-semibold uppercase tracking-wider px-3 py-1 rounded border transition-colors",
             note.pinned
               ? "border-[var(--token-amber)]/30 bg-[var(--token-amber)]/10 text-[var(--token-amber)]"
-              : "border-border text-muted-foreground hover:text-foreground"
+              : "border-border/80 text-muted-foreground hover:text-foreground"
           )}
         >
           <Pin className="h-3 w-3" />
-          {note.pinned ? "Pinned" : "Pin"}
+          {note.pinned ? "PINNED" : "PIN"}
         </button>
 
         <button
           onClick={() => handleToggle("reviewLater")}
           disabled={isPending}
           className={cn(
-            "flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors",
+            "flex items-center gap-1.5 text-[10px] font-mono font-semibold uppercase tracking-wider px-3 py-1 rounded border transition-colors",
             note.reviewLater
               ? "border-[var(--token-cyan)]/30 bg-[var(--token-cyan)]/10 text-[var(--token-cyan)]"
-              : "border-border text-muted-foreground hover:text-foreground"
+              : "border-border/80 text-muted-foreground hover:text-foreground"
           )}
         >
           <BookmarkCheck className="h-3 w-3" />
-          {note.reviewLater ? "Review Later" : "Mark Review Later"}
+          {note.reviewLater ? "REVIEW LATER" : "MARK REVIEW LATER"}
         </button>
 
         <button
           onClick={() => handleToggle("confusing")}
           disabled={isPending}
           className={cn(
-            "flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors",
+            "flex items-center gap-1.5 text-[10px] font-mono font-semibold uppercase tracking-wider px-3 py-1 rounded border transition-colors",
             note.confusing
               ? "border-[var(--token-red)]/30 bg-[var(--token-red)]/10 text-[var(--token-red)]"
-              : "border-border text-muted-foreground hover:text-foreground"
+              : "border-border/80 text-muted-foreground hover:text-foreground"
           )}
         >
           <AlertCircle className="h-3 w-3" />
-          {note.confusing ? "Confusing" : "Mark Confusing"}
+          {note.confusing ? "CONFUSING" : "MARK CONFUSING"}
         </button>
 
         <div className="flex-1" />
 
         {!editing && (
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => setEditing(true)}
-          >
+          <Button size="sm" variant="outline" onClick={() => setEditing(true)} className="border-border hover:bg-muted text-xs font-mono uppercase tracking-wider">
             <Pencil className="h-3.5 w-3.5" />
-            Edit
+            EDIT
           </Button>
         )}
         {editing && (
           <>
-            <Button
-              size="sm"
-              onClick={handleSaveEdit}
-              disabled={isPending}
-            >
+            <Button size="sm" onClick={handleSaveEdit} disabled={isPending} className="font-mono text-xs font-semibold uppercase tracking-wider">
               <Check className="h-3.5 w-3.5" />
-              {isPending ? "Saving…" : "Save"}
+              {isPending ? "SAVING…" : "SAVE"}
             </Button>
             <Button
               size="sm"
@@ -227,21 +209,20 @@ export function NoteDetailClient({ note: initialNote }: NoteDetailClientProps) {
                 setEditTitle(note.title);
                 setEditContent(note.content);
               }}
+              className="text-xs font-mono uppercase tracking-wider"
             >
               <X className="h-3.5 w-3.5" />
-              Cancel
+              CANCEL
             </Button>
           </>
         )}
       </div>
 
-      <Separator />
-
       {/* Content */}
       {editing ? (
         <div className="space-y-2">
-          <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-            Content (Markdown supported)
+          <Label className="text-[10px] font-mono font-semibold text-muted-foreground/80 uppercase tracking-widest">
+            CONTENT (MARKDOWN SUPPORTED)
           </Label>
           <Textarea
             value={editContent}
@@ -250,7 +231,7 @@ export function NoteDetailClient({ note: initialNote }: NoteDetailClientProps) {
           />
         </div>
       ) : (
-        <Card className="border-border bg-card">
+        <Card data-slot="card" className="border border-border/80 bg-card/60 rounded-xl">
           <CardContent className="p-5">
             <div className="prose prose-sm prose-invert max-w-none">
               <ReactMarkdown>{note.content}</ReactMarkdown>
@@ -261,44 +242,40 @@ export function NoteDetailClient({ note: initialNote }: NoteDetailClientProps) {
 
       {/* Related links */}
       {(note.lesson || note.assignment) && (
-        <>
-          <Separator />
-          <div className="space-y-2">
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-              Related
-            </p>
+        <div className="space-y-2 border-t border-border/40 pt-5">
+          <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground/80 font-mono">RELATED</p>
+          <div className="flex flex-wrap gap-2">
             {note.lesson && (
-              <Button size="sm" variant="outline" asChild>
+              <Button size="sm" variant="outline" asChild className="border-border hover:bg-muted text-xs font-mono uppercase tracking-wider">
                 <Link href={`/lessons/${note.lesson.slug}`}>
                   <ExternalLink className="h-3.5 w-3.5" />
-                  Lesson: {note.lesson.title}
+                  LESSON · {note.lesson.title}
                 </Link>
               </Button>
             )}
             {note.assignment && (
-              <Button size="sm" variant="outline" asChild>
+              <Button size="sm" variant="outline" asChild className="border-border hover:bg-muted text-xs font-mono uppercase tracking-wider">
                 <Link href={`/assignments/${note.assignment.id}`}>
                   <ExternalLink className="h-3.5 w-3.5" />
-                  Assignment: {note.assignment.title}
+                  ASSIGN · {note.assignment.title}
                 </Link>
               </Button>
             )}
           </div>
-        </>
+        </div>
       )}
 
-      <Separator />
-
       {/* Delete */}
-      <div className="flex justify-end">
+      <div className="flex justify-end border-t border-border/40 pt-5">
         <Button
           variant="destructive"
           size="sm"
           onClick={handleDelete}
           disabled={isDeleting}
+          className="font-mono text-xs font-semibold uppercase tracking-wider"
         >
           <Trash2 className="h-3.5 w-3.5" />
-          {isDeleting ? "Deleting…" : "Delete Note"}
+          {isDeleting ? "DELETING…" : "DELETE NOTE"}
         </Button>
       </div>
     </div>

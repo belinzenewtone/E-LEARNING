@@ -4,7 +4,6 @@ import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
 import {
   Calendar,
-  ChevronRight,
   Clock,
   FileText,
   CheckSquare,
@@ -18,18 +17,9 @@ import {
 } from "lucide-react";
 import { getAssignmentById } from "@/server/queries/assignments";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { AssignmentSkeleton } from "@/components/shared/loading-skeleton";
-import {
-  cn,
-  formatDate,
-  formatDateTime,
-  getDifficultyColor,
-  getStatusColor,
-  isOverdue,
-} from "@/lib/utils";
+import { cn, formatDate, formatDateTime, isOverdue } from "@/lib/utils";
 import { SubmissionForm } from "./submission-form";
 import { ReviewForm } from "./review-form";
 import { Topbar } from "@/components/layout/topbar";
@@ -39,47 +29,71 @@ import { Topbar } from "@/components/layout/topbar";
 type RubricItem = { criterion: string; description: string; maxPoints: number };
 type Deliverable = { label: string; description?: string };
 
-// ── countdown ─────────────────────────────────────────────────────────────────
+// ── helpers ──────────────────────────────────────────────────────────────────
+
+function difficultyClasses(d: string): string {
+  switch (d) {
+    case "beginner":
+    case "easy":
+      return "bg-[var(--token-emerald)]/10 text-[var(--token-emerald)] border-[var(--token-emerald)]/20";
+    case "intermediate":
+    case "medium":
+      return "bg-[var(--token-amber)]/10 text-[var(--token-amber)] border-[var(--token-amber)]/20";
+    case "advanced":
+    case "hard":
+      return "bg-[var(--token-red)]/10 text-[var(--token-red)] border-[var(--token-red)]/20";
+    default:
+      return "bg-muted/40 text-muted-foreground border-border";
+  }
+}
+
+function statusClasses(s: string): string {
+  switch (s) {
+    case "completed":
+    case "approved":
+      return "bg-[var(--token-emerald)]/10 text-[var(--token-emerald)] border-[var(--token-emerald)]/20";
+    case "in-progress":
+    case "submitted":
+    case "reviewed":
+      return "bg-[var(--token-cyan)]/10 text-[var(--token-cyan)] border-[var(--token-cyan)]/20";
+    case "overdue":
+      return "bg-[var(--token-red)]/10 text-[var(--token-red)] border-[var(--token-red)]/20";
+    default:
+      return "bg-muted/40 text-muted-foreground border-border";
+  }
+}
 
 function DueDateBadge({ dueDate }: { dueDate: Date }) {
   const now = new Date();
-  const diff = Math.ceil(
-    (new Date(dueDate).getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
-  );
+  const diff = Math.ceil((new Date(dueDate).getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
   const overdue = isOverdue(dueDate);
 
   if (overdue) {
     return (
-      <span className="text-[var(--token-red)] text-sm font-medium">
-        Overdue by {Math.abs(diff)} day{Math.abs(diff) !== 1 ? "s" : ""}
+      <span className="text-[var(--token-red)] text-xs font-mono uppercase tracking-wider font-semibold">
+        OVERDUE BY {Math.abs(diff)} DAY{Math.abs(diff) !== 1 ? "S" : ""}
       </span>
     );
   }
 
   if (diff <= 3) {
     return (
-      <span className="text-[var(--token-amber)] text-sm font-medium">
-        Due in {diff} day{diff !== 1 ? "s" : ""} ({formatDate(dueDate)})
+      <span className="text-[var(--token-amber)] text-xs font-mono uppercase tracking-wider font-semibold">
+        DUE IN {diff} DAY{diff !== 1 ? "S" : ""} ({formatDate(dueDate).toUpperCase()})
       </span>
     );
   }
 
   return (
-    <span className="text-muted-foreground text-sm">
-      Due {formatDate(dueDate)}
+    <span className="text-muted-foreground/80 text-xs font-mono uppercase tracking-wider">
+      DUE {formatDate(dueDate).toUpperCase()}
     </span>
   );
 }
 
 // ── page content ──────────────────────────────────────────────────────────────
 
-async function AssignmentContent({
-  id,
-  userId,
-}: {
-  id: string;
-  userId: string;
-}) {
+async function AssignmentContent({ id, userId }: { id: string; userId: string }) {
   const assignment = await getAssignmentById(id, userId);
   if (!assignment) notFound();
 
@@ -89,115 +103,91 @@ async function AssignmentContent({
   const alreadySubmitted = !!submission;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-6xl mx-auto">
       {/* Header */}
-      <div className="space-y-3">
-        <div className="flex flex-wrap items-center gap-2">
-          {assignment.track && (
-            <Badge variant="outline">{assignment.track.name}</Badge>
-          )}
-          <span
-            className={cn(
-              "inline-flex rounded-full border px-2.5 py-0.5 text-xs font-semibold capitalize",
-              getDifficultyColor(assignment.difficulty)
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-border/40 pb-6">
+        <div className="space-y-2">
+          <p className="text-[10px] font-mono font-semibold tracking-widest text-muted-foreground/80">
+            SYSTEM // ASSIGNMENT DETAIL
+          </p>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">{assignment.title}</h1>
+          <div className="flex flex-wrap items-center gap-2">
+            {assignment.track && (
+              <span className="text-[9px] font-mono font-semibold uppercase tracking-wider px-2 py-0.5 rounded border bg-muted/40 text-muted-foreground border-border">
+                {assignment.track.name}
+              </span>
             )}
-          >
-            {assignment.difficulty}
-          </span>
-          <span
-            className={cn(
-              "inline-flex rounded-full border px-2.5 py-0.5 text-xs font-semibold capitalize",
-              getStatusColor(assignment.status)
-            )}
-          >
-            {assignment.status}
-          </span>
-          <Badge variant="outline">
-            Week {assignment.week.weekNumber}
-          </Badge>
-        </div>
-
-        <h1 className="text-2xl font-bold text-foreground">
-          {assignment.title}
-        </h1>
-
-        <div className="flex items-center gap-2 text-sm">
-          <Calendar className="h-4 w-4 text-muted-foreground" />
-          <DueDateBadge dueDate={assignment.dueDate} />
-          <span className="text-muted-foreground">·</span>
-          <span className="text-muted-foreground">
-            {assignment.xpReward} XP reward
-          </span>
+            <span className={cn("text-[9px] font-mono font-semibold uppercase tracking-wider px-2 py-0.5 rounded border", difficultyClasses(assignment.difficulty))}>
+              {assignment.difficulty}
+            </span>
+            <span className={cn("text-[9px] font-mono font-semibold uppercase tracking-wider px-2 py-0.5 rounded border", statusClasses(assignment.status))}>
+              {assignment.status}
+            </span>
+            <span className="text-[9px] font-mono font-semibold uppercase tracking-wider px-2 py-0.5 rounded border bg-muted/40 text-muted-foreground border-border">
+              WEEK {assignment.week.weekNumber}
+            </span>
+          </div>
+          <div className="flex items-center gap-3 text-xs">
+            <span className="flex items-center gap-1.5 text-muted-foreground/80">
+              <Calendar className="h-3.5 w-3.5" />
+              <DueDateBadge dueDate={assignment.dueDate} />
+            </span>
+            <span className="text-muted-foreground/40">·</span>
+            <span className="font-mono text-[10px] uppercase tracking-wider text-[var(--token-amber)] font-semibold">
+              +{assignment.xpReward} XP REWARD
+            </span>
+          </div>
         </div>
       </div>
-
-      <Separator />
 
       {/* Two-column layout */}
       <div className="grid gap-6 lg:grid-cols-[1fr_380px]">
         {/* Left: brief + rubric + deliverables + notes */}
         <div className="space-y-5">
           {/* Brief */}
-          <Card className="border-border bg-card">
+          <Card data-slot="card" className="border border-border/80 bg-card/60 rounded-xl">
             <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-sm">
+              <CardTitle className="flex items-center gap-2 text-[11px] font-mono font-bold uppercase tracking-wider text-muted-foreground/80">
                 <FileText className="h-4 w-4 text-primary" />
-                Assignment Brief
+                ASSIGNMENT BRIEF
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">
-                {assignment.brief}
-              </p>
+              <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">{assignment.brief}</p>
             </CardContent>
           </Card>
 
           {/* Rubric */}
           {rubric.length > 0 && (
-            <Card className="border-border bg-card">
+            <Card data-slot="card" className="border border-border/80 bg-card/60 rounded-xl">
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm">Grading Rubric</CardTitle>
+                <CardTitle className="text-[11px] font-mono font-bold uppercase tracking-wider text-muted-foreground/80">
+                  GRADING RUBRIC
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b border-border">
-                        <th className="pb-2 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                          Criterion
-                        </th>
-                        <th className="pb-2 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                          Description
-                        </th>
-                        <th className="pb-2 text-right text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                          Points
-                        </th>
+                      <tr className="border-b border-border/40">
+                        <th className="pb-2 text-left text-[10px] font-mono font-semibold uppercase tracking-widest text-muted-foreground/70">CRITERION</th>
+                        <th className="pb-2 text-left text-[10px] font-mono font-semibold uppercase tracking-widest text-muted-foreground/70">DESCRIPTION</th>
+                        <th className="pb-2 text-right text-[10px] font-mono font-semibold uppercase tracking-widest text-muted-foreground/70">POINTS</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-border/30">
                       {rubric.map((item, i) => (
                         <tr key={i}>
-                          <td className="py-2.5 pr-4 font-medium text-foreground align-top">
-                            {item.criterion}
-                          </td>
-                          <td className="py-2.5 pr-4 text-muted-foreground align-top">
-                            {item.description}
-                          </td>
-                          <td className="py-2.5 text-right font-semibold text-foreground align-top">
-                            {item.maxPoints}
-                          </td>
+                          <td className="py-2.5 pr-4 text-xs font-semibold text-foreground align-top">{item.criterion}</td>
+                          <td className="py-2.5 pr-4 text-xs text-muted-foreground/80 align-top">{item.description}</td>
+                          <td className="py-2.5 text-right font-mono font-bold text-foreground align-top">{item.maxPoints}</td>
                         </tr>
                       ))}
                     </tbody>
                     <tfoot>
-                      <tr className="border-t border-border">
-                        <td
-                          colSpan={2}
-                          className="pt-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground"
-                        >
-                          Total
-                        </td>
-                        <td className="pt-2 text-right font-bold text-foreground">
+                      <tr className="border-t border-border/40">
+                        <td colSpan={2} className="pt-2 text-[10px] font-mono font-semibold uppercase tracking-widest text-muted-foreground/70">TOTAL</td>
+                        <td className="pt-2 text-right font-mono font-bold text-foreground">
                           {rubric.reduce((s, r) => s + r.maxPoints, 0)}
                         </td>
                       </tr>
@@ -210,31 +200,23 @@ async function AssignmentContent({
 
           {/* Required deliverables */}
           {deliverables.length > 0 && (
-            <Card className="border-border bg-card">
+            <Card data-slot="card" className="border border-border/80 bg-card/60 rounded-xl">
               <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-2 text-sm">
+                <CardTitle className="flex items-center gap-2 text-[11px] font-mono font-bold uppercase tracking-wider text-muted-foreground/80">
                   <CheckSquare className="h-4 w-4 text-[var(--token-emerald)]" />
-                  Required Deliverables
+                  REQUIRED DELIVERABLES
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <ul className="space-y-2">
                   {deliverables.map((d, i) => (
                     <li key={i} className="flex items-start gap-2.5 text-sm">
-                      <div className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded border border-border">
-                        <span className="text-[10px] text-muted-foreground">
-                          {i + 1}
-                        </span>
+                      <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded border border-border bg-muted/40">
+                        <span className="text-[10px] font-mono text-muted-foreground">{i + 1}</span>
                       </div>
                       <div>
-                        <span className="font-medium text-foreground">
-                          {d.label}
-                        </span>
-                        {d.description && (
-                          <p className="text-xs text-muted-foreground">
-                            {d.description}
-                          </p>
-                        )}
+                        <span className="text-xs font-semibold text-foreground">{d.label}</span>
+                        {d.description && <p className="text-xs text-muted-foreground/80">{d.description}</p>}
                       </div>
                     </li>
                   ))}
@@ -245,32 +227,25 @@ async function AssignmentContent({
 
           {/* Notes on this assignment */}
           {assignment.notes.length > 0 && (
-            <Card className="border-border bg-card">
+            <Card data-slot="card" className="border border-border/80 bg-card/60 rounded-xl">
               <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-2 text-sm">
-                  <BookOpen className="h-4 w-4 text-[var(--token-blue)]" />
-                  Related Notes ({assignment.notes.length})
+                <CardTitle className="flex items-center gap-2 text-[11px] font-mono font-bold uppercase tracking-wider text-muted-foreground/80">
+                  <BookOpen className="h-4 w-4 text-[var(--token-cyan)]" />
+                  RELATED NOTES ({assignment.notes.length})
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 {assignment.notes.map((note) => (
-                  <div
-                    key={note.id}
-                    className="rounded-lg border border-border bg-muted/20 p-3"
-                  >
+                  <div key={note.id} className="rounded-lg border border-border/40 bg-muted/20 p-3">
                     <div className="mb-1 flex items-center justify-between gap-2">
-                      <p className="text-sm font-medium text-foreground">
-                        {note.title}
-                      </p>
+                      <p className="text-xs font-semibold text-foreground">{note.title}</p>
                       <Button size="sm" variant="ghost" asChild>
                         <Link href={`/notes/${note.id}`}>
                           <ExternalLink className="h-3.5 w-3.5" />
                         </Link>
                       </Button>
                     </div>
-                    <p className="text-xs text-muted-foreground line-clamp-2">
-                      {note.content}
-                    </p>
+                    <p className="text-xs text-muted-foreground/80 line-clamp-2">{note.content}</p>
                   </div>
                 ))}
               </CardContent>
@@ -282,47 +257,41 @@ async function AssignmentContent({
         <div>
           {alreadySubmitted ? (
             <div className="space-y-4">
-              {/* Submission header */}
-              <Card className="border-[var(--token-emerald)]/20 bg-card">
+              <Card data-slot="card" className="border border-[var(--token-emerald)]/25 bg-card/60 rounded-xl border-l-2 border-l-[var(--token-emerald)]">
                 <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center gap-2 text-sm text-[var(--token-emerald)]">
+                  <CardTitle className="flex items-center gap-2 text-[11px] font-mono font-bold uppercase tracking-wider text-[var(--token-emerald)]">
                     <CheckCircle2 className="h-4 w-4" />
-                    Submitted
+                    SUBMITTED
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4 text-sm">
-                  <p className="text-xs text-muted-foreground">
-                    Submitted {formatDateTime(submission.submittedAt)}
+                  <p className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground/70 flex items-center gap-1.5">
+                    <Clock className="h-3 w-3" />
+                    {formatDateTime(submission.submittedAt).toUpperCase()}
                   </p>
 
-                  {/* Links group */}
                   {(submission.repoUrl || submission.deploymentUrl || submission.sqlScriptUrl) && (
                     <div className="space-y-2">
-                      <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                        Links
-                      </p>
+                      <p className="text-[10px] font-mono font-semibold uppercase tracking-widest text-muted-foreground/80">LINKS</p>
                       <div className="flex flex-wrap gap-2">
                         {submission.repoUrl && (
-                          <Button size="sm" variant="outline" asChild className="gap-1.5">
+                          <Button size="sm" variant="outline" asChild className="gap-1.5 border-border hover:bg-muted text-[10px] font-mono uppercase tracking-wider">
                             <a href={submission.repoUrl} target="_blank" rel="noopener noreferrer">
-                              <Link2 className="h-3.5 w-3.5" />
-                              Repo
+                              <Link2 className="h-3.5 w-3.5" /> REPO
                             </a>
                           </Button>
                         )}
                         {submission.deploymentUrl && (
-                          <Button size="sm" variant="outline" asChild className="gap-1.5">
+                          <Button size="sm" variant="outline" asChild className="gap-1.5 border-border hover:bg-muted text-[10px] font-mono uppercase tracking-wider">
                             <a href={submission.deploymentUrl} target="_blank" rel="noopener noreferrer">
-                              <ExternalLink className="h-3.5 w-3.5" />
-                              Live Demo
+                              <ExternalLink className="h-3.5 w-3.5" /> LIVE
                             </a>
                           </Button>
                         )}
                         {submission.sqlScriptUrl && (
-                          <Button size="sm" variant="outline" asChild className="gap-1.5">
+                          <Button size="sm" variant="outline" asChild className="gap-1.5 border-border hover:bg-muted text-[10px] font-mono uppercase tracking-wider">
                             <a href={submission.sqlScriptUrl} target="_blank" rel="noopener noreferrer">
-                              <FileText className="h-3.5 w-3.5" />
-                              SQL Script
+                              <FileText className="h-3.5 w-3.5" /> SQL
                             </a>
                           </Button>
                         )}
@@ -330,90 +299,81 @@ async function AssignmentContent({
                     </div>
                   )}
 
-                  {/* Screenshot */}
                   {submission.screenshotUrl && (
                     <div className="space-y-2">
-                      <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
-                        <ImageIcon className="h-3 w-3" /> Screenshot
+                      <p className="text-[10px] font-mono font-semibold uppercase tracking-widest text-muted-foreground/80 flex items-center gap-1">
+                        <ImageIcon className="h-3 w-3" /> SCREENSHOT
                       </p>
-                      <a href={submission.screenshotUrl} target="_blank" rel="noopener noreferrer" className="block rounded-lg border border-border overflow-hidden hover:border-primary/40 transition-colors">
+                      <a
+                        href={submission.screenshotUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block rounded-lg border border-border/60 overflow-hidden hover:border-primary/40 transition-colors"
+                      >
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={submission.screenshotUrl}
-                          alt="Assignment screenshot"
-                          className="w-full h-auto object-cover"
-                          loading="lazy"
-                        />
+                        <img src={submission.screenshotUrl} alt="Assignment screenshot" className="w-full h-auto object-cover" loading="lazy" />
                       </a>
                     </div>
                   )}
 
-                  {/* Self score */}
                   {submission.selfScore !== null && (
-                    <div className="flex items-center gap-2 rounded-lg border border-border bg-muted/20 px-3 py-2">
+                    <div className="flex items-center gap-2 rounded-lg border border-border/60 bg-muted/20 px-3 py-2">
                       <Star className="h-4 w-4 text-[var(--token-amber)]" />
-                      <span className="text-xs text-muted-foreground">Self Score</span>
-                      <span className="ml-auto text-sm font-bold text-foreground">{submission.selfScore}/10</span>
+                      <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground/80">SELF SCORE</span>
+                      <span className="ml-auto font-mono font-bold text-foreground">{submission.selfScore}/10</span>
                     </div>
                   )}
 
-                  {/* Status badge */}
-                  <div
-                    className={cn(
-                      "rounded-lg border px-3 py-2 text-xs font-semibold capitalize text-center",
-                      getStatusColor(submission.status)
-                    )}
-                  >
-                    Status: {submission.status}
+                  <div className={cn(
+                    "rounded-lg border px-3 py-2 text-[10px] font-mono font-semibold uppercase tracking-widest text-center",
+                    statusClasses(submission.status)
+                  )}>
+                    STATUS // {submission.status}
                   </div>
                 </CardContent>
               </Card>
 
-              {/* Notes & Reflection cards */}
               {submission.notes && (
-                <Card className="border-border bg-card">
+                <Card data-slot="card" className="border border-border/80 bg-card/60 rounded-xl">
                   <CardHeader className="pb-2">
-                    <CardTitle className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <MessageSquare className="h-3.5 w-3.5" /> Notes
+                    <CardTitle className="flex items-center gap-2 text-[10px] font-mono font-semibold uppercase tracking-widest text-muted-foreground/80">
+                      <MessageSquare className="h-3.5 w-3.5" /> NOTES
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
-                      {submission.notes}
-                    </p>
+                    <p className="text-xs text-foreground whitespace-pre-wrap leading-relaxed">{submission.notes}</p>
                   </CardContent>
                 </Card>
               )}
+
               {submission.reflection && (
-                <Card className="border-border bg-card">
+                <Card data-slot="card" className="border border-border/80 bg-card/60 rounded-xl">
                   <CardHeader className="pb-2">
-                    <CardTitle className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <BookOpen className="h-3.5 w-3.5" /> Reflection
+                    <CardTitle className="flex items-center gap-2 text-[10px] font-mono font-semibold uppercase tracking-widest text-muted-foreground/80">
+                      <BookOpen className="h-3.5 w-3.5" /> REFLECTION
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
-                      {submission.reflection}
-                    </p>
+                    <p className="text-xs text-foreground whitespace-pre-wrap leading-relaxed">{submission.reflection}</p>
                   </CardContent>
                 </Card>
               )}
-              {/* Reviewer notes — shown when a review has been saved */}
+
               {(submission as { reviewerNotes?: string | null }).reviewerNotes && (
-                <Card className="border-[var(--token-cyan)]/20 bg-[var(--token-cyan)]/5">
+                <Card data-slot="card" className="border border-[var(--token-cyan)]/25 bg-card/60 rounded-xl border-l-2 border-l-[var(--token-cyan)]">
                   <CardHeader className="pb-2">
-                    <CardTitle className="flex items-center gap-2 text-xs text-[var(--token-cyan)]">
-                      <Star className="h-3.5 w-3.5" /> Review Notes
+                    <CardTitle className="flex items-center gap-2 text-[10px] font-mono font-semibold uppercase tracking-widest text-[var(--token-cyan)]">
+                      <Star className="h-3.5 w-3.5" /> REVIEW NOTES
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
+                    <p className="text-xs text-foreground whitespace-pre-wrap leading-relaxed">
                       {(submission as { reviewerNotes?: string | null }).reviewerNotes}
                     </p>
                   </CardContent>
                 </Card>
               )}
-              {/* Self-review form */}
+
               <ReviewForm
                 submissionId={submission.id}
                 currentStatus={submission.status}
@@ -433,9 +393,7 @@ interface AssignmentDetailPageProps {
   params: Promise<{ id: string }>;
 }
 
-export default async function AssignmentDetailPage({
-  params,
-}: AssignmentDetailPageProps) {
+export default async function AssignmentDetailPage({ params }: AssignmentDetailPageProps) {
   const session = await auth();
   if (!session?.user?.id) redirect("/login");
 

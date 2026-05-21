@@ -5,9 +5,9 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { Shield, LogIn, LogOut, AlertTriangle, Lock, Ban, Key, RefreshCw, Loader2, CheckCircle2, XCircle, Clock } from "lucide-react";
+import { Shield, LogOut, AlertTriangle, Lock, Ban, Key, RefreshCw, Loader2, CheckCircle2, XCircle, Clock } from "lucide-react";
 import { formatDistanceToNow, format } from "date-fns";
+import { cn } from "@/lib/utils";
 import { revokeAllSessions } from "@/server/actions/settings";
 
 type EventType =
@@ -41,26 +41,26 @@ interface SecurityClientProps {
 }
 
 function parseDevice(ua: string | null): string {
-  if (!ua) return "Unknown device";
+  if (!ua) return "UNKNOWN";
   if (/mobile|android|iphone|ipad/i.test(ua)) {
-    if (/iphone/i.test(ua)) return "iPhone";
-    if (/ipad/i.test(ua)) return "iPad";
-    if (/android/i.test(ua)) return "Android";
-    return "Mobile";
+    if (/iphone/i.test(ua)) return "IPHONE";
+    if (/ipad/i.test(ua)) return "IPAD";
+    if (/android/i.test(ua)) return "ANDROID";
+    return "MOBILE";
   }
-  if (/windows/i.test(ua)) return "Windows";
-  if (/macintosh|mac os/i.test(ua)) return "macOS";
-  if (/linux/i.test(ua)) return "Linux";
-  return "Desktop";
+  if (/windows/i.test(ua)) return "WINDOWS";
+  if (/macintosh|mac os/i.test(ua)) return "MACOS";
+  if (/linux/i.test(ua)) return "LINUX";
+  return "DESKTOP";
 }
 
 function parseBrowser(ua: string | null): string {
   if (!ua) return "";
-  if (/firefox/i.test(ua)) return "Firefox";
-  if (/edg\//i.test(ua)) return "Edge";
-  if (/chrome/i.test(ua)) return "Chrome";
-  if (/safari/i.test(ua)) return "Safari";
-  if (/curl/i.test(ua)) return "curl";
+  if (/firefox/i.test(ua)) return "FIREFOX";
+  if (/edg\//i.test(ua)) return "EDGE";
+  if (/chrome/i.test(ua)) return "CHROME";
+  if (/safari/i.test(ua)) return "SAFARI";
+  if (/curl/i.test(ua)) return "CURL";
   return "";
 }
 
@@ -68,17 +68,17 @@ const EVENT_CONFIG: Record<
   EventType,
   { label: string; icon: React.ElementType; color: string; bg: string }
 > = {
-  LOGIN_SUCCESS:      { label: "Successful login",     icon: CheckCircle2, color: "text-[var(--token-emerald)]", bg: "bg-[var(--token-emerald)]/10" },
-  LOGIN_FAILURE:      { label: "Failed login attempt", icon: XCircle,      color: "text-[var(--token-red)]",     bg: "bg-[var(--token-red)]/10" },
-  LOGIN_LOCKED:       { label: "Account locked",       icon: Lock,         color: "text-[var(--token-amber)]",   bg: "bg-[var(--token-amber)]/10" },
-  LOGIN_RATE_LIMITED: { label: "Rate limited",         icon: Ban,          color: "text-[var(--token-amber)]",   bg: "bg-[var(--token-amber)]/10" },
-  LOGOUT:             { label: "Signed out",           icon: LogOut,       color: "text-muted-foreground",       bg: "bg-muted/50" },
-  PASSWORD_CHANGE:    { label: "Password changed",     icon: Key,          color: "text-[var(--token-cyan)]",    bg: "bg-[var(--token-cyan)]/10" },
-  DATA_EXPORT:        { label: "Data exported",        icon: Shield,       color: "text-[var(--token-purple)]",  bg: "bg-[var(--token-purple)]/10" },
-  SESSION_REVOKED:    { label: "All sessions revoked", icon: RefreshCw,    color: "text-[var(--token-red)]",     bg: "bg-[var(--token-red)]/10" },
+  LOGIN_SUCCESS:      { label: "LOGIN OK",             icon: CheckCircle2, color: "text-[var(--token-emerald)]", bg: "bg-[var(--token-emerald)]/10" },
+  LOGIN_FAILURE:      { label: "LOGIN FAILURE",        icon: XCircle,      color: "text-[var(--token-red)]",     bg: "bg-[var(--token-red)]/10" },
+  LOGIN_LOCKED:       { label: "ACCOUNT LOCKED",       icon: Lock,         color: "text-[var(--token-amber)]",   bg: "bg-[var(--token-amber)]/10" },
+  LOGIN_RATE_LIMITED: { label: "RATE LIMITED",         icon: Ban,          color: "text-[var(--token-amber)]",   bg: "bg-[var(--token-amber)]/10" },
+  LOGOUT:             { label: "SIGNED OUT",           icon: LogOut,       color: "text-muted-foreground",       bg: "bg-muted/50" },
+  PASSWORD_CHANGE:    { label: "PASSWORD CHANGED",     icon: Key,          color: "text-[var(--token-cyan)]",    bg: "bg-[var(--token-cyan)]/10" },
+  DATA_EXPORT:        { label: "DATA EXPORTED",        icon: Shield,       color: "text-[var(--token-purple)]",  bg: "bg-[var(--token-purple)]/10" },
+  SESSION_REVOKED:    { label: "SESSIONS REVOKED",     icon: RefreshCw,    color: "text-[var(--token-red)]",     bg: "bg-[var(--token-red)]/10" },
 };
 
-const FALLBACK_CONFIG = { label: "Security event", icon: Shield, color: "text-muted-foreground", bg: "bg-muted/50" };
+const FALLBACK_CONFIG = { label: "SECURITY EVENT", icon: Shield, color: "text-muted-foreground", bg: "bg-muted/50" };
 
 export function SecurityClient({ events, stats }: SecurityClientProps) {
   const router = useRouter();
@@ -103,43 +103,54 @@ export function SecurityClient({ events, stats }: SecurityClientProps) {
   }
 
   return (
-    <div className="p-6 space-y-6 max-w-2xl">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-3xl mx-auto space-y-6">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-border/40 pb-6">
+        <div className="space-y-1">
+          <p className="text-[10px] font-mono font-semibold tracking-widest text-muted-foreground/80">
+            SYSTEM // SECURITY AUDIT
+          </p>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">Security</h1>
+          <p className="text-xs text-muted-foreground/80">Login history, session control, and event audit log.</p>
+        </div>
+      </div>
+
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4">
-        <Card>
+        <Card data-slot="card" className="border border-border/80 bg-card/60 rounded-xl border-l-2 border-l-[var(--token-emerald)]">
           <CardContent className="pt-4 pb-4">
-            <div className="text-2xl font-bold text-[var(--token-emerald)]">{stats.successes}</div>
-            <div className="text-xs text-muted-foreground mt-1">Successful logins (30d)</div>
+            <div className="font-mono text-2xl font-bold text-[var(--token-emerald)]">{stats.successes}</div>
+            <div className="text-[10px] font-mono font-semibold uppercase tracking-widest text-muted-foreground/70 mt-1">LOGINS // 30D</div>
           </CardContent>
         </Card>
-        <Card>
+        <Card data-slot="card" className="border border-border/80 bg-card/60 rounded-xl border-l-2 border-l-[var(--token-red)]">
           <CardContent className="pt-4 pb-4">
-            <div className="text-2xl font-bold text-[var(--token-red)]">{stats.failures}</div>
-            <div className="text-xs text-muted-foreground mt-1">Failed attempts (30d)</div>
+            <div className="font-mono text-2xl font-bold text-[var(--token-red)]">{stats.failures}</div>
+            <div className="text-[10px] font-mono font-semibold uppercase tracking-widest text-muted-foreground/70 mt-1">FAILURES // 30D</div>
           </CardContent>
         </Card>
-        <Card>
+        <Card data-slot="card" className="border border-border/80 bg-card/60 rounded-xl border-l-2 border-l-primary">
           <CardContent className="pt-4 pb-4">
-            <div className="text-2xl font-bold">{stats.total}</div>
-            <div className="text-xs text-muted-foreground mt-1">Total events logged</div>
+            <div className="font-mono text-2xl font-bold text-foreground">{stats.total}</div>
+            <div className="text-[10px] font-mono font-semibold uppercase tracking-widest text-muted-foreground/70 mt-1">TOTAL EVENTS</div>
           </CardContent>
         </Card>
       </div>
 
       {/* Session Management */}
-      <Card>
+      <Card data-slot="card" className="border border-border/80 bg-card/60 rounded-xl">
         <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2">
-            <RefreshCw className="w-4 h-4 text-muted-foreground" />
-            Session Management
+          <CardTitle className="text-[11px] font-mono font-bold uppercase tracking-wider text-muted-foreground/80 flex items-center gap-2">
+            <RefreshCw className="w-3.5 h-3.5" />
+            SESSION MANAGEMENT
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-xs text-muted-foreground/80">
             Revoking all sessions will force sign-out on every other device. Your current session remains active until you log out manually.
           </p>
           {showConfirm && (
-            <div className="flex items-start gap-2 p-3 rounded-lg bg-[var(--token-red)]/10 border border-[var(--token-red)]/20 text-sm text-[var(--token-red)]">
+            <div className="flex items-start gap-2 p-3 rounded-lg bg-[var(--token-red)]/10 border border-[var(--token-red)]/25 text-xs text-[var(--token-red)]">
               <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
               <span>This will immediately invalidate all existing sessions. Click again to confirm.</span>
             </div>
@@ -150,19 +161,27 @@ export function SecurityClient({ events, stats }: SecurityClientProps) {
               size="sm"
               onClick={handleRevokeAll}
               disabled={isPending}
-              className={showConfirm ? "text-[var(--token-red)] border-[var(--token-red)]/40 hover:bg-[var(--token-red)]/10" : ""}
+              className={cn(
+                "border-border hover:bg-muted text-xs font-mono uppercase tracking-wider",
+                showConfirm && "text-[var(--token-red)] border-[var(--token-red)]/40 hover:bg-[var(--token-red)]/10"
+              )}
             >
               {isPending ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : showConfirm ? (
-                "Confirm — Revoke All Sessions"
+                "CONFIRM // REVOKE ALL"
               ) : (
-                "Revoke All Sessions"
+                "REVOKE ALL SESSIONS"
               )}
             </Button>
             {showConfirm && (
-              <Button variant="ghost" size="sm" onClick={() => setShowConfirm(false)}>
-                Cancel
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowConfirm(false)}
+                className="text-xs font-mono uppercase tracking-wider"
+              >
+                CANCEL
               </Button>
             )}
           </div>
@@ -170,19 +189,19 @@ export function SecurityClient({ events, stats }: SecurityClientProps) {
       </Card>
 
       {/* Login History */}
-      <Card>
+      <Card data-slot="card" className="border border-border/80 bg-card/60 rounded-xl">
         <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2">
-            <Clock className="w-4 h-4 text-muted-foreground" />
-            Security Event Log
+          <CardTitle className="text-[11px] font-mono font-bold uppercase tracking-wider text-muted-foreground/80 flex items-center gap-2">
+            <Clock className="w-3.5 h-3.5" />
+            SECURITY EVENT LOG
           </CardTitle>
         </CardHeader>
         <CardContent>
           {events.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No security events recorded yet.</p>
+            <p className="text-xs text-muted-foreground/80">No security events recorded yet.</p>
           ) : (
-            <div className="space-y-1">
-              {events.map((event, i) => {
+            <div className="divide-y divide-border/30">
+              {events.map((event) => {
                 const cfg = EVENT_CONFIG[event.type as EventType] ?? FALLBACK_CONFIG;
                 const Icon = cfg.icon;
                 const device = parseDevice(event.userAgent);
@@ -190,23 +209,20 @@ export function SecurityClient({ events, stats }: SecurityClientProps) {
                 const deviceLabel = browser ? `${device} · ${browser}` : device;
 
                 return (
-                  <div key={event.id}>
-                    {i > 0 && <Separator className="my-1" />}
-                    <div className="flex items-start gap-3 py-2">
-                      <div className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${cfg.bg}`}>
-                        <Icon className={`h-3.5 w-3.5 ${cfg.color}`} />
+                  <div key={event.id} className="flex items-start gap-3 py-2.5 hover:bg-muted/40 transition-colors px-1">
+                    <div className={cn("mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-border/60", cfg.bg)}>
+                      <Icon className={cn("h-3.5 w-3.5", cfg.color)} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-baseline gap-2 flex-wrap">
+                        <span className={cn("text-[10px] font-mono font-semibold uppercase tracking-wider", cfg.color)}>{cfg.label}</span>
+                        <span className="text-[10px] font-mono text-muted-foreground/70 uppercase tracking-wider">{deviceLabel}</span>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-baseline gap-2 flex-wrap">
-                          <span className={`text-sm font-medium ${cfg.color}`}>{cfg.label}</span>
-                          <span className="text-xs text-muted-foreground">{deviceLabel}</span>
-                        </div>
-                        <div className="flex items-center gap-3 mt-0.5 text-xs text-muted-foreground">
-                          <span>{event.ip ?? "IP unknown"}</span>
-                          <span title={format(new Date(event.createdAt), "PPpp")}>
-                            {formatDistanceToNow(new Date(event.createdAt), { addSuffix: true })}
-                          </span>
-                        </div>
+                      <div className="flex items-center gap-3 mt-0.5 text-[9px] font-mono text-muted-foreground/60 uppercase tracking-wider">
+                        <span>{event.ip ?? "IP UNKNOWN"}</span>
+                        <span title={format(new Date(event.createdAt), "PPpp")}>
+                          {formatDistanceToNow(new Date(event.createdAt), { addSuffix: true }).toUpperCase()}
+                        </span>
                       </div>
                     </div>
                   </div>

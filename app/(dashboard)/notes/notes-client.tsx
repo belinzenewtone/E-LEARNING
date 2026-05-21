@@ -5,8 +5,6 @@ import Link from "next/link";
 import { Search, Pin, BookmarkCheck, AlertCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { cn, formatDateShort, truncate } from "@/lib/utils";
 
 type NoteTrack = { id: string; name: string; slug: string } | null;
@@ -68,13 +66,13 @@ export function NotesClient({ notes, tracks }: NotesClientProps) {
     <div className="space-y-4">
       {/* Search */}
       <div className="relative max-w-sm">
-        <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+        <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground/60" />
         <Input
           type="search"
           placeholder="Search notes..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="pl-8 text-sm"
+          className="pl-8 text-xs font-mono bg-card/40 border-border/80"
         />
       </div>
 
@@ -85,10 +83,10 @@ export function NotesClient({ notes, tracks }: NotesClientProps) {
             key={chip}
             onClick={() => setActiveFilter(chip)}
             className={cn(
-              "rounded-full border px-3 py-1 text-xs font-medium transition-colors",
+              "text-[10px] font-mono font-semibold uppercase tracking-wider px-3 py-1 rounded border transition-colors",
               activeFilter === chip
                 ? "border-primary bg-primary/10 text-primary"
-                : "border-border bg-muted/20 text-muted-foreground hover:border-border hover:text-foreground"
+                : "border-border/80 bg-card/40 text-muted-foreground hover:text-foreground"
             )}
           >
             {chip}
@@ -97,75 +95,68 @@ export function NotesClient({ notes, tracks }: NotesClientProps) {
       </div>
 
       {/* Count */}
-      <p className="text-xs text-muted-foreground">
-        {filtered.length} note{filtered.length !== 1 ? "s" : ""}
+      <p className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground/70">
+        <span className="font-bold text-foreground">{filtered.length}</span> NOTE{filtered.length !== 1 ? "S" : ""}
       </p>
 
       {/* Notes grid */}
       {filtered.length === 0 ? (
-        <p className="py-12 text-center text-sm text-muted-foreground">
+        <p className="py-12 text-center text-xs text-muted-foreground/80">
           No notes match your search.
         </p>
       ) : (
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {filtered.map((note) => (
             <Link key={note.id} href={`/notes/${note.id}`}>
-              <Card className="h-full cursor-pointer border-border bg-card transition-shadow hover:shadow-md hover:shadow-black/20">
+              <Card
+                data-slot="card"
+                className="h-full cursor-pointer border border-border/80 bg-card/60 rounded-xl transition-all hover:shadow-sm hover:border-primary/30"
+              >
                 <CardContent className="p-4">
-                  {/* Title + flags */}
                   <div className="mb-1.5 flex items-start justify-between gap-2">
-                    <h3 className="line-clamp-1 text-sm font-semibold text-foreground flex-1">
+                    <h3 className="line-clamp-1 text-sm font-bold tracking-tight text-foreground flex-1">
                       {note.title}
                     </h3>
                     <div className="flex shrink-0 items-center gap-1">
-                      {note.pinned && (
-                        <Pin className="h-3.5 w-3.5 text-[var(--token-amber)]" />
-                      )}
-                      {note.reviewLater && (
-                        <BookmarkCheck className="h-3.5 w-3.5 text-[var(--token-cyan)]" />
-                      )}
-                      {note.confusing && (
-                        <AlertCircle className="h-3.5 w-3.5 text-[var(--token-red)]" />
-                      )}
+                      {note.pinned && <Pin className="h-3.5 w-3.5 text-[var(--token-amber)]" />}
+                      {note.reviewLater && <BookmarkCheck className="h-3.5 w-3.5 text-[var(--token-cyan)]" />}
+                      {note.confusing && <AlertCircle className="h-3.5 w-3.5 text-[var(--token-red)]" />}
                     </div>
                   </div>
 
-                  {/* Content preview */}
-                  <p className="mb-3 text-xs text-muted-foreground leading-relaxed">
+                  <p className="mb-3 text-xs text-muted-foreground/80 leading-relaxed">
                     {truncate(note.content, 150)}
                   </p>
 
-                  {/* Tags */}
                   {note.tags.length > 0 && (
                     <div className="mb-3 flex flex-wrap gap-1">
                       {note.tags.slice(0, 4).map((tag) => (
                         <span
                           key={tag}
-                          className="rounded-full bg-muted/40 px-2 py-0.5 text-[10px] text-muted-foreground border border-border"
+                          className="text-[9px] font-mono uppercase tracking-wider px-2 py-0.5 rounded border bg-muted/40 text-muted-foreground border-border"
                         >
                           {tag}
                         </span>
                       ))}
                       {note.tags.length > 4 && (
-                        <span className="text-[10px] text-muted-foreground/60">
+                        <span className="text-[9px] font-mono text-muted-foreground/60">
                           +{note.tags.length - 4}
                         </span>
                       )}
                     </div>
                   )}
 
-                  {/* Footer: source + date */}
-                  <div className="flex items-center justify-between text-[10px] text-muted-foreground/60">
-                    <span>
+                  <div className="flex items-center justify-between text-[9px] font-mono uppercase tracking-wider text-muted-foreground/60">
+                    <span className="truncate">
                       {note.lesson
-                        ? `Lesson: ${truncate(note.lesson.title, 25)}`
+                        ? `LESSON · ${truncate(note.lesson.title, 25)}`
                         : note.assignment
-                        ? `Assignment: ${truncate(note.assignment.title, 20)}`
+                        ? `ASSIGN · ${truncate(note.assignment.title, 20)}`
                         : note.track
-                        ? note.track.name
-                        : "General"}
+                        ? note.track.name.toUpperCase()
+                        : "GENERAL"}
                     </span>
-                    <span>{formatDateShort(note.createdAt)}</span>
+                    <span className="shrink-0">{formatDateShort(note.createdAt).toUpperCase()}</span>
                   </div>
                 </CardContent>
               </Card>

@@ -18,31 +18,54 @@ const CYAN = "var(--token-cyan)";
 const EMERALD = "var(--token-emerald)";
 const AMBER = "var(--token-amber)";
 const PURPLE = "var(--token-purple)";
-const XP_TYPE_COLORS = [CYAN, EMERALD, AMBER, PURPLE, "#f43f5e"];
+const XP_TYPE_COLORS = [CYAN, EMERALD, AMBER, PURPLE, "var(--token-red)"];
 
 const tooltipStyle = {
   contentStyle: {
     background: "oklch(0.17 0.015 240)",
     border: "1px solid oklch(1 0 0 / 8%)",
     borderRadius: 8,
-    fontSize: 12,
+    fontSize: 11,
+    fontFamily: "var(--font-mono, monospace)",
   },
   labelStyle: { color: "oklch(0.95 0.005 240)" },
 };
 
 const axisProps = {
-  tick: { fontSize: 11, fill: "oklch(0.60 0.01 240)" },
+  tick: { fontSize: 10, fill: "oklch(0.60 0.01 240)", fontFamily: "var(--font-mono, monospace)" },
 };
 
 interface AnalyticsChartsProps {
   data: AnalyticsData;
 }
 
+function SectionTitle({ children, icon: Icon }: { children: React.ReactNode; icon?: React.ElementType }) {
+  return (
+    <CardTitle className="flex items-center gap-2 text-[11px] font-mono font-bold uppercase tracking-wider text-muted-foreground/80">
+      {Icon && <Icon className="h-3.5 w-3.5" />}
+      {children}
+    </CardTitle>
+  );
+}
+
 export function AnalyticsCharts({ data }: AnalyticsChartsProps) {
   const { weeklyHours, xpOverTime, xpByType, lessonsOverTime, trackProgress, activityDays, moodTrend, summary } = data;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-7xl mx-auto">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-border/40 pb-6">
+        <div className="space-y-1">
+          <p className="text-[10px] font-mono font-semibold tracking-widest text-muted-foreground/80">
+            SYSTEM // ANALYTICS DASHBOARD
+          </p>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">Analytics</h1>
+          <p className="text-xs text-muted-foreground/80">
+            Telemetry across study velocity, XP throughput, and curriculum traversal.
+          </p>
+        </div>
+      </div>
+
       {/* Summary stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard title="Total Study Time" value={minutesToHours(summary.totalMinutes)} icon={Clock} color="primary" subtitle="All time" />
@@ -53,9 +76,9 @@ export function AnalyticsCharts({ data }: AnalyticsChartsProps) {
 
       {/* Study hours & XP */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <Card>
+        <Card data-slot="card" className="border border-border/80 bg-card/60 rounded-xl">
           <CardHeader>
-            <CardTitle className="text-base">Study Hours by Week</CardTitle>
+            <SectionTitle icon={BarChart3}>STUDY HOURS // BY WEEK</SectionTitle>
           </CardHeader>
           <CardContent>
             {weeklyHours.length === 0 ? (
@@ -79,9 +102,9 @@ export function AnalyticsCharts({ data }: AnalyticsChartsProps) {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card data-slot="card" className="border border-border/80 bg-card/60 rounded-xl">
           <CardHeader>
-            <CardTitle className="text-base">XP Earned Over Time</CardTitle>
+            <SectionTitle icon={Zap}>XP THROUGHPUT // OVER TIME</SectionTitle>
           </CardHeader>
           <CardContent>
             {xpOverTime.length === 0 ? (
@@ -114,9 +137,9 @@ export function AnalyticsCharts({ data }: AnalyticsChartsProps) {
 
       {/* Lessons over time & Track Progress */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <Card>
+        <Card data-slot="card" className="border border-border/80 bg-card/60 rounded-xl">
           <CardHeader>
-            <CardTitle className="text-base">Lessons Completed Over Time</CardTitle>
+            <SectionTitle icon={BookOpen}>LESSONS COMPLETED // OVER TIME</SectionTitle>
           </CardHeader>
           <CardContent>
             {lessonsOverTime.length === 0 ? (
@@ -140,40 +163,38 @@ export function AnalyticsCharts({ data }: AnalyticsChartsProps) {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card data-slot="card" className="border border-border/80 bg-card/60 rounded-xl">
           <CardHeader>
-            <CardTitle className="text-base">Track Progress</CardTitle>
+            <SectionTitle>TRACK PROGRESSION</SectionTitle>
           </CardHeader>
-          <CardContent className="space-y-5 pt-2">
+          <CardContent className="space-y-4 pt-2">
             {trackProgress.map((track) => (
-              <div key={track.slug} className="space-y-2">
-                <div className="flex justify-between items-center text-sm">
-                  <span className="font-medium" style={{ color: track.color }}>{track.name}</span>
-                  <span className="text-muted-foreground text-xs">
-                    {track.completed}/{track.total} · {track.percent}%
-                    {track.minutesSpent > 0 && ` · ${minutesToHours(track.minutesSpent)} spent`}
+              <div key={track.slug} className="space-y-1.5">
+                <div className="flex justify-between items-center text-xs">
+                  <span className="font-bold tracking-tight" style={{ color: track.color }}>{track.name}</span>
+                  <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground/70">
+                    <span className="font-bold text-foreground">{track.completed}</span>
+                    /{track.total} · {track.percent}%
+                    {track.minutesSpent > 0 && ` · ${minutesToHours(track.minutesSpent)}`}
                   </span>
                 </div>
-                <div className="w-full bg-muted rounded-full h-2">
-                  <div
-                    className="h-2 rounded-full transition-all duration-700"
-                    style={{ width: `${track.percent}%`, backgroundColor: track.color }}
-                  />
+                <div className="h-1 bg-muted rounded overflow-hidden">
+                  <div className="h-full rounded transition-all duration-700" style={{ width: `${track.percent}%`, backgroundColor: track.color }} />
                 </div>
               </div>
             ))}
             {trackProgress.length === 0 && (
-              <p className="text-sm text-muted-foreground">No track data available.</p>
+              <p className="text-xs text-muted-foreground/80">No track data available.</p>
             )}
           </CardContent>
         </Card>
       </div>
 
-      {/* XP breakdown by type + mood trend */}
+      {/* XP breakdown + Review pointer */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <Card>
+        <Card data-slot="card" className="border border-border/80 bg-card/60 rounded-xl">
           <CardHeader>
-            <CardTitle className="text-base">XP by Activity Type</CardTitle>
+            <SectionTitle icon={Zap}>XP DISTRIBUTION // BY TYPE</SectionTitle>
           </CardHeader>
           <CardContent>
             {xpByType.length === 0 ? (
@@ -181,32 +202,38 @@ export function AnalyticsCharts({ data }: AnalyticsChartsProps) {
             ) : (
               <ResponsiveContainer width="100%" height={220}>
                 <PieChart>
-                  <Pie data={xpByType} dataKey="points" nameKey="type" cx="50%" cy="50%" outerRadius={80} label={(props) => `${(props as { name?: string }).name ?? ""} ${Math.round(((props.percent as number) ?? 0) * 100)}%`} labelLine={false}>
+                  <Pie
+                    data={xpByType}
+                    dataKey="points"
+                    nameKey="type"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={80}
+                    label={(props) => `${(props as { name?: string }).name ?? ""} ${Math.round(((props.percent as number) ?? 0) * 100)}%`}
+                    labelLine={false}
+                  >
                     {xpByType.map((_, i) => (
                       <Cell key={i} fill={XP_TYPE_COLORS[i % XP_TYPE_COLORS.length]} />
                     ))}
                   </Pie>
                   <Tooltip {...tooltipStyle} formatter={(val) => [`${val} XP`]} />
-                  <Legend wrapperStyle={{ fontSize: 11 }} />
+                  <Legend wrapperStyle={{ fontSize: 10, fontFamily: "var(--font-mono, monospace)" }} />
                 </PieChart>
               </ResponsiveContainer>
             )}
           </CardContent>
         </Card>
 
-        <Card>
+        <Card data-slot="card" className="border border-border/80 bg-card/60 rounded-xl border-l-2 border-l-[var(--token-purple)]">
           <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2">
-              <Brain className="h-4 w-4 text-muted-foreground" />
-              Spaced Repetition
-            </CardTitle>
+            <SectionTitle icon={Brain}>SPACED REPETITION</SectionTitle>
           </CardHeader>
           <CardContent className="flex flex-col items-center justify-center gap-4 py-6">
-            <p className="text-sm text-muted-foreground text-center">
+            <p className="text-xs text-muted-foreground/80 text-center max-w-xs">
               Review checkpoint questions from completed lessons to reinforce long-term memory via the SM-2 algorithm.
             </p>
-            <Button asChild>
-              <Link href="/review">Go to Review Queue</Link>
+            <Button asChild className="font-mono text-xs font-semibold uppercase tracking-wider">
+              <Link href="/review">LAUNCH REVIEW QUEUE</Link>
             </Button>
           </CardContent>
         </Card>
@@ -214,9 +241,9 @@ export function AnalyticsCharts({ data }: AnalyticsChartsProps) {
 
       {/* Mood & energy trend */}
       {moodTrend.length > 0 && (
-        <Card>
+        <Card data-slot="card" className="border border-border/80 bg-card/60 rounded-xl">
           <CardHeader>
-            <CardTitle className="text-base">Study Mood Trend</CardTitle>
+            <SectionTitle>STUDY MOOD // ENERGY TREND</SectionTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={180}>
@@ -224,25 +251,21 @@ export function AnalyticsCharts({ data }: AnalyticsChartsProps) {
                 <CartesianGrid strokeDasharray="3 3" stroke="oklch(1 0 0 / 6%)" />
                 <XAxis dataKey="date" {...axisProps} />
                 <YAxis {...axisProps} domain={[0, 5]} ticks={[1, 2, 3, 4, 5]} />
-                <Tooltip
-                  {...tooltipStyle}
-                  formatter={(val, name) => [val, name === "energy" ? "Energy (1-5)" : "Mood"]}
-                />
+                <Tooltip {...tooltipStyle} formatter={(val, name) => [val, name === "energy" ? "Energy (1-5)" : "Mood"]} />
                 <Bar dataKey="energy" fill={AMBER} radius={[3, 3, 0, 0]} name="energy" />
               </BarChart>
             </ResponsiveContainer>
-            <p className="mt-2 text-xs text-muted-foreground text-center">Energy level (1–5) logged with study sessions</p>
+            <p className="mt-2 text-[10px] font-mono uppercase tracking-wider text-muted-foreground/70 text-center">
+              ENERGY LEVEL (1–5) LOGGED WITH STUDY SESSIONS
+            </p>
           </CardContent>
         </Card>
       )}
 
       {/* Activity Heatmap */}
-      <Card>
+      <Card data-slot="card" className="border border-border/80 bg-card/60 rounded-xl">
         <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-muted-foreground" />
-            Activity Heatmap — Last 60 Days
-          </CardTitle>
+          <SectionTitle icon={Calendar}>ACTIVITY HEATMAP // LAST 60 DAYS</SectionTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-1">
@@ -261,11 +284,11 @@ export function AnalyticsCharts({ data }: AnalyticsChartsProps) {
               />
             ))}
           </div>
-          <div className="flex flex-wrap items-center gap-3 mt-3 text-xs text-muted-foreground">
-            <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-sm bg-white/5" /> No activity</div>
-            <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-sm" style={{ backgroundColor: "color-mix(in oklch, var(--token-cyan) 25%, transparent)" }} /> &lt;60 min</div>
-            <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-sm" style={{ backgroundColor: "color-mix(in oklch, var(--token-cyan) 50%, transparent)" }} /> 60–120 min</div>
-            <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-sm" style={{ backgroundColor: "var(--token-cyan)" }} /> 120+ min</div>
+          <div className="flex flex-wrap items-center gap-3 mt-3 text-[10px] font-mono uppercase tracking-wider text-muted-foreground/70">
+            <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-sm bg-white/5" /> NONE</div>
+            <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-sm" style={{ backgroundColor: "color-mix(in oklch, var(--token-cyan) 25%, transparent)" }} /> &lt;60M</div>
+            <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-sm" style={{ backgroundColor: "color-mix(in oklch, var(--token-cyan) 50%, transparent)" }} /> 60–120M</div>
+            <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-sm" style={{ backgroundColor: "var(--token-cyan)" }} /> 120M+</div>
           </div>
         </CardContent>
       </Card>

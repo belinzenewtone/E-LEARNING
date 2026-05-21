@@ -32,6 +32,14 @@ interface StudyLogFormProps {
   tracks: Track[];
 }
 
+function FieldLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <Label className="text-[10px] font-mono font-semibold text-muted-foreground/80 uppercase tracking-widest">
+      {children}
+    </Label>
+  );
+}
+
 export function StudyLogForm({ tracks }: StudyLogFormProps) {
   const today = format(new Date(), "yyyy-MM-dd");
   const [date, setDate] = useState(today);
@@ -62,7 +70,6 @@ export function StudyLogForm({ tracks }: StudyLogFormProps) {
     startTransition(async () => {
       try {
         await addStudyLog(formData);
-        // Reset form
         setDate(today);
         setTrackId("");
         setMinutes("");
@@ -79,32 +86,27 @@ export function StudyLogForm({ tracks }: StudyLogFormProps) {
   }
 
   return (
-    <Card className="border-border bg-card">
+    <Card data-slot="card" className="border border-border/80 bg-card/60 rounded-xl">
       <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2 text-sm">
+        <CardTitle className="flex items-center gap-2 text-[11px] font-mono font-bold uppercase tracking-wider text-muted-foreground/80">
           <ClipboardList className="h-4 w-4 text-primary" />
-          Log Today&apos;s Session
+          LOG TODAY&apos;S SESSION
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* Row: date + track + minutes */}
         <div className="grid gap-3 sm:grid-cols-3">
           <div className="space-y-1.5">
-            <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-              Date
-            </Label>
+            <FieldLabel>DATE</FieldLabel>
             <Input
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="bg-muted/20 text-sm"
+              className="bg-muted/20 text-sm font-mono"
             />
           </div>
 
           <div className="space-y-1.5">
-            <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-              Track
-            </Label>
+            <FieldLabel>TRACK</FieldLabel>
             <select
               value={trackId}
               onChange={(e) => setTrackId(e.target.value)}
@@ -112,33 +114,27 @@ export function StudyLogForm({ tracks }: StudyLogFormProps) {
             >
               <option value="">All / General</option>
               {tracks.map((t) => (
-                <option key={t.id} value={t.id}>
-                  {t.name}
-                </option>
+                <option key={t.id} value={t.id}>{t.name}</option>
               ))}
             </select>
           </div>
 
           <div className="space-y-1.5">
-            <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-              Minutes Studied
-            </Label>
+            <FieldLabel>MINUTES STUDIED</FieldLabel>
             <Input
               type="number"
               min={1}
               placeholder="e.g. 90"
               value={minutes}
               onChange={(e) => setMinutes(e.target.value)}
-              className="bg-muted/20 text-sm"
+              className="bg-muted/20 text-sm font-mono"
             />
           </div>
         </div>
 
         {/* Mood */}
         <div className="space-y-1.5">
-          <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-            Mood
-          </Label>
+          <FieldLabel>MOOD</FieldLabel>
           <div className="flex flex-wrap gap-2">
             {MOODS.map((m) => (
               <button
@@ -146,24 +142,22 @@ export function StudyLogForm({ tracks }: StudyLogFormProps) {
                 type="button"
                 onClick={() => setMood(m.value)}
                 className={cn(
-                  "flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm transition-colors",
+                  "flex items-center gap-1.5 rounded border px-3 py-1 text-xs transition-colors",
                   mood === m.value
                     ? "border-primary bg-primary/10 text-primary"
-                    : "border-border text-muted-foreground hover:border-border hover:text-foreground"
+                    : "border-border/80 text-muted-foreground hover:text-foreground"
                 )}
               >
                 {m.emoji}
-                <span className="text-xs">{m.label}</span>
+                <span className="text-[10px] font-mono font-semibold uppercase tracking-wider">{m.label}</span>
               </button>
             ))}
           </div>
         </div>
 
-        {/* Energy slider */}
+        {/* Energy */}
         <div className="space-y-1.5">
-          <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-            Energy Level — {energy}/5
-          </Label>
+          <FieldLabel>ENERGY LEVEL — {energy}/5</FieldLabel>
           <input
             type="range"
             min={1}
@@ -172,17 +166,14 @@ export function StudyLogForm({ tracks }: StudyLogFormProps) {
             onChange={(e) => setEnergy(parseInt(e.target.value, 10))}
             className="form-range"
           />
-          <div className="flex justify-between text-[10px] text-muted-foreground/60">
-            <span>Drained</span>
-            <span>Energised</span>
+          <div className="flex justify-between text-[9px] font-mono uppercase tracking-widest text-muted-foreground/60">
+            <span>DRAINED</span>
+            <span>ENERGISED</span>
           </div>
         </div>
 
-        {/* Learned */}
         <div className="space-y-1.5">
-          <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-            What I Learned
-          </Label>
+          <FieldLabel>WHAT I LEARNED</FieldLabel>
           <Textarea
             placeholder="Key takeaways from today's session..."
             value={learned}
@@ -191,11 +182,8 @@ export function StudyLogForm({ tracks }: StudyLogFormProps) {
           />
         </div>
 
-        {/* Blockers */}
         <div className="space-y-1.5">
-          <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-            Blockers / Challenges
-          </Label>
+          <FieldLabel>BLOCKERS / CHALLENGES</FieldLabel>
           <Textarea
             placeholder="Anything that slowed you down today..."
             value={blockers}
@@ -204,11 +192,8 @@ export function StudyLogForm({ tracks }: StudyLogFormProps) {
           />
         </div>
 
-        {/* Tomorrow's plan */}
         <div className="space-y-1.5">
-          <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-            Tomorrow&apos;s Plan
-          </Label>
+          <FieldLabel>TOMORROW&apos;S PLAN</FieldLabel>
           <Textarea
             placeholder="What will you tackle next?"
             value={nextStep}
@@ -218,11 +203,11 @@ export function StudyLogForm({ tracks }: StudyLogFormProps) {
         </div>
 
         <Button
-          className="w-full"
+          className="w-full font-mono text-xs font-semibold uppercase tracking-wider"
           disabled={!canSubmit || isPending}
           onClick={handleSubmit}
         >
-          {isPending ? "Logging…" : "Log Study Session"}
+          {isPending ? "LOGGING…" : "LOG STUDY SESSION"}
         </Button>
       </CardContent>
     </Card>

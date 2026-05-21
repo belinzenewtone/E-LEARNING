@@ -51,11 +51,11 @@ type StepStatus = "done" | "active" | "locked";
 type Quality = 0 | 1 | 2 | 3 | 4 | 5;
 
 const CONFIDENCE_LABELS: { value: Quality; label: string; color: string }[] = [
-  { value: 1, label: "Blank",   color: "border-rose-500/40 bg-rose-500/10 text-rose-400" },
-  { value: 2, label: "Hard",    color: "border-orange-500/40 bg-orange-500/10 text-orange-400" },
-  { value: 3, label: "Ok",      color: "border-yellow-500/40 bg-yellow-500/10 text-yellow-400" },
-  { value: 4, label: "Good",    color: "border-[var(--token-cyan)]/40 bg-[var(--token-cyan)]/10 text-[var(--token-cyan)]" },
-  { value: 5, label: "Easy",    color: "border-[var(--token-emerald)]/40 bg-[var(--token-emerald)]/10 text-[var(--token-emerald)]" },
+  { value: 1, label: "Blank", color: "border-[var(--token-red)]/40 bg-[var(--token-red)]/10 text-[var(--token-red)]" },
+  { value: 2, label: "Hard",  color: "border-orange-500/40 bg-orange-500/10 text-orange-400" },
+  { value: 3, label: "Ok",    color: "border-[var(--token-amber)]/40 bg-[var(--token-amber)]/10 text-[var(--token-amber)]" },
+  { value: 4, label: "Good",  color: "border-[var(--token-cyan)]/40 bg-[var(--token-cyan)]/10 text-[var(--token-cyan)]" },
+  { value: 5, label: "Easy",  color: "border-[var(--token-emerald)]/40 bg-[var(--token-emerald)]/10 text-[var(--token-emerald)]" },
 ];
 
 const MIN_NOTE_CHARS = 10;
@@ -72,13 +72,10 @@ function StepBadge({ number, status }: { number: number; status: StepStatus }) {
   return (
     <div
       className={cn(
-        "flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 text-xs font-bold transition-all",
-        status === "done" &&
-          "border-[var(--token-emerald)] bg-[var(--token-emerald)] text-white",
-        status === "active" &&
-          "border-[var(--token-cyan)] bg-[var(--token-cyan)]/10 text-[var(--token-cyan)]",
-        status === "locked" &&
-          "border-border bg-muted/20 text-muted-foreground/50"
+        "flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 text-[10px] font-mono font-bold transition-all",
+        status === "done" && "border-[var(--token-emerald)] bg-[var(--token-emerald)] text-white",
+        status === "active" && "border-[var(--token-cyan)] bg-[var(--token-cyan)]/10 text-[var(--token-cyan)]",
+        status === "locked" && "border-border bg-muted/20 text-muted-foreground/50"
       )}
     >
       {status === "done" ? <Check className="h-3.5 w-3.5" /> : number}
@@ -120,7 +117,6 @@ export function LessonStudyArea({
   const [isSavingNote, startSavingNote] = useTransition();
   const [optimisticCompleted, setOptimisticCompleted] = useOptimistic(isCompleted);
 
-  // Live elapsed-time counter (pauses once completed)
   useEffect(() => {
     if (isCompleted) return;
     const id = setInterval(() => {
@@ -212,24 +208,22 @@ export function LessonStudyArea({
 
   const elapsedMinutes = Math.floor(elapsedSeconds / 60);
   const timeColor =
-    elapsedMinutes >= estimatedMinutes
-      ? "text-[var(--token-emerald)]"
-      : "text-muted-foreground";
+    elapsedMinutes >= estimatedMinutes ? "text-[var(--token-emerald)]" : "text-muted-foreground";
 
   return (
     <div className="space-y-4">
       {/* Step progress header */}
-      <Card className="border-border bg-card">
+      <Card data-slot="card" className="border border-border/80 bg-card/60 rounded-xl">
         <CardContent className="p-4">
           <div className="mb-3 flex items-center justify-between">
-            <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
-              Study Steps
+            <p className="text-[10px] font-mono font-semibold tracking-widest text-muted-foreground/80 uppercase">
+              SYSTEM // STUDY PIPELINE
             </p>
             {!optimisticCompleted && (
-              <span className={cn("flex items-center gap-1 text-[11px]", timeColor)}>
+              <span className={cn("flex items-center gap-1 text-[10px] font-mono uppercase tracking-wider", timeColor)}>
                 <Clock className="h-3 w-3" />
                 {formatElapsed(elapsedSeconds)}
-                <span className="text-muted-foreground/60">/ {estimatedMinutes}m est.</span>
+                <span className="text-muted-foreground/60">/ {estimatedMinutes}M EST</span>
               </span>
             )}
           </div>
@@ -247,54 +241,38 @@ export function LessonStudyArea({
             )}
             {!hasCheckpoints && <StepBadge number={3} status={s4} />}
           </div>
-          <div className="mt-2 flex items-center justify-between text-[11px] text-muted-foreground">
-            <span>Review</span>
-            <span>Notes</span>
+          <div className="mt-2 flex items-center justify-between text-[9px] font-mono uppercase tracking-widest text-muted-foreground/70">
+            <span>REVIEW</span>
+            <span>NOTES</span>
             {hasCheckpoints && (
               <>
-                <span>Checkpoints</span>
-                <span>Reflect</span>
+                <span>CHECKPOINT</span>
+                <span>REFLECT</span>
               </>
             )}
-            {!hasCheckpoints && <span>Reflect</span>}
+            {!hasCheckpoints && <span>REFLECT</span>}
           </div>
         </CardContent>
       </Card>
 
       {/* Step 1 — Review Source */}
-      <StepCard
-        number={1}
-        title="Review the Source"
-        icon={<BookOpen className="h-4 w-4" />}
-        status={s1}
-        iconColor="text-[var(--token-cyan)]"
-      >
+      <StepCard number={1} title="Review the Source" icon={<BookOpen className="h-4 w-4" />} status={s1} iconColor="text-[var(--token-cyan)]">
         <button
           onClick={() => setSourceReviewed((v) => !v)}
           className={cn(
-            "flex w-full items-center gap-3 rounded-lg border px-4 py-3 text-sm font-medium transition-all",
+            "flex w-full items-center gap-3 rounded-lg border px-4 py-3 text-xs font-mono font-semibold uppercase tracking-wider transition-all",
             sourceReviewed
               ? "border-[var(--token-emerald)]/30 bg-[var(--token-emerald)]/10 text-[var(--token-emerald)]"
-              : "border-border bg-muted/20 text-muted-foreground hover:border-border hover:text-foreground"
+              : "border-border bg-muted/20 text-muted-foreground hover:text-foreground"
           )}
         >
-          {sourceReviewed ? (
-            <CheckCircle2 className="h-4 w-4 shrink-0" />
-          ) : (
-            <Circle className="h-4 w-4 shrink-0" />
-          )}
-          {sourceReviewed ? "Source reviewed — nice work!" : "Mark as Source Reviewed"}
+          {sourceReviewed ? <CheckCircle2 className="h-4 w-4 shrink-0" /> : <Circle className="h-4 w-4 shrink-0" />}
+          {sourceReviewed ? "SOURCE REVIEWED — NICE WORK" : "MARK AS SOURCE REVIEWED"}
         </button>
       </StepCard>
 
       {/* Step 2 — Personal Notes */}
-      <StepCard
-        number={2}
-        title="Personal Notes"
-        icon={<PenLine className="h-4 w-4" />}
-        status={s2}
-        iconColor="text-primary"
-      >
+      <StepCard number={2} title="Personal Notes" icon={<PenLine className="h-4 w-4" />} status={s2} iconColor="text-primary">
         <Textarea
           placeholder="Capture key ideas, examples, or anything worth remembering..."
           value={noteContent}
@@ -302,33 +280,31 @@ export function LessonStudyArea({
           className="min-h-[120px] resize-y bg-muted/20 text-sm"
         />
         <div className="flex items-center justify-between">
-          <span className={cn("text-[11px]", noteContent.trim().length >= MIN_NOTE_CHARS ? "text-[var(--token-emerald)]" : "text-muted-foreground/60")}>
-            {noteContent.trim().length}/{MIN_NOTE_CHARS}+ chars
+          <span className={cn(
+            "text-[10px] font-mono uppercase tracking-wider",
+            noteContent.trim().length >= MIN_NOTE_CHARS ? "text-[var(--token-emerald)]" : "text-muted-foreground/60"
+          )}>
+            {noteContent.trim().length}/{MIN_NOTE_CHARS}+ CHARS
           </span>
           <Button
             size="sm"
             variant="outline"
             onClick={handleSaveNote}
             disabled={isSavingNote || !noteContent.trim()}
+            className="border-border hover:bg-muted text-[10px] font-mono uppercase tracking-wider"
           >
-            {isSavingNote ? "Saving…" : "Save Note"}
+            {isSavingNote ? "SAVING…" : "SAVE NOTE"}
           </Button>
         </div>
       </StepCard>
 
-      {/* Step 3 — Checkpoint Questions (conditional) */}
+      {/* Step 3 — Checkpoint Questions */}
       {hasCheckpoints && (
-        <StepCard
-          number={3}
-          title="Checkpoint Questions"
-          icon={<HelpCircle className="h-4 w-4" />}
-          status={s3}
-          iconColor="text-[var(--token-amber)]"
-        >
+        <StepCard number={3} title="Checkpoint Questions" icon={<HelpCircle className="h-4 w-4" />} status={s3} iconColor="text-[var(--token-amber)]">
           <div className="space-y-6">
             {checkpointQuestions.map((q, i) => (
               <div key={i} className="space-y-2">
-                <Label className="text-sm font-medium text-foreground leading-snug">
+                <Label className="text-xs font-semibold text-foreground leading-snug">
                   {i + 1}. {q.question}
                 </Label>
                 <Textarea
@@ -337,15 +313,14 @@ export function LessonStudyArea({
                   onChange={(e) => handleAnswerChange(i, e.target.value)}
                   className="min-h-[80px] resize-y bg-muted/20 text-sm"
                 />
-                {/* Confidence rating */}
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[11px] text-muted-foreground mr-1">Recall:</span>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="text-[9px] font-mono font-semibold uppercase tracking-widest text-muted-foreground/70 mr-1">RECALL:</span>
                   {CONFIDENCE_LABELS.map(({ value, label, color }) => (
                     <button
                       key={value}
                       onClick={() => handleConfidenceChange(i, value)}
                       className={cn(
-                        "rounded border px-2 py-0.5 text-[11px] font-medium transition-all",
+                        "rounded border px-2 py-0.5 text-[9px] font-mono font-semibold uppercase tracking-wider transition-all",
                         checkpointConfidence[i] === value
                           ? color
                           : "border-border bg-muted/20 text-muted-foreground/60 hover:text-foreground"
@@ -362,40 +337,25 @@ export function LessonStudyArea({
       )}
 
       {/* Step 3 or 4 — Reflection */}
-      <StepCard
-        number={hasCheckpoints ? 4 : 3}
-        title="Reflection"
-        icon={<Lightbulb className="h-4 w-4" />}
-        status={s4}
-        iconColor="text-[var(--token-emerald)]"
-      >
+      <StepCard number={hasCheckpoints ? 4 : 3} title="Reflection" icon={<Lightbulb className="h-4 w-4" />} status={s4} iconColor="text-[var(--token-emerald)]">
         <div className="space-y-4">
           {(
             [
-              {
-                key: "understood" as const,
-                prompt: "What did I understand?",
-                placeholder: "Summarize the concepts that clicked for you...",
-              },
-              {
-                key: "confused" as const,
-                prompt: "What confused me?",
-                placeholder: "Note anything that felt unclear or tricky...",
-              },
-              {
-                key: "apply" as const,
-                prompt: "Where can I apply this?",
-                placeholder: "Think about real-world contexts where this knowledge is useful...",
-              },
+              { key: "understood" as const, prompt: "What did I understand?", placeholder: "Summarize the concepts that clicked for you..." },
+              { key: "confused" as const,   prompt: "What confused me?",       placeholder: "Note anything that felt unclear or tricky..." },
+              { key: "apply" as const,      prompt: "Where can I apply this?", placeholder: "Think about real-world contexts where this knowledge is useful..." },
             ] as const
           ).map(({ key, prompt, placeholder }) => (
             <div key={key} className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                <Label className="text-[10px] font-mono font-semibold text-muted-foreground/80 uppercase tracking-widest">
                   {prompt}
                 </Label>
                 {reflection[key].trim().length > 0 && (
-                  <span className={cn("text-[11px]", reflection[key].trim().length >= MIN_REFLECTION_CHARS ? "text-[var(--token-emerald)]" : "text-muted-foreground/60")}>
+                  <span className={cn(
+                    "text-[10px] font-mono uppercase tracking-wider",
+                    reflection[key].trim().length >= MIN_REFLECTION_CHARS ? "text-[var(--token-emerald)]" : "text-muted-foreground/60"
+                  )}>
                     {reflection[key].trim().length}/{MIN_REFLECTION_CHARS}+
                   </span>
                 )}
@@ -414,35 +374,33 @@ export function LessonStudyArea({
       {/* Complete button */}
       <div className="pt-1">
         {optimisticCompleted ? (
-          <div className="flex items-center justify-center gap-2 rounded-xl border border-[var(--token-emerald)]/30 bg-[var(--token-emerald)]/10 py-3 text-sm font-medium text-[var(--token-emerald)]">
+          <div className="flex items-center justify-center gap-2 rounded-xl border border-[var(--token-emerald)]/30 bg-[var(--token-emerald)]/10 py-3 text-xs font-mono font-semibold uppercase tracking-wider text-[var(--token-emerald)]">
             <Trophy className="h-4 w-4" />
-            Lesson Completed — Great work!
+            LESSON COMPLETED — GREAT WORK
           </div>
         ) : (
           <>
             <Button
               size="lg"
               className={cn(
-                "w-full transition-all",
-                canComplete
-                  ? "bg-[var(--token-emerald)] hover:bg-[var(--token-emerald)]/85 text-white"
-                  : ""
+                "w-full transition-all font-mono text-xs font-semibold uppercase tracking-wider",
+                canComplete && "bg-[var(--token-emerald)] hover:bg-[var(--token-emerald)]/85 text-white"
               )}
               disabled={!canComplete || isPending}
               onClick={handleCompleteLesson}
             >
-              {isPending ? "Completing…" : "Complete Lesson"}
+              {isPending ? "COMPLETING…" : "COMPLETE LESSON"}
               {canComplete && <CheckCircle2 className="h-4 w-4" />}
             </Button>
             {!canComplete && (
-              <p className="mt-2 text-center text-xs text-muted-foreground">
+              <p className="mt-2 text-center text-[10px] font-mono uppercase tracking-wider text-muted-foreground/70">
                 {!step1Done
-                  ? "Mark the source reviewed to begin."
+                  ? "MARK SOURCE REVIEWED TO BEGIN"
                   : !step2Done
-                  ? `Add at least ${MIN_NOTE_CHARS} characters of notes before continuing.`
+                  ? `ADD AT LEAST ${MIN_NOTE_CHARS} CHARS OF NOTES`
                   : !step3Done
-                  ? "Answer at least one checkpoint question."
-                  : `Write at least ${MIN_REFLECTION_CHARS} characters in one reflection field.`}
+                  ? "ANSWER AT LEAST ONE CHECKPOINT QUESTION"
+                  : `WRITE AT LEAST ${MIN_REFLECTION_CHARS} CHARS IN ONE REFLECTION FIELD`}
               </p>
             )}
           </>
@@ -451,8 +409,6 @@ export function LessonStudyArea({
     </div>
   );
 }
-
-// ── StepCard helper ───────────────────────────────────────────────────────────
 
 interface StepCardProps {
   number: number;
@@ -466,35 +422,31 @@ interface StepCardProps {
 function StepCard({ number, title, icon, status, iconColor, children }: StepCardProps) {
   return (
     <Card
+      data-slot="card"
       className={cn(
-        "border transition-all",
-        status === "done" && "border-[var(--token-emerald)]/25 bg-card",
-        status === "active" && "border-[var(--token-cyan)]/30 bg-card shadow-sm",
-        status === "locked" && "border-border bg-card opacity-60"
+        "border bg-card/60 rounded-xl transition-all",
+        status === "done" && "border-[var(--token-emerald)]/25",
+        status === "active" && "border-[var(--token-cyan)]/30 shadow-sm",
+        status === "locked" && "border-border/80 opacity-60"
       )}
     >
       <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2.5 text-sm">
+        <CardTitle className="flex items-center gap-2.5 text-xs font-mono font-semibold uppercase tracking-wider">
           <span
             className={cn(
               "flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold",
-              status === "done" &&
-                "bg-[var(--token-emerald)] text-white",
-              status === "active" &&
-                "bg-[var(--token-cyan)]/15 text-[var(--token-cyan)]",
-              status === "locked" &&
-                "bg-muted/40 text-muted-foreground/50"
+              status === "done" && "bg-[var(--token-emerald)] text-white",
+              status === "active" && "bg-[var(--token-cyan)]/15 text-[var(--token-cyan)]",
+              status === "locked" && "bg-muted/40 text-muted-foreground/50"
             )}
           >
             {status === "done" ? <Check className="h-3 w-3" /> : number}
           </span>
-          <span className={cn("flex items-center gap-1.5", status === "locked" && "text-muted-foreground/60")}>
+          <span className={cn("flex items-center gap-1.5 text-foreground", status === "locked" && "text-muted-foreground/60")}>
             <span className={status !== "locked" ? iconColor : ""}>{icon}</span>
             {title}
           </span>
-          {status === "done" && (
-            <CheckCircle2 className="ml-auto h-4 w-4 text-[var(--token-emerald)]" />
-          )}
+          {status === "done" && <CheckCircle2 className="ml-auto h-4 w-4 text-[var(--token-emerald)]" />}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">{children}</CardContent>

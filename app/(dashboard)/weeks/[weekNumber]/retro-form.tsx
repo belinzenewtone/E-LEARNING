@@ -14,11 +14,7 @@ interface RetroFormProps {
   isCompleted: boolean;
 }
 
-export function RetroForm({
-  weekId,
-  existingNotes,
-  isCompleted,
-}: RetroFormProps) {
+export function RetroForm({ weekId, existingNotes, isCompleted }: RetroFormProps) {
   const [notes, setNotes] = useState(existingNotes);
   const [done, setDone] = useState(isCompleted);
   const [isPending, startTransition] = useTransition();
@@ -40,12 +36,12 @@ export function RetroForm({
   }
 
   return (
-    <Card className="border-border bg-card">
+    <Card data-slot="card" className="border border-border/80 bg-card/60 rounded-xl">
       <CardContent className="space-y-3 p-4">
         {done && (
-          <div className="flex items-center gap-2 rounded-lg border border-[var(--token-emerald)]/20 bg-[var(--token-emerald)]/10 px-3 py-2 text-sm text-[var(--token-emerald)]">
+          <div className="flex items-center gap-2 rounded-lg border border-[var(--token-emerald)]/25 bg-[var(--token-emerald)]/10 px-3 py-2 text-xs font-mono font-semibold uppercase tracking-wider text-[var(--token-emerald)]">
             <CheckCircle2 className="h-4 w-4 shrink-0" />
-            Retrospective completed!
+            RETROSPECTIVE COMPLETED
           </div>
         )}
         <Textarea
@@ -60,12 +56,9 @@ export function RetroForm({
             onClick={handleSubmit}
             disabled={done || isPending || !notes.trim()}
             size="sm"
+            className="font-mono text-xs font-semibold uppercase tracking-wider"
           >
-            {done
-              ? "Retrospective Submitted"
-              : isPending
-              ? "Submitting…"
-              : "Submit Retrospective"}
+            {done ? "RETROSPECTIVE SUBMITTED" : isPending ? "SUBMITTING…" : "SUBMIT RETROSPECTIVE"}
           </Button>
         </div>
       </CardContent>
