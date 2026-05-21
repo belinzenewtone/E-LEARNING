@@ -17,6 +17,7 @@ import { Separator } from "@/components/ui/separator";
 import { LessonSkeleton } from "@/components/shared/loading-skeleton";
 import { cn, minutesToHours, getDifficultyColor, getStatusColor, getStatusBadgeVariant, getDifficultyBadgeVariant } from "@/lib/utils";
 import { LessonStudyArea } from "./lesson-study-area";
+import { LessonPanelLayout } from "./lesson-panel-layout";
 import { ProgressRing } from "@/components/shared/progress-ring";
 import { StudyTimer } from "@/components/shared/study-timer";
 import { MarkdownContent } from "@/components/shared/markdown-content";
@@ -264,32 +265,11 @@ async function LessonContent({ slug, userId }: { slug: string; userId: string })
     <div>
       <Topbar breadcrumbs={[{ label: "Lessons", href: "/lessons" }, { label: lesson.title }]} />
       <div className="p-4 sm:p-6 lg:p-8">
-        <div className="grid gap-6 xl:grid-cols-[240px_1fr_300px]">
-
-          {/* ── LEFT: lesson metadata ─────────────────────────────── */}
-          <aside className="xl:sticky xl:top-20 xl:self-start xl:max-h-[calc(100vh-6rem)] xl:overflow-y-auto">
-            <LessonInfoPanel lesson={lesson} />
-          </aside>
-
-          {/* ── CENTER: lesson content only ───────────────────────── */}
-          <main className="space-y-5 min-w-0">
-            {lesson.content && (
-              <Card className="border-border bg-card">
-                <CardContent className="p-5" data-lesson-body>
-                  <MarkdownContent content={lesson.content} />
-                </CardContent>
-              </Card>
-            )}
-            <SupplementarySection items={getSupplementaryContent(lesson.slug)} />
-          </main>
-
-          {/* ── RIGHT: study tools — sticky, independently scrollable */}
-          <aside className="xl:sticky xl:top-20 xl:self-start xl:max-h-[calc(100vh-6rem)] xl:overflow-y-auto">
+        <LessonPanelLayout
+          leftPanel={<LessonInfoPanel lesson={lesson} />}
+          rightPanel={
             <div className="space-y-3">
-              {/* Timer always at the top */}
               <StudyTimer />
-
-              {/* Study pipeline: Review → Notes → Checkpoint → Reflect */}
               <LessonStudyArea
                 lessonId={lesson.id}
                 lessonSlug={lesson.slug}
@@ -300,16 +280,21 @@ async function LessonContent({ slug, userId }: { slug: string; userId: string })
                 existingAnswers={lesson.checkpointAnswers}
                 isCompleted={lesson.progress[0]?.status === "completed"}
               />
-
-              {/* Table of contents for jumping to sections */}
               <LessonToc lessonSlug={lesson.slug} />
-
-              {/* Status + week progress + next lesson */}
               <ProgressSidebar lesson={lesson} />
             </div>
-          </aside>
-
-        </div>
+          }
+        >
+          {/* center: lesson content only */}
+          {lesson.content && (
+            <Card className="border-border bg-card">
+              <CardContent className="p-5" data-lesson-body>
+                <MarkdownContent content={lesson.content} />
+              </CardContent>
+            </Card>
+          )}
+          <SupplementarySection items={getSupplementaryContent(lesson.slug)} />
+        </LessonPanelLayout>
       </div>
     </div>
   );
