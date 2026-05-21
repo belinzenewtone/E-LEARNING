@@ -47,7 +47,7 @@ export function Sidebar({ userXp = 0, streak = 0, userName = "Learner" }: Sideba
   void userName;
 
   return (
-    <aside className="flex w-40 flex-col h-screen bg-sidebar border-r border-sidebar-border/80 py-3">
+    <aside className="flex w-36 flex-col h-screen bg-sidebar border-r border-sidebar-border/80 py-3">
 
         {/* ── Brand ─────────────────────────────────────────────── */}
         <Link
@@ -66,7 +66,7 @@ export function Sidebar({ userXp = 0, streak = 0, userName = "Learner" }: Sideba
         <div className="mx-4 h-px bg-sidebar-border/60 shrink-0 mb-2" />
 
         {/* ── Navigation ─────────────────────────────────────────── */}
-        <nav className="flex-1 flex flex-col gap-1 w-full px-2 overflow-y-auto">
+        <nav className="flex-1 flex flex-col gap-2 w-full px-2 overflow-y-auto">
           {navItems.map(({ href, label, icon: Icon }) => {
             const active = isActive(href);
             return (
@@ -74,7 +74,7 @@ export function Sidebar({ userXp = 0, streak = 0, userName = "Learner" }: Sideba
                 key={href}
                 href={href}
                 className={cn(
-                  "group relative flex items-center gap-3 rounded-lg px-3 py-2 w-full transition-colors duration-100",
+                  "group relative flex items-center gap-3 rounded-lg px-3 py-2.5 w-full transition-colors duration-100",
                   active
                     ? "text-sidebar-foreground bg-muted/30"
                     : "text-sidebar-foreground/40 hover:text-sidebar-foreground/70 hover:bg-muted/20"
@@ -101,11 +101,11 @@ export function Sidebar({ userXp = 0, streak = 0, userName = "Learner" }: Sideba
         <div className="mx-4 h-px bg-sidebar-border/60 shrink-0 mb-2" />
 
         {/* ── Bottom actions ─────────────────────────────────────── */}
-        <div className="flex flex-col gap-1 w-full px-2">
+        <div className="flex flex-col gap-2 w-full px-2">
           <Link
             href="/settings"
             className={cn(
-              "group relative flex items-center gap-3 rounded-lg px-3 py-2 w-full transition-colors duration-100",
+              "group relative flex items-center gap-3 rounded-lg px-3 py-2.5 w-full transition-colors duration-100",
               isActive("/settings")
                 ? "text-sidebar-foreground bg-muted/30"
                 : "text-sidebar-foreground/40 hover:text-sidebar-foreground/70 hover:bg-muted/20"
@@ -128,7 +128,7 @@ export function Sidebar({ userXp = 0, streak = 0, userName = "Learner" }: Sideba
 
           <button
             onClick={() => signOut({ callbackUrl: "/login" })}
-            className="group relative flex items-center gap-3 rounded-lg px-3 py-2 w-full transition-colors duration-100 text-sidebar-foreground/40 hover:text-[var(--token-red)] hover:bg-muted/20"
+            className="group relative flex items-center gap-3 rounded-lg px-3 py-2.5 w-full transition-colors duration-100 text-sidebar-foreground/40 hover:text-[var(--token-red)] hover:bg-muted/20"
           >
             <LogOut className="h-4 w-4 shrink-0 text-muted-foreground/50 group-hover:text-[var(--token-red)]" />
             <span className="text-[13px] font-medium leading-none group-hover:text-[var(--token-red)]">
