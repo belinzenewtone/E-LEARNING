@@ -586,11 +586,11 @@ const GATES = [
           topics: [
             'ATS-safe format: single column, no tables/columns/text boxes/headers-as-images, .docx or ATS-safe PDF, standard section headers (Experience, Education, Certifications, Skills)',
             'Transitioner CV section order: Summary → Certifications → Skills → Projects (prioritised) → Work Experience → Education',
-            'Summary: 3 sentences — current role + transition context + what you\'re seeking; example: "IT Support Engineer with 4 years experience transitioning to cloud engineering. AWS SAA-C03 certified. Seeking a junior cloud or DevOps role where I can apply Terraform and Kubernetes skills."',
+            'Summary: 3 sentences — current role + transition context + what you\'re seeking; example: "Cloud Engineering candidate with AWS SAA-C03 certification, transitioning into cloud infrastructure roles. Hands-on with Terraform, Docker, and Python automation projects. Seeking a junior cloud or DevOps role where I can apply Terraform and Kubernetes skills."',
             'Certifications section: AWS SAA-C03 (June 2026), Terraform Associate 003 (Aug 2026) — always include the date passed and expiry',
             'Skills section: Cloud (AWS — EC2, S3, VPC, Lambda, RDS, CloudFront) | IaC (Terraform, CloudFormation) | Containers (Docker, Kubernetes, EKS) | Languages (Python, Bash) | CI/CD (GitHub Actions)',
             'Project bullets: use "Built X using Y, resulting in Z" format — always a verb, a technology, and an outcome or scale metric',
-            'Experience bullets: convert IT support experience to cloud-relevant framing — "Managed Windows Server and Active Directory" → "Administered server infrastructure for 200+ users, implementing automated patching scripts in PowerShell"',
+            'Experience bullets: convert existing experience to cloud-relevant framing — highlight automation, scripting, infrastructure, or systems you managed; quantify impact (users served, uptime %, cost saved)',
             'Find reviewers: AWS User Group Kenya, local tech Slack communities, LinkedIn connections in cloud roles, ADPList.org (free mentorship platform)',
             'jobscan.co: paste your CV and the job description; score ≥70% means your keywords match ATS filters',
             'File naming: Belinze_Newtone_Cloud_Engineer_CV.pdf — not "CV.pdf" or "Resume_Final_v3.pdf"'
@@ -614,7 +614,7 @@ const GATES = [
             'Headline format: "Junior Cloud Engineer | AWS SAA-C03 | Terraform | Kubernetes | Open to Cloud/DevOps roles in Nairobi & Remote" — pack keywords, not job titles',
             'About section (2,000 chars): Start with your transition story (2 sentences), what you\'ve built (3 specific project mentions), what you\'re seeking and where, contact invitation',
             'Featured section: pin your portfolio site URL, GitHub profile, best project link, or a published article — this is prime recruiter real estate',
-            'Experience: add cloud-specific bullet points to existing IT Support role — automation, scripting, infrastructure management you actually did',
+            'Experience: add cloud-specific bullet points to your existing role — automation, scripting, infrastructure management you actually did',
             'Certifications section: add AWS SAA-C03 and Terraform Associate with exact dates and credential IDs (from Credly)',
             'Skills: add AWS, Terraform, Kubernetes, Python, Docker, Linux, CI/CD, GitHub Actions — these are recruiter search keywords',
             'Creator Mode: enable to get a Follow button instead of Connect — useful if you plan to post about your learning journey (increases profile visibility)',

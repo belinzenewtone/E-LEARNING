@@ -1,6 +1,6 @@
 # CloudOS — Personal Command Center
 
-> IT Support → Cloud Engineering · 12-month sprint (2026)
+> Cloud Engineering · 12-month sprint (2026)
 
 Built with **Nuxt 4.5** · **Supabase** · **Nuxt UI v4** · **Tailwind CSS v4** · Deployed on **Vercel**
 

@@ -14,7 +14,7 @@ onMounted(() => {
       </div>
       <div>
         <h1 class="text-4xl font-bold tracking-tight text-foreground">CloudOS</h1>
-        <p class="mt-2 text-muted-foreground text-sm">Your personal command center for the IT → Cloud career transition</p>
+        <p class="mt-2 text-muted-foreground text-sm">Your personal command center for the cloud engineering career transition</p>
       </div>
       <UButton to="/login" size="lg" class="w-full">
         Sign in to continue
