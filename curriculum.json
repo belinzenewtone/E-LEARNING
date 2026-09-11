@@ -1,0 +1,1578 @@
+{
+  "meta": {
+    "title": "Cloud Engineering Transition Curriculum",
+    "duration_months": 12,
+    "project": "CloudOS — Nuxt 4.5 + Supabase + Nuxt UI",
+    "target_role": "Cloud Engineer",
+    "starting_point": "IT Support"
+  },
+  "tracks": {
+    "python": {
+      "title": "Python",
+      "subtitle": "Basics to Cloud Automation with boto3",
+      "color": "#4ade80",
+      "total_approx_hours": 110,
+      "phases": [
+        {
+          "id": "py-p1",
+          "title": "Phase 1 — Core Language",
+          "topics": [
+            {
+              "title": "Variables, Data Types & Control Flow",
+              "phase": "Phase 1 — Core Language",
+              "why": "Every cloud script branches on API responses — solid variable handling and conditional logic are the foundation everything else builds on.",
+              "what": [
+                "Understand Python's built-in types: int, float, str, bool, NoneType",
+                "Write if/elif/else chains; use match/case (Python 3.10+) for multi-branch dispatch",
+                "Loop over lists and ranges with for; use while with break and continue",
+                "Format output with f-strings; understand str() vs repr()",
+                "Read and fix common SyntaxError, TypeError, and NameError messages"
+              ],
+              "mini_project": "Write a script that reads a number from input, classifies it as positive/negative/zero and even/odd, then prints a formatted summary using f-strings.",
+              "resources": [
+                {"name": "Python Official Tutorial — An Informal Introduction", "url": "https://docs.python.org/3/tutorial/introduction.html"},
+                {"name": "Real Python — Python Basics", "url": "https://realpython.com/python-first-steps/"},
+                {"name": "Automate the Boring Stuff — Chapters 1 & 2", "url": "https://automatetheboringstuff.com/2e/chapter1/"}
+              ],
+              "approx_hours": 5
+            },
+            {
+              "title": "Functions & Scope",
+              "phase": "Phase 1 — Core Language",
+              "why": "Cloud scripts are decomposed into one function per AWS action so each piece can be tested and recomposed independently.",
+              "what": [
+                "Define functions with positional args, keyword args, and default values",
+                "Understand local vs global scope; return values instead of relying on globals",
+                "Use *args and **kwargs for flexible boto3 wrapper signatures",
+                "Write docstrings: what the function does, its params, and what it returns",
+                "Decompose a 50-line procedural script into small, single-purpose functions"
+              ],
+              "mini_project": "Refactor a temperature converter script into 5+ named functions, each with a docstring and a return value — no bare print() calls inside functions.",
+              "resources": [
+                {"name": "Real Python — Defining Your Own Functions", "url": "https://realpython.com/defining-your-own-python-function/"},
+                {"name": "Python Docs — Defining Functions", "url": "https://docs.python.org/3/tutorial/controlflow.html#defining-functions"},
+                {"name": "Automate the Boring Stuff — Chapter 3: Functions", "url": "https://automatetheboringstuff.com/2e/chapter3/"}
+              ],
+              "approx_hours": 4
+            },
+            {
+              "title": "Data Structures: Lists, Dicts, Sets & Tuples",
+              "phase": "Phase 1 — Core Language",
+              "why": "boto3 API responses are deeply nested dicts and lists — you must traverse them confidently to extract instance IDs, ARNs, and status fields.",
+              "what": [
+                "Create, index, slice, and mutate lists; understand tuple immutability",
+                "Build dicts with literal syntax and dict(); access nested keys safely with .get()",
+                "Use sets for deduplication and O(1) membership tests on resource ID collections",
+                "Iterate dicts with .items(), .keys(), .values()",
+                "Parse a simulated describe_instances response dict and extract specific fields"
+              ],
+              "mini_project": "Parse a hardcoded dict that mimics an EC2 describe_instances response and print: instance ID, state, and public IP for each reservation.",
+              "resources": [
+                {"name": "Python Docs — Data Structures", "url": "https://docs.python.org/3/tutorial/datastructures.html"},
+                {"name": "Real Python — Lists and Tuples in Python", "url": "https://realpython.com/python-lists-tuples/"},
+                {"name": "Real Python — Dictionaries in Python", "url": "https://realpython.com/python-dicts/"}
+              ],
+              "approx_hours": 5
+            },
+            {
+              "title": "List & Dict Comprehensions",
+              "phase": "Phase 1 — Core Language",
+              "why": "Comprehensions let you filter lists of AWS resources — all running instances, all buckets in us-east-1 — in one readable line.",
+              "what": [
+                "Write list comprehensions with and without conditional filters",
+                "Write dict comprehensions to reshape API response data into lookup maps",
+                "Use nested comprehensions sparingly; know when a for loop is clearer",
+                "Replace common filter()/map() patterns with equivalent comprehensions",
+                "Build generator expressions for memory-efficient iteration over large resource lists"
+              ],
+              "mini_project": "Given a list of 10 EC2 instance dicts (with 'state' and 'instance_type' fields), use comprehensions to produce: (1) a list of IDs for running instances, (2) a dict mapping ID to instance_type.",
+              "resources": [
+                {"name": "Real Python — Python List Comprehensions", "url": "https://realpython.com/list-comprehension-python/"},
+                {"name": "Python Docs — List Comprehensions", "url": "https://docs.python.org/3/tutorial/datastructures.html#list-comprehensions"},
+                {"name": "Trey Hunner — Comprehension Exercises", "url": "https://treyhunner.com/2015/12/python-list-comprehensions-now-in-color/"}
+              ],
+              "approx_hours": 3
+            },
+            {
+              "title": "File I/O & Exception Handling",
+              "phase": "Phase 1 — Core Language",
+              "why": "Cloud scripts read config files, write audit logs, and must handle AWS API errors gracefully without crashing an unattended job at 3 AM.",
+              "what": [
+                "Open, read, write, and append files with the with statement and context managers",
+                "Parse and write JSON with json.load() and json.dump(indent=2)",
+                "Use try/except/finally to catch specific exceptions: FileNotFoundError, KeyError, ValueError",
+                "Raise custom exceptions with informative messages for caller-side handling",
+                "Implement simple retry logic for transient IOErrors"
+              ],
+              "mini_project": "Write a script that reads a JSON config file (AWS region + bucket name list), validates its structure, performs a dry-run action on each entry, and writes a timestamped results log — with try/except on every file operation.",
+              "resources": [
+                {"name": "Python Docs — Reading and Writing Files", "url": "https://docs.python.org/3/tutorial/inputoutput.html#reading-and-writing-files"},
+                {"name": "Real Python — Python Exceptions: An Introduction", "url": "https://realpython.com/python-exceptions/"},
+                {"name": "Real Python — Working with JSON Data in Python", "url": "https://realpython.com/python-json/"}
+              ],
+              "approx_hours": 4
+            },
+            {
+              "title": "Modules, pip & Virtual Environments",
+              "phase": "Phase 1 — Core Language",
+              "why": "Every real cloud project uses third-party packages — knowing how to isolate and manage them is non-negotiable for professional work.",
+              "what": [
+                "Import from the standard library: os, sys, pathlib, json, datetime, time",
+                "Create and activate a virtual environment with python -m venv .venv",
+                "Install packages with pip; pin versions in requirements.txt",
+                "Understand the __name__ == '__main__' guard for importable scripts",
+                "Structure a two-module project (config.py + main.py) with clean imports"
+              ],
+              "mini_project": "Create a venv, install boto3 and python-dotenv, write requirements.txt, and build a two-module project where config.py loads env vars and main.py imports and uses them — without any hardcoded values.",
+              "resources": [
+                {"name": "Python Docs — Creating Virtual Environments", "url": "https://docs.python.org/3/library/venv.html"},
+                {"name": "Real Python — Python Virtual Environments: A Primer", "url": "https://realpython.com/python-virtual-environments-a-primer/"},
+                {"name": "Python Packaging User Guide — pip and venv", "url": "https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/"}
+              ],
+              "approx_hours": 3
+            },
+            {
+              "title": "OOP: Classes, Methods & Inheritance",
+              "phase": "Phase 1 — Core Language",
+              "why": "boto3 resource interfaces are object-oriented; understanding OOP lets you write clean AWS client wrappers and read SDK source when docs fall short.",
+              "what": [
+                "Define classes with __init__, instance attributes, and instance methods",
+                "Understand self; distinguish class attributes from instance attributes",
+                "Implement __str__ and __repr__ for readable debug output",
+                "Use inheritance to create a specialized class from a base AWS client wrapper",
+                "Apply @property and @staticmethod decorators appropriately"
+              ],
+              "mini_project": "Build an EC2Manager class with methods: list_instances(), start_instance(id), stop_instance(id), get_instance_state(id) — using hardcoded mock data now, swapped for real boto3 calls in Phase 3.",
+              "resources": [
+                {"name": "Real Python — Object-Oriented Programming in Python 3", "url": "https://realpython.com/python3-object-oriented-programming/"},
+                {"name": "Python Docs — Classes", "url": "https://docs.python.org/3/tutorial/classes.html"},
+                {"name": "Real Python — Inheritance and Composition", "url": "https://realpython.com/inheritance-composition-python/"}
+              ],
+              "approx_hours": 6
+            }
+          ]
+        },
+        {
+          "id": "py-p2",
+          "title": "Phase 2 — Scripting & APIs",
+          "topics": [
+            {
+              "title": "JSON & YAML Processing",
+              "phase": "Phase 2 — Scripting & APIs",
+              "why": "CloudFormation templates are YAML, boto3 responses are JSON — fluent parsing of both is a daily cloud engineering skill.",
+              "what": [
+                "Use json module: loads/dumps with indent, sort_keys, and default for non-serializable types",
+                "Install and use PyYAML: yaml.safe_load() and yaml.dump() — always use safe_load",
+                "Navigate deeply nested structures with chained .get() calls and default values",
+                "Validate a JSON document against a schema using the jsonschema library",
+                "Convert between JSON and YAML programmatically"
+              ],
+              "mini_project": "Write a script that reads a CloudFormation template (YAML), extracts all resource logical IDs and their types, counts them by type, and writes a JSON summary report.",
+              "resources": [
+                {"name": "Real Python — Working with JSON Data in Python", "url": "https://realpython.com/python-json/"},
+                {"name": "Real Python — YAML: The Missing Battery for Python", "url": "https://realpython.com/python-yaml/"},
+                {"name": "PyYAML Documentation", "url": "https://pyyaml.org/wiki/PyYAMLDocumentation"}
+              ],
+              "approx_hours": 3
+            },
+            {
+              "title": "HTTP Requests with the requests Library",
+              "phase": "Phase 2 — Scripting & APIs",
+              "why": "Cloud engineers call REST APIs constantly — health checks, Slack webhooks, GitHub integrations — requests is the standard tool for all of them.",
+              "what": [
+                "Make GET, POST, PUT, DELETE requests; check status codes and call raise_for_status()",
+                "Pass headers (Authorization, Content-Type) and JSON payloads",
+                "Handle connection timeouts and implement retry with exponential backoff",
+                "Use requests.Session() for persistent connections and shared headers",
+                "Parse JSON responses; handle non-JSON error bodies gracefully"
+              ],
+              "mini_project": "Write a monitor script that polls a public health-check URL every 30 seconds, logs results to a file, and sends a Slack webhook notification if it returns a non-200 status — with timeout and retry on connection errors.",
+              "resources": [
+                {"name": "Requests Library — Quickstart", "url": "https://docs.python-requests.org/en/latest/user/quickstart/"},
+                {"name": "Real Python — Python's requests Library", "url": "https://realpython.com/python-requests/"},
+                {"name": "Real Python — Retry Failed Requests", "url": "https://realpython.com/python-requests/#performance"}
+              ],
+              "approx_hours": 4
+            },
+            {
+              "title": "CLI Scripts with argparse",
+              "phase": "Phase 2 — Scripting & APIs",
+              "why": "Professional automation scripts accept arguments from the command line — argparse makes your tools feel like first-class CLIs, like the AWS CLI itself.",
+              "what": [
+                "Define positional and optional arguments with type conversion and choices",
+                "Add subcommands (mycloud ec2 start) using add_subparsers()",
+                "Set required vs optional flags; provide helpful metavar and description strings",
+                "Validate input inside the parse step and emit clean error messages",
+                "Generate automatic --help text that documents every argument"
+              ],
+              "mini_project": "Build mycloud.py with subcommands: ec2 list, ec2 start --id, ec2 stop --id, s3 list-buckets — using argparse, with mocked responses printed as aligned tabular output.",
+              "resources": [
+                {"name": "Python Docs — argparse Tutorial", "url": "https://docs.python.org/3/howto/argparse.html"},
+                {"name": "Real Python — Build a Command-Line Interface with argparse", "url": "https://realpython.com/command-line-interfaces-python-argparse/"},
+                {"name": "Real Python — Comparing Python CLI Libraries", "url": "https://realpython.com/python-click/"}
+              ],
+              "approx_hours": 3
+            },
+            {
+              "title": "Environment Variables & .env Management",
+              "phase": "Phase 2 — Scripting & APIs",
+              "why": "AWS credentials and API keys must never be hardcoded — loading them from the environment is the correct, secure pattern every cloud team enforces.",
+              "what": [
+                "Read env vars with os.environ[] and os.getenv() with a safe default",
+                "Use python-dotenv to load .env files in development without touching production",
+                "Add .env to .gitignore; document all vars in a committed .env.example",
+                "Use pathlib to build OS-independent config file paths",
+                "Understand the AWS credential resolution chain: env vars → profile → IAM role"
+              ],
+              "mini_project": "Refactor a script that has hardcoded region, bucket name, and API key strings to load everything from a .env file — with a startup check that raises a clear error listing any missing required variables.",
+              "resources": [
+                {"name": "python-dotenv Documentation", "url": "https://saurabh-kumar.com/python-dotenv/"},
+                {"name": "Real Python — Python Environment Variables", "url": "https://realpython.com/python-environment-variables/"},
+                {"name": "AWS Docs — Environment Variables for Credentials", "url": "https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-envvars.html"}
+              ],
+              "approx_hours": 2
+            },
+            {
+              "title": "Logging & Structured Output",
+              "phase": "Phase 2 — Scripting & APIs",
+              "why": "Unattended cloud automation must produce machine-readable logs that CloudWatch can ingest and alert on — print() statements are not enough.",
+              "what": [
+                "Use the logging module with DEBUG, INFO, WARNING, ERROR, CRITICAL levels",
+                "Configure a root logger with a FileHandler and StreamHandler",
+                "Emit structured JSON logs using python-json-logger for CloudWatch ingestion",
+                "Add context to every log line: timestamp, script name, AWS region, resource ID",
+                "Control log level from an environment variable at runtime"
+              ],
+              "mini_project": "Instrument a prior exercise script with the logging module — replace all print() calls with appropriate log levels, emit JSON to stdout, and rotate file logs — so CloudWatch Logs can parse them.",
+              "resources": [
+                {"name": "Python Docs — Logging HOWTO", "url": "https://docs.python.org/3/howto/logging.html"},
+                {"name": "Real Python — Logging in Python", "url": "https://realpython.com/python-logging/"},
+                {"name": "python-json-logger on PyPI", "url": "https://pypi.org/project/python-json-logger/"}
+              ],
+              "approx_hours": 3
+            },
+            {
+              "title": "Regex for Log Parsing",
+              "phase": "Phase 2 — Scripting & APIs",
+              "why": "Cloud engineers parse VPC flow logs, ALB access logs, and CloudTrail events with regex to extract IPs, request paths, and error patterns at scale.",
+              "what": [
+                "Compile and use re.search(), re.match(), re.findall(), re.sub()",
+                "Write patterns for IPv4 addresses, HTTP methods, status codes, and timestamps",
+                "Use named capture groups (?P<name>...) for readable, self-documenting extractions",
+                "Parse a multi-line log file line by line and accumulate results",
+                "Know when regex is overkill and a simple split() or partition() is better"
+              ],
+              "mini_project": "Write a script that reads a sample ALB access log file, uses regex to extract timestamp, client IP, HTTP method, path, and status code, then writes a JSON report with counts per status code.",
+              "resources": [
+                {"name": "Python Docs — re Module", "url": "https://docs.python.org/3/library/re.html"},
+                {"name": "Real Python — Regular Expressions: Part 1", "url": "https://realpython.com/regex-python/"},
+                {"name": "Regex101 — Test and Debug Regex Interactively", "url": "https://regex101.com/"}
+              ],
+              "approx_hours": 3
+            },
+            {
+              "title": "subprocess & the os Module",
+              "phase": "Phase 2 — Scripting & APIs",
+              "why": "Cloud scripts orchestrate other tools — aws cli, terraform, kubectl, docker — subprocess is how Python drives them.",
+              "what": [
+                "Use subprocess.run() with capture_output=True, text=True, and check=True",
+                "Handle CalledProcessError and inspect returncode and stderr",
+                "Use shlex.split() to safely tokenize command strings without shell=True",
+                "Use os and pathlib: getcwd, makedirs, path.exists, path.join",
+                "Understand the security risk of shell=True and when it is actually needed"
+              ],
+              "mini_project": "Write a Python wrapper around aws s3 ls that calls it via subprocess, parses the text output, and prints a formatted table of bucket names and creation dates — with a clear error if the AWS CLI is not on PATH.",
+              "resources": [
+                {"name": "Python Docs — subprocess", "url": "https://docs.python.org/3/library/subprocess.html"},
+                {"name": "Real Python — The subprocess Module", "url": "https://realpython.com/python-subprocess/"},
+                {"name": "Python Docs — os Module", "url": "https://docs.python.org/3/library/os.html"}
+              ],
+              "approx_hours": 3
+            }
+          ]
+        },
+        {
+          "id": "py-p3",
+          "title": "Phase 3 — Cloud Automation with boto3",
+          "topics": [
+            {
+              "title": "AWS SDK Setup & IAM Authentication",
+              "phase": "Phase 3 — Cloud Automation with boto3",
+              "why": "Using the wrong boto3 authentication method is a security risk and the most common source of runtime failures in cloud scripts.",
+              "what": [
+                "Install boto3 and configure credentials with aws configure and named profiles",
+                "Understand the credential resolution chain: env vars → profile → instance role",
+                "Create boto3 clients vs resource interfaces and know when to use each",
+                "Use boto3.Session() with a named profile for multi-account scripts",
+                "Call sts.get_caller_identity() to verify which identity a script is running as"
+              ],
+              "mini_project": "Write a script that accepts a --profile argument, creates a boto3 Session, calls STS to print the account ID and ARN, and lists the first 5 S3 buckets in that account.",
+              "resources": [
+                {"name": "boto3 Docs — Quickstart", "url": "https://boto3.amazonaws.com/v1/documentation/api/latest/guide/quickstart.html"},
+                {"name": "boto3 Docs — Credentials Configuration", "url": "https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html"},
+                {"name": "AWS Docs — IAM Best Practices", "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html"}
+              ],
+              "approx_hours": 4
+            },
+            {
+              "title": "S3 Operations with boto3",
+              "phase": "Phase 3 — Cloud Automation with boto3",
+              "why": "S3 is the most-used AWS service — uploading, downloading, copying, and managing objects programmatically is a daily cloud engineering task.",
+              "what": [
+                "Create buckets, list objects, upload/download with put_object and get_object",
+                "Set bucket policies; enable versioning and configure lifecycle rules via the API",
+                "Generate presigned URLs for secure, time-limited object access",
+                "Use S3Transfer for multipart uploads of files larger than 100 MB",
+                "Paginate list_objects_v2 correctly using continuation tokens"
+              ],
+              "mini_project": "Write a backup script that compresses a local directory to .tar.gz, uploads it to S3 with a timestamped key, lists objects older than 30 days, and deletes them — all via boto3.",
+              "resources": [
+                {"name": "boto3 Docs — Amazon S3 Examples", "url": "https://boto3.amazonaws.com/v1/documentation/api/latest/guide/s3-examples.html"},
+                {"name": "boto3 Docs — Uploading Files", "url": "https://boto3.amazonaws.com/v1/documentation/api/latest/guide/s3-uploading-files.html"},
+                {"name": "Real Python — Python, boto3, and AWS S3", "url": "https://realpython.com/python-boto3-aws-s3/"}
+              ],
+              "approx_hours": 5
+            },
+            {
+              "title": "EC2 Management & Automation",
+              "phase": "Phase 3 — Cloud Automation with boto3",
+              "why": "Automating EC2 lifecycle — stopping dev fleets at night, enforcing tags, collecting inventory — is a weekly task for cloud engineers.",
+              "what": [
+                "Launch instances with run_instances(): AMI, type, key pair, security groups, user_data",
+                "Filter instances with describe_instances() using the Filters parameter",
+                "Start, stop, terminate instances; use Waiters to block until state is reached",
+                "Tag resources programmatically; write a tagging compliance checker",
+                "Snapshot volumes and deregister old AMIs to control costs"
+              ],
+              "mini_project": "Write a compliance script that lists all EC2 instances missing a required 'Owner' tag, prints a tabular report, and with --enforce stops any non-compliant instance after a 5-second confirmation prompt.",
+              "resources": [
+                {"name": "boto3 Docs — EC2 Examples", "url": "https://boto3.amazonaws.com/v1/documentation/api/latest/guide/ec2-examples.html"},
+                {"name": "boto3 Docs — Waiters", "url": "https://boto3.amazonaws.com/v1/documentation/api/latest/guide/clients.html#waiters"},
+                {"name": "AWS Docs — RunInstances API Reference", "url": "https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_RunInstances.html"}
+              ],
+              "approx_hours": 5
+            },
+            {
+              "title": "Lambda Functions in Python",
+              "phase": "Phase 3 — Cloud Automation with boto3",
+              "why": "Lambda is how AWS runs automation code without servers — writing, packaging, deploying, and invoking functions from Python is a core skill.",
+              "what": [
+                "Write a Lambda handler: understand the event and context objects for common trigger types",
+                "Package a function and its dependencies into a deployment ZIP",
+                "Deploy and update functions with boto3: create_function and update_function_code",
+                "Set environment variables and IAM execution roles via the API",
+                "Invoke Lambda synchronously and asynchronously from a Python script"
+              ],
+              "mini_project": "Write and deploy (via boto3) a Lambda function that triggers on S3 ObjectCreated events, reads the new object, validates its JSON content, and writes a metadata record to a DynamoDB table.",
+              "resources": [
+                {"name": "AWS Docs — Lambda Python Handler", "url": "https://docs.aws.amazon.com/lambda/latest/dg/python-handler.html"},
+                {"name": "boto3 Docs — Lambda", "url": "https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/lambda.html"},
+                {"name": "AWS Docs — Deploying Lambda Functions as .zip Files", "url": "https://docs.aws.amazon.com/lambda/latest/dg/python-package.html"}
+              ],
+              "approx_hours": 6
+            },
+            {
+              "title": "Paginators, Waiters & Error Handling",
+              "phase": "Phase 3 — Cloud Automation with boto3",
+              "why": "AWS APIs return paginated results and throttle requests — scripts that ignore this silently miss resources or crash on large accounts.",
+              "what": [
+                "Use paginators to iterate all pages of any describe_* API call",
+                "Use named Waiters to poll until a resource reaches the desired state",
+                "Catch ClientError and inspect error['Error']['Code'] for specific handling",
+                "Implement exponential backoff for ThrottlingException using tenacity or custom logic",
+                "Log every API call with its arguments and latency for debugging"
+              ],
+              "mini_project": "Rewrite the EC2 compliance script using paginators (handles accounts with 1000+ instances), Waiters before acting, and exponential backoff on ThrottlingException.",
+              "resources": [
+                {"name": "boto3 Docs — Paginators", "url": "https://boto3.amazonaws.com/v1/documentation/api/latest/guide/paginators.html"},
+                {"name": "boto3 Docs — Error Handling", "url": "https://boto3.amazonaws.com/v1/documentation/api/latest/guide/error-handling.html"},
+                {"name": "tenacity — Retry Decorator for Python", "url": "https://tenacity.readthedocs.io/en/latest/"}
+              ],
+              "approx_hours": 4
+            },
+            {
+              "title": "CloudWatch Logs & Metrics via boto3",
+              "phase": "Phase 3 — Cloud Automation with boto3",
+              "why": "Programmatic CloudWatch access replaces manual console searches and lets you build automated health dashboards and alerting pipelines.",
+              "what": [
+                "Query CloudWatch Logs Insights with start_query() and poll get_query_results()",
+                "Put custom metrics to a namespace with put_metric_data()",
+                "Create and describe metric alarms; update thresholds programmatically",
+                "Stream recent log events from a log group to your terminal with filter_log_events()",
+                "Export a log group to S3 for long-term archival and Athena querying"
+              ],
+              "mini_project": "Write a daily health report script that queries the last 24 hours of a Lambda function's logs for ERROR patterns, counts them, puts a custom CloudWatch metric, and publishes an SNS alert if errors exceed a threshold.",
+              "resources": [
+                {"name": "boto3 Docs — CloudWatch", "url": "https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/cloudwatch.html"},
+                {"name": "boto3 Docs — CloudWatch Logs", "url": "https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/logs.html"},
+                {"name": "AWS Docs — CloudWatch Logs Insights Query Syntax", "url": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CWL_QuerySyntax.html"}
+              ],
+              "approx_hours": 4
+            },
+            {
+              "title": "Infrastructure Automation Capstone",
+              "phase": "Phase 3 — Cloud Automation with boto3",
+              "why": "Combining all boto3 skills into one idempotent provisioner demonstrates you can do the work cloud engineers do on day one.",
+              "what": [
+                "Design a script that provisions a full environment from a YAML config: VPC, subnet, security group, EC2, S3 bucket",
+                "Make it idempotent: check for existing resources by tag before creating",
+                "Add --teardown flag that deletes all resources in reverse dependency order",
+                "Log every action as structured JSON; implement rollback on any failure",
+                "Write a README with required IAM permissions and example config YAML"
+              ],
+              "mini_project": "Build env_provisioner.py: reads config.yaml, spins up VPC + EC2 + S3, waits for the instance to pass status checks, and writes outputs.json with public IP and resource IDs.",
+              "resources": [
+                {"name": "boto3 Docs — Available Services Index", "url": "https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/index.html"},
+                {"name": "AWS Docs — VPC with a Public Subnet (CLI)", "url": "https://docs.aws.amazon.com/vpc/latest/userguide/vpc-subnets-commands-example.html"},
+                {"name": "Real Python — Python Application Layouts", "url": "https://realpython.com/python-application-layouts/"}
+              ],
+              "approx_hours": 8
+            }
+          ]
+        }
+      ]
+    },
+    "bash": {
+      "title": "Bash",
+      "subtitle": "Shell Scripting for Cloud & Linux Environments",
+      "color": "#fbbf24",
+      "total_approx_hours": 78,
+      "phases": [
+        {
+          "id": "bash-p1",
+          "title": "Phase 1 — Shell Fundamentals",
+          "topics": [
+            {
+              "title": "File System, Navigation & Permissions",
+              "phase": "Phase 1 — Shell Fundamentals",
+              "why": "Cloud engineers SSH into Linux servers constantly — moving around, reading files, and fixing permissions is the minimum viable skill for any hands-on work.",
+              "what": [
+                "Navigate with cd, ls -la, pwd, find, tree; understand relative vs absolute paths",
+                "Manage files: cp, mv, rm, mkdir -p, touch, ln -s",
+                "Read and set permissions with chmod (octal and symbolic) and chown",
+                "Understand the execute bit on scripts and why chmod +x matters",
+                "Use find with -name, -type, -mtime, -exec for locating config files and logs"
+              ],
+              "mini_project": "Write a script that finds all .log files older than 7 days in /var/log, compresses each with gzip, moves them to an archive directory, and prints a summary of space recovered.",
+              "resources": [
+                {"name": "The Linux Command Line — Chapter 3: Exploring the System", "url": "https://linuxcommand.org/tlcl.php"},
+                {"name": "Ryan's Tutorials — Linux Tutorial", "url": "https://ryanstutorials.net/linuxtutorial/"},
+                {"name": "tldr pages — Community man pages", "url": "https://tldr.sh/"}
+              ],
+              "approx_hours": 4
+            },
+            {
+              "title": "Variables, Quoting & Parameter Expansion",
+              "phase": "Phase 1 — Shell Fundamentals",
+              "why": "Incorrect quoting is the #1 source of Bash bugs — a variable with a space in it will silently break commands in production scripts.",
+              "what": [
+                "Declare and reference variables; understand word splitting with unquoted variables",
+                "Use double quotes for variables, single quotes for literals; know when each applies",
+                "Apply parameter expansion: ${VAR:-default}, ${VAR:?error}, ${VAR#prefix}, ${VAR%suffix}",
+                "Use command substitution: VAR=$(command) over the deprecated `backtick` form",
+                "Understand $0, $1..$9, $@, $*, $#, $?, $$ special variables"
+              ],
+              "mini_project": "Write a script that accepts a filename argument, validates it is non-empty and the file exists, then prints its line count, word count, and size — using parameter expansion for defaults and error messages.",
+              "resources": [
+                {"name": "Bash Manual — Shell Parameter Expansion", "url": "https://www.gnu.org/software/bash/manual/bash.html#Shell-Parameter-Expansion"},
+                {"name": "Ryan's Bash Scripting Tutorial — Variables", "url": "https://ryanstutorials.net/bash-scripting-tutorial/bash-variables.php"},
+                {"name": "BashGuide — Parameters", "url": "https://mywiki.wooledge.org/BashGuide/Parameters"}
+              ],
+              "approx_hours": 4
+            },
+            {
+              "title": "Conditionals: if, test & case",
+              "phase": "Phase 1 — Shell Fundamentals",
+              "why": "Scripts must check if a service is running, if a file exists, or if an AWS CLI command succeeded — conditionals are how you act on those checks.",
+              "what": [
+                "Write if/elif/else with [[ ]] test expressions",
+                "Test file conditions: -f, -d, -e, -r, -w, -x, -s",
+                "Compare strings with =, !=, =~; compare integers with -eq, -ne, -lt, -gt",
+                "Check exit codes: if command; then ... fi and the && / || short-circuit operators",
+                "Use case statements for multi-branch dispatch on string values"
+              ],
+              "mini_project": "Write a service-check script that tests if nginx is running, if its config directory exists, and if port 80 is in use — printing a color-coded status summary for each check.",
+              "resources": [
+                {"name": "Ryan's Bash Scripting Tutorial — If Statements", "url": "https://ryanstutorials.net/bash-scripting-tutorial/bash-if-statements.php"},
+                {"name": "BashGuide — Tests and Conditionals", "url": "https://mywiki.wooledge.org/BashGuide/TestsAndConditionals"},
+                {"name": "Bash Manual — Conditional Constructs", "url": "https://www.gnu.org/software/bash/manual/bash.html#Conditional-Constructs"}
+              ],
+              "approx_hours": 3
+            },
+            {
+              "title": "Loops: for, while & until",
+              "phase": "Phase 1 — Shell Fundamentals",
+              "why": "Iterating over a list of servers, buckets, or regions to run the same operation on each is a routine cloud automation pattern.",
+              "what": [
+                "Write for loops over lists, arrays, ranges with {1..10}, and command output",
+                "Loop over file globs: for file in /path/*.conf; do ...; done",
+                "Use while read line to process file output line by line (the safe pattern)",
+                "Use until and while true with break for polling loops",
+                "Control iteration with break and continue"
+              ],
+              "mini_project": "Write a script that loops over a list of EC2 instance IDs (read from a file), calls aws ec2 describe-instance-status for each, and writes a CSV report with instance ID and status.",
+              "resources": [
+                {"name": "Ryan's Bash Scripting Tutorial — Loops", "url": "https://ryanstutorials.net/bash-scripting-tutorial/bash-loops.php"},
+                {"name": "BashGuide — Loops", "url": "https://mywiki.wooledge.org/BashGuide/LoopsAndBranching"},
+                {"name": "Bash Manual — Looping Constructs", "url": "https://www.gnu.org/software/bash/manual/bash.html#Looping-Constructs"}
+              ],
+              "approx_hours": 3
+            },
+            {
+              "title": "Functions & Script Structure",
+              "phase": "Phase 1 — Shell Fundamentals",
+              "why": "Well-structured scripts with functions and a consistent layout are maintainable — you will revisit scripts written months ago when something breaks at midnight.",
+              "what": [
+                "Define and call functions; understand local variable scoping",
+                "Use return codes (not echo) to signal success/failure from functions",
+                "Add a shebang (#!/usr/bin/env bash), set -euo pipefail at the top of every script",
+                "Write a usage() function and trap EXIT to clean up temp files",
+                "Organize scripts: constants at top, functions in the middle, main() at the bottom"
+              ],
+              "mini_project": "Refactor a 60-line flat script into a structured script with: a usage() function, a main() function, 3+ named helper functions, set -euo pipefail, and an EXIT trap that removes temp files.",
+              "resources": [
+                {"name": "Ryan's Bash Scripting Tutorial — Functions", "url": "https://ryanstutorials.net/bash-scripting-tutorial/bash-functions.php"},
+                {"name": "BashGuide — Functions", "url": "https://mywiki.wooledge.org/BashGuide/Functions"},
+                {"name": "Google Shell Style Guide", "url": "https://google.github.io/styleguide/shellguide.html"}
+              ],
+              "approx_hours": 4
+            },
+            {
+              "title": "Pipes, Redirection & Process Substitution",
+              "phase": "Phase 1 — Shell Fundamentals",
+              "why": "The Unix pipe model is the core of shell power — combining small commands into pipelines is how you process cloud CLI output without writing scripts.",
+              "what": [
+                "Redirect stdout, stderr, and both: >, >>, 2>, 2>&1, &>",
+                "Pipe stdout between commands; understand that pipes create subshells",
+                "Use /dev/null to silence output; use tee to log and continue a pipeline",
+                "Apply process substitution: diff <(command1) <(command2)",
+                "Use here-strings (<<< text) and here-docs (<< EOF) for inline input"
+              ],
+              "mini_project": "Write a one-liner pipeline that: lists all running processes, filters for a pattern, extracts the PID column, sorts numerically, and writes output to both stdout and a log file simultaneously using tee.",
+              "resources": [
+                {"name": "Bash Manual — Redirections", "url": "https://www.gnu.org/software/bash/manual/bash.html#Redirections"},
+                {"name": "BashGuide — Input and Output", "url": "https://mywiki.wooledge.org/BashGuide/InputAndOutput"},
+                {"name": "The Linux Command Line — Chapter 6: Redirection", "url": "https://linuxcommand.org/tlcl.php"}
+              ],
+              "approx_hours": 4
+            }
+          ]
+        },
+        {
+          "id": "bash-p2",
+          "title": "Phase 2 — Text Processing & System Administration",
+          "topics": [
+            {
+              "title": "grep & Regular Expressions",
+              "phase": "Phase 2 — Text Processing & System Administration",
+              "why": "Searching logs, configs, and command output with grep is the most-used text operation in any cloud engineer's day.",
+              "what": [
+                "Use grep with -i (case-insensitive), -r (recursive), -n (line numbers), -l (filenames only)",
+                "Write basic regex: character classes, quantifiers, anchors, alternation",
+                "Use -E (ERE) for extended regex: +, ?, |, grouping ()",
+                "Use -P for Perl-compatible regex when you need lookaheads or named groups",
+                "Combine grep with pipes to filter multi-step command output"
+              ],
+              "mini_project": "Write a log analysis pipeline using only grep, sort, and uniq that: finds all ERROR lines in a log file, extracts the error code, counts occurrences of each, and outputs the top 10.",
+              "resources": [
+                {"name": "GNU grep Manual", "url": "https://www.gnu.org/software/grep/manual/grep.html"},
+                {"name": "Ryan's Tutorials — grep", "url": "https://ryanstutorials.net/linuxtutorial/grep.php"},
+                {"name": "Regex101 — Interactive Regex Tester", "url": "https://regex101.com/"}
+              ],
+              "approx_hours": 4
+            },
+            {
+              "title": "sed for Text Transformation",
+              "phase": "Phase 2 — Text Processing & System Administration",
+              "why": "sed is how cloud engineers patch config files in place, strip comments, and transform CLI output in deployment scripts.",
+              "what": [
+                "Use s/pattern/replacement/flags for in-place substitutions in files and pipelines",
+                "Edit files in place with sed -i (or sed -i '' on macOS)",
+                "Delete lines matching a pattern with d; print specific lines with p and -n",
+                "Use address ranges: line numbers, patterns, and ranges like /start/,/end/",
+                "Chain multiple expressions with -e or semicolons"
+              ],
+              "mini_project": "Write a script that takes a .env.template file and substitutes all {{VARIABLE}} placeholders with values from environment variables using sed, writing the result to a real .env file.",
+              "resources": [
+                {"name": "GNU sed Manual", "url": "https://www.gnu.org/software/sed/manual/sed.html"},
+                {"name": "Ryan's Tutorials — sed", "url": "https://ryanstutorials.net/linuxtutorial/sed.php"},
+                {"name": "Grymoire — sed Introduction", "url": "https://www.grymoire.com/Unix/Sed.html"}
+              ],
+              "approx_hours": 4
+            },
+            {
+              "title": "awk for Structured Data",
+              "phase": "Phase 2 — Text Processing & System Administration",
+              "why": "awk extracts specific columns from tabular CLI output — aws cli, ps, df, netstat — which is a constant need when scripting.",
+              "what": [
+                "Use awk '{print $1, $3}' to extract specific fields by position",
+                "Set the field separator with -F for CSV, TSV, colon-delimited files",
+                "Use BEGIN and END blocks for headers and summaries",
+                "Filter rows with conditional expressions: awk '$3 > 100 {print $0}'",
+                "Accumulate totals: sum += $4; print in END block"
+              ],
+              "mini_project": "Parse the output of aws ec2 describe-instances --query with awk to produce a tab-delimited report of instance ID, type, state, and launch time — no Python, no jq.",
+              "resources": [
+                {"name": "GNU awk User's Guide", "url": "https://www.gnu.org/software/gawk/manual/gawk.html"},
+                {"name": "Grymoire — awk Introduction", "url": "https://www.grymoire.com/Unix/Awk.html"},
+                {"name": "Ryan's Tutorials — awk", "url": "https://ryanstutorials.net/linuxtutorial/awk.php"}
+              ],
+              "approx_hours": 4
+            },
+            {
+              "title": "Process Management & Job Control",
+              "phase": "Phase 2 — Text Processing & System Administration",
+              "why": "Cloud engineers manage long-running processes on servers — starting, backgrounding, monitoring, and killing jobs is a daily operational skill.",
+              "what": [
+                "View processes with ps aux, top, and htop; filter with grep",
+                "Send signals: kill -9 (SIGKILL), kill -15 (SIGTERM), kill -HUP (reload)",
+                "Background jobs with & and manage with jobs, fg, bg, disown",
+                "Use nohup and screen/tmux to keep processes alive after SSH disconnect",
+                "Find what is using a port with lsof -i :PORT and ss -tulnp"
+              ],
+              "mini_project": "Write a process watchdog script that checks if a named process is running every 30 seconds, logs the check, and restarts it (via a configurable command) if it has died — running itself in the background via nohup.",
+              "resources": [
+                {"name": "The Linux Command Line — Chapter 10: Processes", "url": "https://linuxcommand.org/tlcl.php"},
+                {"name": "DigitalOcean — How to Use ps, kill, and nice", "url": "https://www.digitalocean.com/community/tutorials/how-to-use-ps-kill-and-nice-to-manage-processes-in-linux"},
+                {"name": "tmux Getting Started", "url": "https://github.com/tmux/tmux/wiki/Getting-Started"}
+              ],
+              "approx_hours": 3
+            },
+            {
+              "title": "SSH, SCP & Key Management",
+              "phase": "Phase 2 — Text Processing & System Administration",
+              "why": "SSH is the primary interface to every cloud server you will ever manage — mastering keys, config, and tunnels removes daily friction.",
+              "what": [
+                "Generate and manage key pairs with ssh-keygen; understand RSA vs ED25519",
+                "Configure ~/.ssh/config with Host entries for alias, IdentityFile, and port",
+                "Use SCP and rsync for copying files to and from remote hosts",
+                "Set up SSH agent forwarding for jump hosts and bastion servers",
+                "Create local and remote port tunnels with -L and -R flags"
+              ],
+              "mini_project": "Configure a ~/.ssh/config with 3 server entries (web, db, bastion), copy a deployment package to the web server using rsync over SSH, and set up a tunnel to access the DB server's admin interface locally.",
+              "resources": [
+                {"name": "SSH Academy — SSH Keys and Config", "url": "https://www.ssh.com/academy/ssh/config"},
+                {"name": "DigitalOcean — How to Configure SSH Key-Based Authentication", "url": "https://www.digitalocean.com/community/tutorials/how-to-configure-ssh-key-based-authentication-on-a-linux-server"},
+                {"name": "DigitalOcean — SSH Tunneling", "url": "https://www.digitalocean.com/community/tutorials/ssh-essentials-working-with-ssh-servers-clients-and-keys"}
+              ],
+              "approx_hours": 3
+            },
+            {
+              "title": "Cron Jobs & Task Scheduling",
+              "phase": "Phase 2 — Text Processing & System Administration",
+              "why": "Scheduled scripts run cloud housekeeping tasks — nightly backups, log rotation, cost reports — without human intervention.",
+              "what": [
+                "Write cron expressions for common schedules: daily, hourly, weekday-only",
+                "Edit the crontab with crontab -e; list and remove jobs with -l and -r",
+                "Redirect cron stdout and stderr to log files within the job definition",
+                "Use MAILTO= to suppress cron email or send failure output",
+                "Use @reboot to run a setup script on instance start"
+              ],
+              "mini_project": "Schedule the S3 backup script from Phase 2 to run every night at 2 AM, redirect all output to a log file, and add a second cron job that rotates that log file weekly.",
+              "resources": [
+                {"name": "crontab.guru — Cron Expression Validator", "url": "https://crontab.guru/"},
+                {"name": "DigitalOcean — How to Use Cron to Automate Tasks", "url": "https://www.digitalocean.com/community/tutorials/how-to-use-cron-to-automate-tasks-ubuntu-1804"},
+                {"name": "The Linux Command Line — Chapter 12: Scheduled Tasks", "url": "https://linuxcommand.org/tlcl.php"}
+              ],
+              "approx_hours": 3
+            },
+            {
+              "title": "Package Management & systemd",
+              "phase": "Phase 2 — Text Processing & System Administration",
+              "why": "Setting up a fresh EC2 instance or container requires installing software and managing services — both are done via package managers and systemd.",
+              "what": [
+                "Use apt (Debian/Ubuntu) and yum/dnf (Amazon Linux/RHEL): install, remove, update, search",
+                "Write a server bootstrap script using apt-get -y and DEBIAN_FRONTEND=noninteractive",
+                "Manage services with systemctl: start, stop, restart, enable, disable, status",
+                "View service logs with journalctl -u service-name -f",
+                "Write a basic systemd unit file to run a custom script as a service"
+              ],
+              "mini_project": "Write a bootstrap.sh script that installs nginx, node, and awscli on a fresh Ubuntu instance; enables nginx on startup; and writes a custom systemd service for a Node app.",
+              "resources": [
+                {"name": "DigitalOcean — apt-get Tutorial", "url": "https://www.digitalocean.com/community/tutorials/how-to-manage-packages-in-ubuntu-and-debian"},
+                {"name": "DigitalOcean — systemd Essentials", "url": "https://www.digitalocean.com/community/tutorials/systemd-essentials-working-with-services-units-and-the-journal"},
+                {"name": "Red Hat — Understanding systemd Units", "url": "https://www.redhat.com/sysadmin/systemd-understanding-units"}
+              ],
+              "approx_hours": 4
+            }
+          ]
+        },
+        {
+          "id": "bash-p3",
+          "title": "Phase 3 — Cloud-Ready Scripting",
+          "topics": [
+            {
+              "title": "AWS CLI Scripting",
+              "phase": "Phase 3 — Cloud-Ready Scripting",
+              "why": "The AWS CLI is the Bash-native way to drive AWS — combining it with shell constructs lets you automate the console without any Python.",
+              "what": [
+                "Configure profiles with aws configure; switch profiles with AWS_PROFILE",
+                "Use --output text, --output json, and --query (JMESPath) to shape output",
+                "Combine aws cli calls in loops: iterate over resource lists and act on each",
+                "Check exit codes from aws commands to handle errors in scripts",
+                "Use --dry-run on supported commands to test without side effects"
+              ],
+              "mini_project": "Write a shell script that lists all EC2 instances tagged with Environment=dev, stops each one, waits for stopped state, and logs each action with a timestamp — using only aws cli, loops, and conditionals.",
+              "resources": [
+                {"name": "AWS CLI User Guide", "url": "https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html"},
+                {"name": "AWS CLI — Filtering Output with --query", "url": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-filter.html"},
+                {"name": "AWS Docs — AWS CLI Command Reference", "url": "https://awscli.amazonaws.com/v2/documentation/api/latest/index.html"}
+              ],
+              "approx_hours": 5
+            },
+            {
+              "title": "jq for JSON Parsing",
+              "phase": "Phase 3 — Cloud-Ready Scripting",
+              "why": "AWS CLI returns JSON — jq is the standard tool for extracting, filtering, and transforming that JSON in shell scripts.",
+              "what": [
+                "Navigate JSON with . (identity), .key, .array[], .array[0:3]",
+                "Filter arrays with select(): .[] | select(.state.Name == \"running\")",
+                "Extract and reshape with map(), to_entries, from_entries",
+                "Format output with @csv, @tsv, @sh for use in shell variables",
+                "Combine aws cli + jq in pipelines for common operations"
+              ],
+              "mini_project": "Write a jq-powered pipeline that takes aws ec2 describe-instances JSON output and produces a shell-safe list of public IPs for all running instances — ready to iterate over in a for loop.",
+              "resources": [
+                {"name": "jq Manual", "url": "https://jqlang.github.io/jq/manual/"},
+                {"name": "jq Play — Interactive jq Playground", "url": "https://jqplay.org/"},
+                {"name": "DigitalOcean — How to Transform JSON Data with jq", "url": "https://www.digitalocean.com/community/tutorials/how-to-transform-json-data-with-jq"}
+              ],
+              "approx_hours": 4
+            },
+            {
+              "title": "Environment Bootstrap Scripts",
+              "phase": "Phase 3 — Cloud-Ready Scripting",
+              "why": "Bootstrap scripts run as EC2 user-data or during container builds — writing them correctly means every new instance is configured identically without manual steps.",
+              "what": [
+                "Write idempotent setup scripts: check before installing or configuring",
+                "Export variables for child processes; source shared config files",
+                "Install software, pull secrets from AWS Secrets Manager via the CLI, write config files",
+                "Log every step with timestamps; exit on first error with set -euo pipefail",
+                "Test bootstrap scripts locally with Docker before using as EC2 user-data"
+              ],
+              "mini_project": "Write a bootstrap.sh that installs dependencies, pulls a DB password from Secrets Manager, writes a .env file, and starts the app service — idempotent enough to run twice without side effects.",
+              "resources": [
+                {"name": "AWS Docs — Running Commands on EC2 (User Data)", "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html"},
+                {"name": "AWS Docs — Secrets Manager CLI Examples", "url": "https://docs.aws.amazon.com/secretsmanager/latest/userguide/retrieving-secrets.html"},
+                {"name": "Google Shell Style Guide", "url": "https://google.github.io/styleguide/shellguide.html"}
+              ],
+              "approx_hours": 4
+            },
+            {
+              "title": "Log Monitoring & Alerting Scripts",
+              "phase": "Phase 3 — Cloud-Ready Scripting",
+              "why": "Cloud engineers build lightweight monitoring scripts to catch issues before full observability tools are in place or for custom alert conditions.",
+              "what": [
+                "Tail and watch log files with tail -f and while read",
+                "Use grep with real-time output to detect error patterns and fire alerts",
+                "Send Slack webhook notifications from Bash using curl and JSON payloads",
+                "Track state between script runs using a small state file",
+                "Schedule with cron and handle the case where the script is already running (lockfile)"
+              ],
+              "mini_project": "Write a log watcher that tails nginx error.log, counts CRITICAL entries per minute, and sends a Slack webhook alert with the count and last error line when it exceeds a configurable threshold.",
+              "resources": [
+                {"name": "Slack API — Incoming Webhooks", "url": "https://api.slack.com/messaging/webhooks"},
+                {"name": "DigitalOcean — Using Curl to Send HTTP Requests", "url": "https://www.digitalocean.com/community/tutorials/how-to-use-curl-to-download-files-and-make-api-requests"},
+                {"name": "Bash Manual — The trap Command", "url": "https://www.gnu.org/software/bash/manual/bash.html#index-trap"}
+              ],
+              "approx_hours": 4
+            },
+            {
+              "title": "Deployment & Rollback Scripts",
+              "phase": "Phase 3 — Cloud-Ready Scripting",
+              "why": "Reliable deployment scripts with automated rollback mean a bad release is a 2-minute recovery instead of a 2-hour incident.",
+              "what": [
+                "Write a deploy script: pull artifact, run pre-deploy checks, swap symlinks atomically",
+                "Record the previous version to a VERSION file before deploying",
+                "Implement --rollback mode that restores the previous symlink in one command",
+                "Add a health-check loop after deployment: curl the endpoint until success or timeout",
+                "Lock the deploy with a lockfile; clean up the lock on EXIT via trap"
+              ],
+              "mini_project": "Build deploy.sh that: pulls a release tarball from S3, extracts to a timestamped directory, symlinks /app/current to it, runs a health check, and rolls back the symlink automatically if the health check fails.",
+              "resources": [
+                {"name": "Bash Best Practices — Error Handling", "url": "https://mywiki.wooledge.org/BashFAQ/105"},
+                {"name": "CapistranO — Deployment Patterns (concept reference)", "url": "https://capistranorb.com/documentation/getting-started/flow/"},
+                {"name": "AWS Docs — S3 Download with the CLI", "url": "https://docs.aws.amazon.com/cli/latest/reference/s3/cp.html"}
+              ],
+              "approx_hours": 5
+            },
+            {
+              "title": "Health Check & Infrastructure Validation Scripts",
+              "phase": "Phase 3 — Cloud-Ready Scripting",
+              "why": "Cloud engineers run validation scripts after every deployment or infrastructure change to confirm the environment is healthy before declaring success.",
+              "what": [
+                "Check HTTP endpoints with curl: status code, response body pattern, response time",
+                "Verify services are running: systemctl is-active, lsof port checks",
+                "Validate AWS resources: check security group rules, verify S3 bucket accessibility",
+                "Aggregate check results and exit with code 0 (pass) or 1 (fail) for CI integration",
+                "Output a human-readable report and a machine-readable JSON summary"
+              ],
+              "mini_project": "Write healthcheck.sh that runs 5+ checks (HTTP endpoint, open ports, disk space, memory, a required process), prints a color-coded terminal report, and exits non-zero if any check fails — suitable for use in a CI pipeline.",
+              "resources": [
+                {"name": "Bash Manual — Exit Status", "url": "https://www.gnu.org/software/bash/manual/bash.html#Exit-Status"},
+                {"name": "DigitalOcean — How to Check Disk Usage", "url": "https://www.digitalocean.com/community/tutorials/how-to-check-disk-usage-in-linux-vps"},
+                {"name": "curl Man Page — Exit Codes", "url": "https://curl.se/docs/manpage.html"}
+              ],
+              "approx_hours": 4
+            }
+          ]
+        }
+      ]
+    },
+    "aws": {
+      "title": "Cloud / AWS",
+      "subtitle": "SAA-C03 Prep + Hands-On Labs (No Domain Repetition)",
+      "color": "#fb923c",
+      "total_approx_hours": 133,
+      "phases": [
+        {
+          "id": "aws-p1",
+          "title": "Phase 1 — Core Services Hands-On",
+          "topics": [
+            {
+              "title": "IAM: Users, Roles & Policies",
+              "phase": "Phase 1 — Core Services Hands-On",
+              "why": "IAM controls who can do what in every AWS service — getting it wrong is the most common cause of both security breaches and broken automation.",
+              "what": [
+                "Create IAM users, groups, and assign managed and inline policies",
+                "Write a custom least-privilege IAM policy JSON for a specific script or Lambda",
+                "Create and assume IAM roles; understand trust policies and resource-based policies",
+                "Configure MFA on the root account; set up a break-glass admin account",
+                "Use IAM Policy Simulator to test whether an action is allowed before deploying"
+              ],
+              "mini_project": "Create an IAM role for an EC2 instance with a custom policy that allows only s3:GetObject and s3:PutObject on a specific bucket — no wildcards. Attach it, launch an instance, and confirm the limits work.",
+              "resources": [
+                {"name": "AWS Docs — IAM Getting Started", "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/getting-started.html"},
+                {"name": "AWS Skill Builder — AWS Identity and Access Management (IAM)", "url": "https://explore.skillbuilder.aws/learn/course/external/view/elearning/120/introduction-to-aws-identity-and-access-management-iam"},
+                {"name": "IAM Policy Simulator", "url": "https://policysim.aws.amazon.com/"}
+              ],
+              "approx_hours": 8
+            },
+            {
+              "title": "VPC: Subnets, Routing & Security Groups",
+              "phase": "Phase 1 — Core Services Hands-On",
+              "why": "Every service in AWS lives inside a VPC — designing one correctly determines whether your architecture is secure and actually works.",
+              "what": [
+                "Build a VPC from scratch: CIDR block, public and private subnets across 2 AZs",
+                "Configure route tables: public subnet routes to IGW; private subnet routes to NAT Gateway",
+                "Write security group rules: understand stateful SG vs stateless NACL",
+                "Set up VPC Flow Logs to CloudWatch to see what traffic is hitting your resources",
+                "Connect two VPCs with VPC Peering and update route tables on both sides"
+              ],
+              "mini_project": "Build a 3-tier VPC by hand (no wizard): web tier public subnet, app tier private subnet, DB tier private subnet — each with its own security group that only allows traffic from the tier above it.",
+              "resources": [
+                {"name": "AWS Docs — VPC Getting Started", "url": "https://docs.aws.amazon.com/vpc/latest/userguide/vpc-getting-started.html"},
+                {"name": "AWS Skill Builder — Amazon VPC", "url": "https://explore.skillbuilder.aws/learn/course/external/view/elearning/79/amazon-virtual-private-cloud-amazon-vpc"},
+                {"name": "Tutorials Dojo — VPC Cheat Sheet", "url": "https://tutorialsdojo.com/amazon-vpc/"}
+              ],
+              "approx_hours": 10
+            },
+            {
+              "title": "EC2: Launch, Connect & Configure",
+              "phase": "Phase 1 — Core Services Hands-On",
+              "why": "EC2 is the bread-and-butter compute service — hands-on practice with all its configuration options is foundational for everything from hosting to automation.",
+              "what": [
+                "Launch instances with different types; attach a key pair and security group",
+                "Connect via SSH; install software using user-data bootstrap scripts",
+                "Create a custom AMI from a configured instance for repeatable deployments",
+                "Attach and resize EBS volumes; create and restore from snapshots",
+                "Use EC2 Instance Connect as a browser-based SSH fallback"
+              ],
+              "mini_project": "Launch an Amazon Linux 2 instance, bootstrap it with user-data to install nginx and serve a custom HTML page, create an AMI from it, then launch a second instance from that AMI and confirm the page loads.",
+              "resources": [
+                {"name": "AWS Docs — EC2 Getting Started", "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html"},
+                {"name": "AWS Skill Builder — Amazon EC2 Basics", "url": "https://explore.skillbuilder.aws/learn/course/external/view/elearning/2/amazon-ec2-basics"},
+                {"name": "Tutorials Dojo — EC2 Cheat Sheet", "url": "https://tutorialsdojo.com/amazon-ec2/"}
+              ],
+              "approx_hours": 8
+            },
+            {
+              "title": "S3: Buckets, Policies & Static Hosting",
+              "phase": "Phase 1 — Core Services Hands-On",
+              "why": "S3 is used in virtually every AWS architecture — as artifact storage, log destination, static website host, and Lambda trigger.",
+              "what": [
+                "Create buckets; configure versioning, server-side encryption (SSE-S3 and SSE-KMS)",
+                "Write and apply bucket policies; configure public access block settings",
+                "Host a static website on S3; configure index and error documents",
+                "Set up event notifications: send ObjectCreated events to an SNS topic or Lambda",
+                "Configure a lifecycle rule: transition objects to Glacier after 30 days; delete after 365"
+              ],
+              "mini_project": "Host a static CloudOS landing page on S3 with a custom error page, a bucket policy that allows public read, versioning enabled, and a lifecycle rule that moves non-current versions to Glacier after 30 days.",
+              "resources": [
+                {"name": "AWS Docs — Amazon S3 Getting Started", "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/GetStartedWithS3.html"},
+                {"name": "AWS Docs — Hosting a Static Website on S3", "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/WebsiteHosting.html"},
+                {"name": "Tutorials Dojo — S3 Cheat Sheet", "url": "https://tutorialsdojo.com/amazon-s3/"}
+              ],
+              "approx_hours": 6
+            },
+            {
+              "title": "RDS: Managed Database Hands-On",
+              "phase": "Phase 1 — Core Services Hands-On",
+              "why": "RDS eliminates the overhead of managing database servers — knowing how to provision, connect, and protect one is essential for any backend architecture.",
+              "what": [
+                "Launch a PostgreSQL RDS instance in a private subnet; configure subnet group and security group",
+                "Connect from an EC2 instance using psql; run basic queries",
+                "Enable Multi-AZ for high availability; understand how failover works",
+                "Create a read replica; connect an app to the replica for read queries",
+                "Take a manual snapshot; restore to a new instance; verify data"
+              ],
+              "mini_project": "Deploy a PostgreSQL RDS instance in a private subnet, connect from a bastion EC2, create a table and insert records, take a snapshot, then restore it to a new instance and confirm the data is there.",
+              "resources": [
+                {"name": "AWS Docs — Amazon RDS Getting Started", "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_GettingStarted.html"},
+                {"name": "AWS Skill Builder — Amazon RDS Service Introduction", "url": "https://explore.skillbuilder.aws/learn/course/external/view/elearning/8952/amazon-rds-service-introduction"},
+                {"name": "Tutorials Dojo — RDS Cheat Sheet", "url": "https://tutorialsdojo.com/amazon-relational-database-service-amazon-rds/"}
+              ],
+              "approx_hours": 6
+            },
+            {
+              "title": "CloudWatch: Logs, Metrics, Alarms & Dashboards",
+              "phase": "Phase 1 — Core Services Hands-On",
+              "why": "CloudWatch is how you see what is happening in your infrastructure — without it, you are flying blind.",
+              "what": [
+                "View EC2 and RDS metrics in the console; understand the default metric namespace",
+                "Create a log group; install the CloudWatch Agent on an EC2 instance to ship logs",
+                "Run a Logs Insights query to find errors in a log group",
+                "Create a metric alarm: alert when EC2 CPU > 80% for 5 minutes",
+                "Build a CloudWatch Dashboard with 4+ widgets: CPU, memory, error rate, request count"
+              ],
+              "mini_project": "Set up a CloudWatch Dashboard for a running EC2 instance with: CPU utilization, memory (via agent), disk read/write, and an alarm that sends an SNS email when CPU exceeds 70%.",
+              "resources": [
+                {"name": "AWS Docs — CloudWatch Getting Started", "url": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/GettingStarted.html"},
+                {"name": "AWS Docs — CloudWatch Logs Insights Query Examples", "url": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CWL_QuerySyntax-examples.html"},
+                {"name": "Tutorials Dojo — CloudWatch Cheat Sheet", "url": "https://tutorialsdojo.com/amazon-cloudwatch/"}
+              ],
+              "approx_hours": 5
+            }
+          ]
+        },
+        {
+          "id": "aws-p2",
+          "title": "Phase 2 — Serverless, Containers & Automation",
+          "topics": [
+            {
+              "title": "Lambda + API Gateway: Build a REST API",
+              "phase": "Phase 2 — Serverless, Containers & Automation",
+              "why": "Serverless is the fastest way to add a backend API to a Nuxt app — the CloudOS backend will likely use Lambda + API Gateway or a managed alternative.",
+              "what": [
+                "Write a Python or Node Lambda function and deploy it via the console and CLI",
+                "Create an HTTP API in API Gateway; route GET and POST to different Lambda functions",
+                "Connect Lambda to DynamoDB: read and write items in response to API requests",
+                "Configure CORS on the API Gateway for browser clients",
+                "Add a Lambda authorizer that validates a JWT token before passing the request"
+              ],
+              "mini_project": "Build a serverless notes API: POST /notes creates a note in DynamoDB, GET /notes lists them, GET /notes/{id} returns one — protected by a Lambda authorizer — and call it from a curl script.",
+              "resources": [
+                {"name": "AWS Docs — Lambda Getting Started", "url": "https://docs.aws.amazon.com/lambda/latest/dg/getting-started.html"},
+                {"name": "AWS Docs — API Gateway HTTP API Tutorial", "url": "https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-dynamo-db.html"},
+                {"name": "Tutorials Dojo — Lambda Cheat Sheet", "url": "https://tutorialsdojo.com/aws-lambda/"}
+              ],
+              "approx_hours": 8
+            },
+            {
+              "title": "ECS & ECR: Containers on AWS",
+              "phase": "Phase 2 — Serverless, Containers & Automation",
+              "why": "Containers are how cloud teams ship consistent, reproducible workloads — ECS is the AWS-native way to run them without managing Kubernetes.",
+              "what": [
+                "Build a Docker image for a simple Node or Python app; push it to ECR",
+                "Create an ECS cluster with Fargate; define a Task Definition and Service",
+                "Connect the Fargate service to an ALB; access the app via the load balancer DNS",
+                "Update the service to deploy a new image version with zero downtime",
+                "View ECS logs in CloudWatch; configure a health check for the container"
+              ],
+              "mini_project": "Containerize a simple Node/Express app, push the image to ECR, deploy it on Fargate behind an ALB, and update it to a new version by pushing a new tag and forcing a new service deployment.",
+              "resources": [
+                {"name": "AWS Docs — Amazon ECS Getting Started with Fargate", "url": "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/getting-started-fargate.html"},
+                {"name": "AWS Docs — Amazon ECR Getting Started", "url": "https://docs.aws.amazon.com/AmazonECR/latest/userguide/getting-started-cli.html"},
+                {"name": "Tutorials Dojo — ECS Cheat Sheet", "url": "https://tutorialsdojo.com/amazon-elastic-container-service-amazon-ecs/"}
+              ],
+              "approx_hours": 8
+            },
+            {
+              "title": "CloudFormation: Infrastructure as Code",
+              "phase": "Phase 2 — Serverless, Containers & Automation",
+              "why": "CloudFormation lets you version, review, and reproduce your entire AWS environment — it is how professional cloud teams manage infrastructure.",
+              "what": [
+                "Write a CloudFormation template in YAML: Parameters, Resources, Outputs",
+                "Deploy and update stacks via the console and CLI; read Change Sets before applying",
+                "Use intrinsic functions: Ref, Fn::Sub, Fn::GetAtt, Fn::If",
+                "Create a stack that provisions a VPC, EC2 instance, and security group",
+                "Use DeletionPolicy: Retain to protect production databases from accidental deletion"
+              ],
+              "mini_project": "Write a CloudFormation template that creates a VPC, public subnet, IGW, security group, and EC2 instance with a parameterized AMI ID and instance type — deploy it, update the instance type, then delete the stack.",
+              "resources": [
+                {"name": "AWS Docs — CloudFormation Getting Started", "url": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/GettingStarted.Walkthrough.html"},
+                {"name": "AWS Docs — Template Reference", "url": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-reference.html"},
+                {"name": "Tutorials Dojo — CloudFormation Cheat Sheet", "url": "https://tutorialsdojo.com/aws-cloudformation/"}
+              ],
+              "approx_hours": 8
+            },
+            {
+              "title": "Route 53 & CloudFront: DNS + CDN",
+              "phase": "Phase 2 — Serverless, Containers & Automation",
+              "why": "Every production application needs DNS and a CDN — Route 53 and CloudFront are the AWS-native stack used for nearly every public-facing workload.",
+              "what": [
+                "Register or transfer a domain in Route 53; understand hosted zones",
+                "Create A, CNAME, and Alias records; understand the difference between CNAME and Alias",
+                "Set up a CloudFront distribution in front of an S3 static site; configure caching",
+                "Configure an ACM (Certificate Manager) SSL certificate and attach it to CloudFront",
+                "Set up a Route 53 health check and failover routing policy"
+              ],
+              "mini_project": "Serve the S3 static CloudOS page through CloudFront with HTTPS using an ACM certificate, configure a Route 53 Alias record pointing to the CloudFront distribution, and verify HTTPS is enforced.",
+              "resources": [
+                {"name": "AWS Docs — Route 53 Getting Started", "url": "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/getting-started.html"},
+                {"name": "AWS Docs — CloudFront Getting Started", "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/GettingStarted.html"},
+                {"name": "Tutorials Dojo — CloudFront Cheat Sheet", "url": "https://tutorialsdojo.com/amazon-cloudfront/"}
+              ],
+              "approx_hours": 5
+            },
+            {
+              "title": "SQS & SNS: Decoupled Architectures",
+              "phase": "Phase 2 — Serverless, Containers & Automation",
+              "why": "Queues and topics decouple services so a spike in one part of the system does not cascade into failures elsewhere — a core pattern on the SAA-C03 exam.",
+              "what": [
+                "Create an SQS Standard queue; send, receive, and delete messages via the CLI",
+                "Configure a Dead Letter Queue (DLQ) and set a maxReceiveCount",
+                "Create an SNS topic; subscribe an SQS queue, email, and Lambda to it",
+                "Trigger a Lambda function from SQS; understand batch size and concurrency",
+                "Build a fan-out pattern: one SNS message delivered to multiple SQS queues"
+              ],
+              "mini_project": "Build an order processing pipeline: an API Gateway POST publishes to an SNS topic; two SQS queues subscribe (one for email confirmation, one for inventory); a Lambda consumes the inventory queue and writes to DynamoDB.",
+              "resources": [
+                {"name": "AWS Docs — Amazon SQS Getting Started", "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-getting-started.html"},
+                {"name": "AWS Docs — Amazon SNS Getting Started", "url": "https://docs.aws.amazon.com/sns/latest/dg/sns-getting-started.html"},
+                {"name": "Tutorials Dojo — SQS vs SNS vs EventBridge Cheat Sheet", "url": "https://tutorialsdojo.com/amazon-sqs-vs-amazon-sns-vs-amazon-mq/"}
+              ],
+              "approx_hours": 5
+            },
+            {
+              "title": "Secrets Manager & Parameter Store",
+              "phase": "Phase 2 — Serverless, Containers & Automation",
+              "why": "Hardcoded credentials in code or config are a security incident waiting to happen — Secrets Manager and Parameter Store are the AWS-native solution.",
+              "what": [
+                "Create a secret in Secrets Manager; retrieve it via the CLI and SDK",
+                "Enable automatic rotation for an RDS password using a managed rotation Lambda",
+                "Use SSM Parameter Store for non-sensitive config: hierarchical paths like /app/prod/db_host",
+                "Fetch parameters in a Lambda or EC2 bootstrap script at startup",
+                "Compare Secrets Manager vs Parameter Store: when to use each"
+              ],
+              "mini_project": "Store the RDS password from Phase 1 in Secrets Manager with automatic rotation, update the EC2 bootstrap script to retrieve it at startup instead of reading from a .env file, and verify the app still connects after rotation.",
+              "resources": [
+                {"name": "AWS Docs — Secrets Manager Getting Started", "url": "https://docs.aws.amazon.com/secretsmanager/latest/userguide/getting-started.html"},
+                {"name": "AWS Docs — SSM Parameter Store", "url": "https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-parameter-store.html"},
+                {"name": "Tutorials Dojo — Secrets Manager Cheat Sheet", "url": "https://tutorialsdojo.com/aws-secrets-manager/"}
+              ],
+              "approx_hours": 4
+            }
+          ]
+        },
+        {
+          "id": "aws-p3",
+          "title": "Phase 3 — Architecture & SAA-C03 Prep",
+          "topics": [
+            {
+              "title": "Auto Scaling Groups & Application Load Balancers",
+              "phase": "Phase 3 — Architecture & SAA-C03 Prep",
+              "why": "Designing applications that scale automatically with demand is a core skill on both the exam and in production cloud environments.",
+              "what": [
+                "Create a Launch Template with user-data; build an Auto Scaling Group across 2+ AZs",
+                "Configure scaling policies: target tracking (CPU at 50%) and step scaling",
+                "Create an Application Load Balancer; register the ASG as a target group",
+                "Configure health checks: ALB health check passes traffic only to healthy targets",
+                "Simulate load with a stress tool; watch the ASG scale out and verify traffic distribution"
+              ],
+              "mini_project": "Build an auto-scaling web tier: ASG with a target tracking policy, behind an ALB, with a CloudWatch alarm that emails you when scale-out happens — simulate load and watch it work.",
+              "resources": [
+                {"name": "AWS Docs — Auto Scaling Getting Started", "url": "https://docs.aws.amazon.com/autoscaling/ec2/userguide/get-started-with-ec2-auto-scaling.html"},
+                {"name": "AWS Docs — Application Load Balancers", "url": "https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html"},
+                {"name": "Tutorials Dojo — Auto Scaling Cheat Sheet", "url": "https://tutorialsdojo.com/aws-auto-scaling/"}
+              ],
+              "approx_hours": 6
+            },
+            {
+              "title": "Well-Architected Framework in Practice",
+              "phase": "Phase 3 — Architecture & SAA-C03 Prep",
+              "why": "The Well-Architected Framework is the lens AWS uses to evaluate every architecture — it appears throughout the SAA-C03 exam and every architecture review.",
+              "what": [
+                "Study the 6 pillars: Operational Excellence, Security, Reliability, Performance, Cost, Sustainability",
+                "Run the Well-Architected Tool on a workload you have built; review the findings",
+                "For each pillar, identify 2 design decisions you made that satisfy or violate it",
+                "Practice choosing between architectures on exam-style questions by pillar",
+                "Read 3 AWS architecture blog posts and annotate which pillar each decision addresses"
+              ],
+              "mini_project": "Run the AWS Well-Architected Tool on your Phase 1 VPC + EC2 + RDS architecture, answer every question, review all HIGH risk findings, and document a remediation plan for the top 3.",
+              "resources": [
+                {"name": "AWS Well-Architected Framework Whitepaper", "url": "https://docs.aws.amazon.com/wellarchitected/latest/framework/welcome.html"},
+                {"name": "AWS Well-Architected Tool", "url": "https://aws.amazon.com/well-architected-tool/"},
+                {"name": "AWS Architecture Blog", "url": "https://aws.amazon.com/blogs/architecture/"}
+              ],
+              "approx_hours": 4
+            },
+            {
+              "title": "Cost Management & Billing Hygiene",
+              "phase": "Phase 3 — Architecture & SAA-C03 Prep",
+              "why": "Unexpected AWS bills are a real risk — cloud engineers who monitor and optimize costs are valued; those who do not generate incidents.",
+              "what": [
+                "Set up a billing alarm in CloudWatch for $10 and $50 thresholds",
+                "Use Cost Explorer to break down costs by service, region, and tag",
+                "Enable AWS Cost Anomaly Detection and configure a Slack notification",
+                "Right-size an EC2 instance using the Compute Optimizer recommendations",
+                "Compare On-Demand, Reserved (1yr/3yr), Savings Plans, and Spot pricing for exam and real use"
+              ],
+              "mini_project": "Set up 3 billing alarms ($10, $50, $100), enable Cost Anomaly Detection, tag all your lab resources with Project=CloudOSLab, and use Cost Explorer to see the spend breakdown by that tag.",
+              "resources": [
+                {"name": "AWS Docs — Setting Up a Billing Alarm", "url": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/monitor_estimated_charges_with_cloudwatch.html"},
+                {"name": "AWS Docs — Cost Explorer", "url": "https://docs.aws.amazon.com/cost-management/latest/userguide/ce-getting-started.html"},
+                {"name": "Tutorials Dojo — AWS Pricing Models Cheat Sheet", "url": "https://tutorialsdojo.com/aws-billing-and-pricing/"}
+              ],
+              "approx_hours": 3
+            },
+            {
+              "title": "Security Services: KMS, WAF & Shield",
+              "phase": "Phase 3 — Architecture & SAA-C03 Prep",
+              "why": "Security is a first-order concern in cloud architecture — KMS, WAF, and Shield protect data and applications and appear heavily on the SAA-C03 exam.",
+              "what": [
+                "Create a customer-managed KMS key; encrypt an S3 bucket and RDS instance with it",
+                "Understand key policies vs IAM policies for KMS access control",
+                "Create a WAF Web ACL with rules to block common OWASP Top 10 patterns",
+                "Attach the WAF ACL to a CloudFront distribution or ALB",
+                "Understand the difference between Shield Standard (free) and Shield Advanced"
+              ],
+              "mini_project": "Create a customer-managed KMS key, use it to encrypt a new S3 bucket, attach a WAF Web ACL to your CloudFront distribution with rate limiting and a geo-block rule for a test country.",
+              "resources": [
+                {"name": "AWS Docs — AWS KMS Getting Started", "url": "https://docs.aws.amazon.com/kms/latest/developerguide/getting-started.html"},
+                {"name": "AWS Docs — AWS WAF Getting Started", "url": "https://docs.aws.amazon.com/waf/latest/developerguide/getting-started.html"},
+                {"name": "Tutorials Dojo — KMS Cheat Sheet", "url": "https://tutorialsdojo.com/aws-key-management-service-aws-kms/"}
+              ],
+              "approx_hours": 4
+            },
+            {
+              "title": "SAA-C03 Practice Exams & Weak Area Drilling",
+              "phase": "Phase 3 — Architecture & SAA-C03 Prep",
+              "why": "The SAA-C03 exam is scenario-based — deliberate practice with timed exams under exam conditions is the only reliable way to prepare.",
+              "what": [
+                "Take a full 65-question timed practice exam from Tutorials Dojo or Whizlabs",
+                "Review every wrong answer immediately: read the AWS doc for the service involved",
+                "Categorize weak areas by service (e.g., DynamoDB, ElastiCache, Direct Connect)",
+                "Do 20-question topic-specific drills on each weak area until >80% accuracy",
+                "Repeat full timed exam weekly for 4 weeks; track score trend"
+              ],
+              "mini_project": "Complete 5 full timed 65-question practice exams over 5 weeks, logging your score and top 3 weak services after each — build a personal weak-area study schedule from the log.",
+              "resources": [
+                {"name": "Tutorials Dojo — SAA-C03 Practice Exams", "url": "https://tutorialsdojo.com/aws-certified-solutions-architect-associate-saa-c03/"},
+                {"name": "AWS Skill Builder — Official SAA-C03 Exam Prep", "url": "https://explore.skillbuilder.aws/learn/course/external/view/elearning/14760/exam-prep-standard-course-aws-certified-solutions-architect-associate-saa-c03"},
+                {"name": "Whizlabs — SAA-C03 Practice Tests", "url": "https://www.whizlabs.com/aws-solutions-architect-associate/"}
+              ],
+              "approx_hours": 12
+            },
+            {
+              "title": "Capstone: 3-Tier Web Application on AWS",
+              "phase": "Phase 3 — Architecture & SAA-C03 Prep",
+              "why": "Building a complete, documented architecture from scratch is the best proof of readiness for a cloud engineering role.",
+              "what": [
+                "Design a 3-tier architecture: static frontend on S3/CloudFront, API tier on Lambda or Fargate, RDS backend",
+                "Deploy the full architecture using CloudFormation templates",
+                "Implement: HTTPS end-to-end, WAF on CloudFront, RDS in private subnet, secrets in Secrets Manager",
+                "Set up CloudWatch dashboards and alarms for all three tiers",
+                "Write architecture documentation with a diagram and security, scalability, and cost notes"
+              ],
+              "mini_project": "Deploy the CloudOS app (or a representative stand-in) on AWS: CloudFront + S3 for the Nuxt static build, Lambda + API Gateway for the API layer, RDS PostgreSQL for data — all in CloudFormation, all with monitoring.",
+              "resources": [
+                {"name": "AWS Architecture Center — Web Application Hosting", "url": "https://aws.amazon.com/architecture/web-mobile-social/"},
+                {"name": "AWS Docs — CloudFormation Best Practices", "url": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/best-practices.html"},
+                {"name": "draw.io / diagrams.net — Architecture Diagramming", "url": "https://app.diagrams.net/"}
+              ],
+              "approx_hours": 10
+            }
+          ]
+        }
+      ]
+    },
+    "nuxt": {
+      "title": "Nuxt",
+      "subtitle": "Nuxt 4 + Vue 3 for CloudOS (Nuxt 4.5 + Supabase + Nuxt UI)",
+      "color": "#22d3ee",
+      "total_approx_hours": 116,
+      "phases": [
+        {
+          "id": "nuxt-p1",
+          "title": "Phase 1 — Vue 3 & Nuxt 4 Foundations",
+          "topics": [
+            {
+              "title": "Vue 3 Composition API",
+              "phase": "Phase 1 — Vue 3 & Nuxt 4 Foundations",
+              "why": "Nuxt 4 is built on Vue 3 — the Composition API (ref, reactive, computed, watch) is how every CloudOS component will be written.",
+              "what": [
+                "Use ref() for primitive reactive values and reactive() for objects",
+                "Compute derived values with computed(); understand why it is lazy and cached",
+                "Watch for changes with watch() and watchEffect(); know the difference",
+                "Use lifecycle hooks: onMounted, onUnmounted, onBeforeUnmount",
+                "Write a composable function (useCounter, useToggle) that encapsulates reactive logic"
+              ],
+              "mini_project": "Build a standalone Vue 3 component (no Nuxt yet) that displays a real-time character counter and word count as you type in a textarea — using ref, computed, and watch.",
+              "resources": [
+                {"name": "Vue 3 Docs — Composition API FAQ", "url": "https://vuejs.org/guide/extras/composition-api-faq"},
+                {"name": "Vue 3 Docs — Reactivity Fundamentals", "url": "https://vuejs.org/guide/essentials/reactivity-fundamentals"},
+                {"name": "Vue Mastery — Intro to Vue 3 (free tier)", "url": "https://www.vuemastery.com/courses/intro-to-vue-3/intro-to-vue3"}
+              ],
+              "approx_hours": 8
+            },
+            {
+              "title": "Nuxt 4 Project Setup & Configuration",
+              "phase": "Phase 1 — Vue 3 & Nuxt 4 Foundations",
+              "why": "Understanding the Nuxt 4 directory structure, nuxt.config.ts, and the app/ folder layout is the prerequisite for building CloudOS.",
+              "what": [
+                "Scaffold a new project with npx nuxi@latest init; understand the app/ directory convention",
+                "Configure nuxt.config.ts: modules, runtimeConfig, app.head, routeRules",
+                "Understand Nuxt auto-imports: components, composables, and utils are imported automatically",
+                "Configure .env and runtimeConfig for public vs private environment variables",
+                "Read and understand the Nuxt 4 compatibility changes from Nuxt 3"
+              ],
+              "mini_project": "Set up the CloudOS project with Nuxt 4: configure runtimeConfig for Supabase URL and key, add a custom app head with title and meta, and verify auto-imports work for a test composable.",
+              "resources": [
+                {"name": "Nuxt 4 Docs — Getting Started", "url": "https://nuxt.com/docs/getting-started/introduction"},
+                {"name": "Nuxt 4 Docs — Configuration", "url": "https://nuxt.com/docs/guide/directory-structure/nuxt.config"},
+                {"name": "Nuxt 4 Docs — Upgrade Guide (v3 → v4)", "url": "https://nuxt.com/docs/getting-started/upgrade"}
+              ],
+              "approx_hours": 4
+            },
+            {
+              "title": "File-Based Routing & Nested Routes",
+              "phase": "Phase 1 — Vue 3 & Nuxt 4 Foundations",
+              "why": "CloudOS will have dashboards, settings, and resource detail pages — knowing how Nuxt's file-based router maps files to URLs is essential for structuring the app.",
+              "what": [
+                "Create pages in app/pages/; understand how filenames map to routes",
+                "Create nested routes using subdirectories and [id].vue dynamic segments",
+                "Use <NuxtLink> for client-side navigation; understand prefetching behavior",
+                "Use the useRoute() and useRouter() composables to read params and navigate programmatically",
+                "Set up catch-all routes with [...slug].vue for 404 handling"
+              ],
+              "mini_project": "Build the CloudOS routing skeleton: pages for /, /dashboard, /resources/[type]/[id], and /settings — each rendering its route params — with a working navigation bar using <NuxtLink>.",
+              "resources": [
+                {"name": "Nuxt Docs — Routing", "url": "https://nuxt.com/docs/getting-started/routing"},
+                {"name": "Nuxt Docs — Pages Directory", "url": "https://nuxt.com/docs/guide/directory-structure/pages"},
+                {"name": "Nuxt Docs — useRoute and useRouter", "url": "https://nuxt.com/docs/api/composables/use-route"}
+              ],
+              "approx_hours": 4
+            },
+            {
+              "title": "Components, Props, Emits & Slots",
+              "phase": "Phase 1 — Vue 3 & Nuxt 4 Foundations",
+              "why": "Every CloudOS screen is composed of reusable components — ResourceCard, StatusBadge, DataTable — built with props, emits, and slots.",
+              "what": [
+                "Define props with defineProps() and type them with TypeScript interfaces",
+                "Emit custom events with defineEmits() and handle them in the parent",
+                "Use default and named slots to make layout components flexible",
+                "Use v-model on a custom component (defineModel() in Vue 3.4+)",
+                "Organize components in app/components/ and use Nuxt auto-import naming conventions"
+              ],
+              "mini_project": "Build 3 reusable CloudOS components: ResourceCard (props: title, status, region), StatusBadge (props: status — renders colored pill), and a DataTable that accepts column definitions and row data via props.",
+              "resources": [
+                {"name": "Vue 3 Docs — Components Basics", "url": "https://vuejs.org/guide/components/basics"},
+                {"name": "Vue 3 Docs — Props", "url": "https://vuejs.org/guide/components/props"},
+                {"name": "Nuxt Docs — Components Directory", "url": "https://nuxt.com/docs/guide/directory-structure/components"}
+              ],
+              "approx_hours": 6
+            },
+            {
+              "title": "State Management with Pinia",
+              "phase": "Phase 1 — Vue 3 & Nuxt 4 Foundations",
+              "why": "CloudOS needs shared state — the current user, selected region, resource lists — and Pinia is the officially recommended Nuxt-compatible state library.",
+              "what": [
+                "Install @pinia/nuxt; define a store with defineStore() using the setup syntax",
+                "Define state, getters (computed), and actions in a store",
+                "Use useAuthStore, useResourceStore in components with storeToRefs()",
+                "Persist state to localStorage with pinia-plugin-persistedstate",
+                "Test stores independently from components by calling actions directly"
+              ],
+              "mini_project": "Build useCloudStore: stores current AWS region, selected resources (array), and a loading flag. Add actions: setRegion(r), toggleResource(id), fetchResources() (mocked). Use it in 2 components with storeToRefs.",
+              "resources": [
+                {"name": "Pinia Docs — Getting Started", "url": "https://pinia.vuejs.org/getting-started.html"},
+                {"name": "Pinia Docs — Defining a Store", "url": "https://pinia.vuejs.org/core-concepts/"},
+                {"name": "Nuxt Docs — @pinia/nuxt Module", "url": "https://nuxt.com/modules/pinia"}
+              ],
+              "approx_hours": 5
+            },
+            {
+              "title": "Nuxt UI: Components, Theming & Dark Mode",
+              "phase": "Phase 1 — Vue 3 & Nuxt 4 Foundations",
+              "why": "CloudOS is built with Nuxt UI — knowing the component library, theming system, and how to customize it avoids reinventing everything from scratch.",
+              "what": [
+                "Install @nuxt/ui; explore UButton, UInput, UTable, UModal, UDropdownMenu, UBadge",
+                "Configure the Nuxt UI color palette in app.config.ts to match CloudOS brand",
+                "Use useColorMode() to implement a light/dark toggle in the navigation",
+                "Override component styles using the ui prop and global CSS custom properties",
+                "Use UForm with schema validation (Zod or Valibot) for a create-resource form"
+              ],
+              "mini_project": "Build the CloudOS navigation shell with Nuxt UI: a UHorizontalNavigation, a dark mode toggle, a UDropdownMenu for user actions, and a UButton that opens a UModal — all respecting the configured color theme.",
+              "resources": [
+                {"name": "Nuxt UI v3 Docs — Getting Started", "url": "https://ui.nuxt.com/getting-started"},
+                {"name": "Nuxt UI v3 Docs — Components", "url": "https://ui.nuxt.com/components"},
+                {"name": "Nuxt Docs — Color Mode Module", "url": "https://nuxt.com/modules/color-mode"}
+              ],
+              "approx_hours": 6
+            }
+          ]
+        },
+        {
+          "id": "nuxt-p2",
+          "title": "Phase 2 — Supabase Integration",
+          "topics": [
+            {
+              "title": "Supabase Auth: Email, OAuth & Sessions",
+              "phase": "Phase 2 — Supabase Integration",
+              "why": "Every CloudOS user needs to log in — Supabase Auth handles email/password and OAuth flows with minimal setup.",
+              "what": [
+                "Install @nuxtjs/supabase; configure Supabase URL and anon key in runtimeConfig",
+                "Implement email+password sign-up and login using useSupabaseClient().auth.signInWithPassword()",
+                "Implement Google OAuth login with signInWithOAuth()",
+                "Use useSupabaseUser() to reactively access the current user in any component",
+                "Handle auth state changes and redirect unauthenticated users"
+              ],
+              "mini_project": "Build CloudOS login and signup pages: email/password form with error messages, Google OAuth button, and a success redirect to /dashboard — using @nuxtjs/supabase and Nuxt UI UForm.",
+              "resources": [
+                {"name": "Supabase Docs — Auth with Nuxt", "url": "https://supabase.com/docs/guides/auth/quickstarts/nuxt"},
+                {"name": "@nuxtjs/supabase Docs", "url": "https://supabase.nuxtjs.org/"},
+                {"name": "Supabase Docs — Auth Overview", "url": "https://supabase.com/docs/guides/auth"}
+              ],
+              "approx_hours": 6
+            },
+            {
+              "title": "Supabase Database: Tables, Queries & RLS",
+              "phase": "Phase 2 — Supabase Integration",
+              "why": "CloudOS data — user preferences, saved resources, configurations — lives in Supabase PostgreSQL, and Row Level Security is what keeps each user's data private.",
+              "what": [
+                "Create tables in the Supabase Dashboard; understand column types and foreign keys",
+                "Query with the Supabase JS client: .select(), .insert(), .update(), .delete(), .eq()",
+                "Write Row Level Security policies: users can only read/write rows where user_id = auth.uid()",
+                "Enable RLS on a table and test that unauthenticated reads are blocked",
+                "Use Supabase migrations with supabase db diff and supabase db push for schema versioning"
+              ],
+              "mini_project": "Create a cloud_resources table in Supabase with user_id, name, type, region, and tags columns — add RLS so users see only their own rows — and build a CloudOS page that lists, creates, and deletes resources.",
+              "resources": [
+                {"name": "Supabase Docs — Database", "url": "https://supabase.com/docs/guides/database/overview"},
+                {"name": "Supabase Docs — Row Level Security", "url": "https://supabase.com/docs/guides/auth/row-level-security"},
+                {"name": "Supabase Docs — JavaScript Client", "url": "https://supabase.com/docs/reference/javascript/introduction"}
+              ],
+              "approx_hours": 6
+            },
+            {
+              "title": "useFetch, useAsyncData & Data Patterns",
+              "phase": "Phase 2 — Supabase Integration",
+              "why": "Nuxt's data-fetching composables handle SSR, caching, and loading/error states — using them correctly avoids duplicate requests and flash-of-content bugs.",
+              "what": [
+                "Use useFetch() for simple GET requests; understand how it differs from $fetch",
+                "Use useAsyncData() with a Supabase query for more control over caching and refresh",
+                "Handle pending, data, and error states from useFetch in the template",
+                "Refresh data programmatically with the refresh() return value",
+                "Use lazy: true to defer non-critical fetches from blocking the initial render"
+              ],
+              "mini_project": "Rebuild the CloudOS resource list page using useAsyncData with a Supabase query — show a UTable skeleton while loading, an error alert on failure, and a refresh button that re-fetches without a full page reload.",
+              "resources": [
+                {"name": "Nuxt Docs — Data Fetching", "url": "https://nuxt.com/docs/getting-started/data-fetching"},
+                {"name": "Nuxt Docs — useFetch", "url": "https://nuxt.com/docs/api/composables/use-fetch"},
+                {"name": "Nuxt Docs — useAsyncData", "url": "https://nuxt.com/docs/api/composables/use-async-data"}
+              ],
+              "approx_hours": 5
+            },
+            {
+              "title": "Form Handling & Validation with Zod",
+              "phase": "Phase 2 — Supabase Integration",
+              "why": "Every CloudOS create/edit flow needs validated forms — Zod provides type-safe schema validation that integrates natively with Nuxt UI's UForm.",
+              "what": [
+                "Define a Zod schema for a form: required fields, min/max lengths, enum values, custom messages",
+                "Use UForm with the schema prop to get automatic per-field error messages",
+                "Handle form submission: call Supabase insert, catch and display API errors",
+                "Implement optimistic UI: update the local list before the server confirms",
+                "Build a multi-step form with separate Zod schemas per step"
+              ],
+              "mini_project": "Build a Create Resource modal in CloudOS: a UForm with Zod validation (name required, type must be ec2/s3/rds, region from a select), submission to Supabase, optimistic list update, and error toast on failure.",
+              "resources": [
+                {"name": "Nuxt UI Docs — Form Component", "url": "https://ui.nuxt.com/components/form"},
+                {"name": "Zod Docs — Getting Started", "url": "https://zod.dev/?id=introduction"},
+                {"name": "Nuxt UI Docs — Form Validation with Zod", "url": "https://ui.nuxt.com/components/form#validation"}
+              ],
+              "approx_hours": 5
+            },
+            {
+              "title": "Supabase Storage: File Uploads & Management",
+              "phase": "Phase 2 — Supabase Integration",
+              "why": "CloudOS may need to store user-uploaded files (config exports, diagrams, CSVs) — Supabase Storage integrates directly with auth and RLS.",
+              "what": [
+                "Create a storage bucket in the Supabase Dashboard; configure public vs private access",
+                "Upload files with .storage.from('bucket').upload(path, file)",
+                "Generate signed URLs for private file access with createSignedUrl()",
+                "List and delete files in a bucket from the client",
+                "Add RLS policies to the storage bucket so users can only access their own files"
+              ],
+              "mini_project": "Add a user avatar upload feature to CloudOS: a file input, client-side image preview, upload to Supabase Storage under users/{userId}/avatar, store the public URL in the user profile, and display it in the nav.",
+              "resources": [
+                {"name": "Supabase Docs — Storage", "url": "https://supabase.com/docs/guides/storage"},
+                {"name": "Supabase Docs — Storage with Nuxt", "url": "https://supabase.com/docs/guides/storage/uploads/standard-uploads"},
+                {"name": "Supabase Docs — Storage Access Control", "url": "https://supabase.com/docs/guides/storage/security/access-control"}
+              ],
+              "approx_hours": 4
+            },
+            {
+              "title": "Supabase Realtime: Live Updates",
+              "phase": "Phase 2 — Supabase Integration",
+              "why": "A cloud dashboard that shows live status changes (instance started/stopped, job completed) needs realtime updates — Supabase makes this easy with Postgres changes.",
+              "what": [
+                "Subscribe to Postgres changes on a table with .channel().on('postgres_changes'...)",
+                "Filter realtime events by event type: INSERT, UPDATE, DELETE",
+                "Update a reactive list in real time as rows are added or changed in Supabase",
+                "Unsubscribe in onUnmounted() to prevent memory leaks",
+                "Use Supabase Presence to show which users are online in a shared view"
+              ],
+              "mini_project": "Add realtime updates to the CloudOS resource list: when another tab or user changes a resource's status in Supabase, the list updates instantly without a manual refresh — using a Postgres changes subscription.",
+              "resources": [
+                {"name": "Supabase Docs — Realtime", "url": "https://supabase.com/docs/guides/realtime"},
+                {"name": "Supabase Docs — Postgres Changes", "url": "https://supabase.com/docs/guides/realtime/postgres-changes"},
+                {"name": "Supabase Docs — Realtime with JavaScript", "url": "https://supabase.com/docs/reference/javascript/subscribe"}
+              ],
+              "approx_hours": 4
+            }
+          ]
+        },
+        {
+          "id": "nuxt-p3",
+          "title": "Phase 3 — Production & CloudOS Features",
+          "topics": [
+            {
+              "title": "Nuxt Server Routes & H3 API",
+              "phase": "Phase 3 — Production & CloudOS Features",
+              "why": "Some CloudOS API logic — calling AWS, processing secrets — must run server-side, not in the browser; Nuxt server routes handle this without a separate backend.",
+              "what": [
+                "Create API endpoints in server/api/: GET, POST with defineEventHandler()",
+                "Read request body with readBody(); access query params with getQuery()",
+                "Call Supabase server-side using the service role key in a server route",
+                "Return structured errors with createError() and appropriate status codes",
+                "Call boto3 or the AWS CLI from a Nuxt server route via a child process"
+              ],
+              "mini_project": "Build a /api/aws/ec2 server route that calls the AWS CLI (or a mocked response) to list EC2 instances and returns them as JSON — called from the CloudOS dashboard using useFetch('/api/aws/ec2').",
+              "resources": [
+                {"name": "Nuxt Docs — Server Routes", "url": "https://nuxt.com/docs/guide/directory-structure/server"},
+                {"name": "H3 Docs — Event Handler", "url": "https://h3.unjs.io/guide/event-handler"},
+                {"name": "Nuxt Docs — Server API Layer", "url": "https://nuxt.com/docs/guide/concepts/server-engine"}
+              ],
+              "approx_hours": 6
+            },
+            {
+              "title": "Auth Middleware & Route Guards",
+              "phase": "Phase 3 — Production & CloudOS Features",
+              "why": "CloudOS routes like /dashboard and /resources must be protected — unauthenticated users should be redirected to login, not shown a blank page.",
+              "what": [
+                "Write a named route middleware in middleware/auth.ts using useSupabaseUser()",
+                "Apply the middleware to specific pages with definePageMeta({ middleware: 'auth' })",
+                "Write a guest middleware for /login and /signup that redirects logged-in users",
+                "Protect server routes by verifying the session using the Supabase server client",
+                "Test middleware by loading a protected route in a private browser window"
+              ],
+              "mini_project": "Protect all /dashboard/* and /resources/* routes with an auth middleware that redirects to /login with a from query param — after login, redirect back to the original destination.",
+              "resources": [
+                {"name": "Nuxt Docs — Route Middleware", "url": "https://nuxt.com/docs/guide/directory-structure/middleware"},
+                {"name": "@nuxtjs/supabase Docs — Middleware", "url": "https://supabase.nuxtjs.org/get-started#redirect-on-login"},
+                {"name": "Nuxt Docs — definePageMeta", "url": "https://nuxt.com/docs/api/utils/define-page-meta"}
+              ],
+              "approx_hours": 4
+            },
+            {
+              "title": "SSR, SSG & Hybrid Rendering Modes",
+              "phase": "Phase 3 — Production & CloudOS Features",
+              "why": "CloudOS has both static marketing pages and dynamic authenticated dashboards — Nuxt's hybrid rendering lets you optimize each route independently.",
+              "what": [
+                "Understand the difference between SSR (per-request), SSG (build-time), and SPA (client-only)",
+                "Configure routeRules in nuxt.config: static for marketing, ssr for dashboard, client for real-time pages",
+                "Use prerender: true for the landing page and /about",
+                "Use ssr: false for routes that use browser-only APIs (WebSockets, browser storage)",
+                "Measure TTFB and LCP difference between SSR and CSR for the same page"
+              ],
+              "mini_project": "Configure CloudOS routeRules: prerender '/' and '/pricing', use SSR for '/dashboard/**', and use client-only for a '/live' realtime monitoring page — then deploy and compare Time to First Byte.",
+              "resources": [
+                {"name": "Nuxt Docs — Rendering Modes", "url": "https://nuxt.com/docs/guide/concepts/rendering"},
+                {"name": "Nuxt Docs — routeRules", "url": "https://nuxt.com/docs/guide/concepts/rendering#hybrid-rendering"},
+                {"name": "Nuxt Docs — Hybrid Rendering", "url": "https://nuxt.com/docs/guide/concepts/rendering#hybrid-rendering"}
+              ],
+              "approx_hours": 5
+            },
+            {
+              "title": "Layouts, Error Pages & Loading States",
+              "phase": "Phase 3 — Production & CloudOS Features",
+              "why": "A polished app handles the moments between states — loading skeletons, empty states, and error pages are what separate an app that feels production-ready from one that does not.",
+              "what": [
+                "Create named layouts in app/layouts/: default.vue, dashboard.vue, auth.vue",
+                "Assign a layout per page with definePageMeta({ layout: 'dashboard' })",
+                "Build a custom 404 page at app/error.vue with a useful recovery message",
+                "Build loading skeleton components that match the shape of the real content",
+                "Use <Suspense> with async components for granular loading boundaries"
+              ],
+              "mini_project": "Create 3 CloudOS layouts (default, dashboard with sidebar, auth centered), a custom error.vue with a friendly 404 message and a home link, and loading skeleton components for the ResourceCard and DataTable.",
+              "resources": [
+                {"name": "Nuxt Docs — Layouts", "url": "https://nuxt.com/docs/guide/directory-structure/layouts"},
+                {"name": "Nuxt Docs — Error Handling", "url": "https://nuxt.com/docs/getting-started/error-handling"},
+                {"name": "Nuxt UI Docs — Skeleton Component", "url": "https://ui.nuxt.com/components/skeleton"}
+              ],
+              "approx_hours": 4
+            },
+            {
+              "title": "SEO & Meta Tags with useHead & useSeoMeta",
+              "phase": "Phase 3 — Production & CloudOS Features",
+              "why": "CloudOS's public marketing pages need proper meta tags for search and sharing — Nuxt's head management composables handle this without a plugin.",
+              "what": [
+                "Use useHead() to set title, meta description, and Open Graph tags per page",
+                "Use useSeoMeta() for type-safe social and SEO meta tags",
+                "Configure a global default in nuxt.config.ts app.head; override per-page",
+                "Generate dynamic meta for resource detail pages using route params and useFetch data",
+                "Validate tags with a browser extension and test Open Graph cards"
+              ],
+              "mini_project": "Add full SEO meta to the CloudOS landing page (title, description, og:title, og:description, og:image, twitter:card) and dynamic meta to the resource detail page that uses the resource name in the title.",
+              "resources": [
+                {"name": "Nuxt Docs — SEO and Meta", "url": "https://nuxt.com/docs/getting-started/seo-meta"},
+                {"name": "Nuxt Docs — useSeoMeta", "url": "https://nuxt.com/docs/api/composables/use-seo-meta"},
+                {"name": "Open Graph Debugger (Facebook)", "url": "https://developers.facebook.com/tools/debug/"}
+              ],
+              "approx_hours": 3
+            },
+            {
+              "title": "Deployment: Vercel, Netlify & CI/CD",
+              "phase": "Phase 3 — Production & CloudOS Features",
+              "why": "CloudOS needs a deployment pipeline so every push to main ships a new version — Vercel or Netlify give you this in minutes.",
+              "what": [
+                "Deploy to Vercel with the Vercel CLI: vercel --prod after connecting the GitHub repo",
+                "Configure environment variables in the Vercel dashboard for Supabase keys",
+                "Understand the Nuxt Vercel preset and how it maps server routes to Vercel Functions",
+                "Set up a preview deployment workflow: PRs deploy to a unique preview URL",
+                "Configure a production branch protection rule: require passing CI before merge"
+              ],
+              "mini_project": "Deploy CloudOS to Vercel, configure all Supabase env vars in the Vercel dashboard, set up preview deployments from PRs, and verify that server routes work in the deployed environment.",
+              "resources": [
+                {"name": "Nuxt Docs — Deployment to Vercel", "url": "https://nuxt.com/deploy/vercel"},
+                {"name": "Vercel Docs — Nuxt Framework Guide", "url": "https://vercel.com/docs/frameworks/nuxt"},
+                {"name": "Nuxt Docs — Deployment Overview", "url": "https://nuxt.com/docs/getting-started/deployment"}
+              ],
+              "approx_hours": 5
+            },
+            {
+              "title": "Testing Nuxt Apps with Vitest",
+              "phase": "Phase 3 — Production & CloudOS Features",
+              "why": "Tests give you confidence to refactor CloudOS and ship new features without breaking existing ones — Vitest and @nuxt/test-utils are the standard stack.",
+              "what": [
+                "Set up Vitest with @nuxt/test-utils; configure nuxt.config for test environment",
+                "Write unit tests for composables: test useCloudStore actions and state changes",
+                "Write component tests with mountSuspended(): render a component and assert its output",
+                "Mock Supabase client calls in tests to avoid network requests",
+                "Write an API route integration test that calls a server route and checks the JSON response"
+              ],
+              "mini_project": "Write tests for: (1) the useCloudStore Pinia store — all actions, (2) the ResourceCard component — props render correctly, (3) the /api/aws/ec2 server route — returns expected shape with mocked AWS response.",
+              "resources": [
+                {"name": "Nuxt Docs — Testing", "url": "https://nuxt.com/docs/getting-started/testing"},
+                {"name": "@nuxt/test-utils Docs", "url": "https://nuxt.com/docs/getting-started/testing"},
+                {"name": "Vitest Docs — Getting Started", "url": "https://vitest.dev/guide/"}
+              ],
+              "approx_hours": 6
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
