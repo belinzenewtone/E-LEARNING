@@ -1,7 +1,7 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'default' })
 
-const ALLOWED_EMAIL = 'newtonebelinzeojing@gmail.com'
+const { public: { allowedEmail } } = useRuntimeConfig()
 
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
@@ -10,7 +10,7 @@ const user = useSupabaseUser()
 // Check email here so we don't create a middleware redirect loop.
 watchEffect(async () => {
   if (!user.value) return
-  if (user.value.email === ALLOWED_EMAIL) {
+  if (!allowedEmail || user.value.email === allowedEmail) {
     await navigateTo('/dashboard')
   } else {
     // Signed in with wrong account — sign out and show error

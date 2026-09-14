@@ -1,6 +1,5 @@
-const ALLOWED_EMAIL = 'newtonebelinzeojing@gmail.com'
-
 export default defineNuxtRouteMiddleware((to) => {
+  const { public: { allowedEmail } } = useRuntimeConfig()
   const user = useSupabaseUser()
 
   // Public routes — always allow
@@ -11,5 +10,5 @@ export default defineNuxtRouteMiddleware((to) => {
   if (!user.value) return navigateTo('/login')
 
   // Email allowlist — only the owner can access the dashboard
-  if (user.value.email !== ALLOWED_EMAIL) return navigateTo('/login')
+  if (allowedEmail && user.value.email !== allowedEmail) return navigateTo('/login')
 })

@@ -33,6 +33,13 @@ export default defineNuxtConfig({
     '/dashboard/**': { ssr: false }
   },
 
+  // Expose owner email for client-side allowlist check (set in Vercel env vars)
+  runtimeConfig: {
+    public: {
+      allowedEmail: process.env.NUXT_PUBLIC_ALLOWED_EMAIL ?? ''
+    }
+  },
+
   eslint: {
     config: {
       stylistic: {
