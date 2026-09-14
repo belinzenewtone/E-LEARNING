@@ -1,4 +1,4 @@
-const ALLOWED_EMAIL = 'belinze.newtone@jtl.co.ke'
+const ALLOWED_EMAIL = 'newtonebelinzeojing@gmail.com'
 
 export default defineNuxtRouteMiddleware((to) => {
   const user = useSupabaseUser()

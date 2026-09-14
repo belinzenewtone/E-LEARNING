@@ -1,7 +1,7 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'default' })
 
-const ALLOWED_EMAIL = 'belinze.newtone@jtl.co.ke'
+const ALLOWED_EMAIL = 'newtonebelinzeojing@gmail.com'
 
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
