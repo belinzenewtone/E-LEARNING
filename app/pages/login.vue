@@ -113,7 +113,7 @@ const sideFeatures = [
             <UInput
               v-model="email"
               type="email"
-              placeholder="belinze@example.com"
+              placeholder="you@example.com"
               autocomplete="email"
               required
               class="w-full"
@@ -134,7 +134,7 @@ const sideFeatures = [
           <UButton
             type="submit"
             :loading="loading"
-            class="mx-auto block"
+            class="w-full justify-center"
             size="md"
           >
             {{ loading ? 'Signing in…' : 'Sign in' }}
