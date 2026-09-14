@@ -17,16 +17,28 @@ const error = ref('')
 async function handleLogin() {
   loading.value = true
   error.value = ''
-  const { error: err } = await supabase.auth.signInWithPassword({
-    email: email.value,
-    password: password.value
-  })
-  if (err) {
-    error.value = err.message
-  } else {
-    navigateTo('/dashboard')
+  try {
+    const { data, error: err } = await supabase.auth.signInWithPassword({
+      email: email.value,
+      password: password.value
+    })
+    if (err) {
+      error.value = err.message
+      loading.value = false
+      return
+    }
+    if (!data.session) {
+      error.value = 'Sign-in succeeded but no session was returned. Check Supabase email confirmation settings.'
+      loading.value = false
+      return
+    }
+    // Wait a tick for the auth state to propagate before navigating
+    await nextTick()
+    await navigateTo('/dashboard')
+  } catch (e: unknown) {
+    error.value = e instanceof Error ? e.message : 'Unexpected error. Check your connection.'
+    loading.value = false
   }
-  loading.value = false
 }
 
 const sideFeatures = [
