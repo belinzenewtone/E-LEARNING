@@ -1,12 +1,23 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'default' })
 
+const ALLOWED_EMAIL = 'belinze.newtone@jtl.co.ke'
+
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
 
-// Redirect if already signed in
-watchEffect(() => {
-  if (user.value) navigateTo('/dashboard')
+// If already signed in with the right account, go straight to dashboard.
+// Check email here so we don't create a middleware redirect loop.
+watchEffect(async () => {
+  if (!user.value) return
+  if (user.value.email === ALLOWED_EMAIL) {
+    await navigateTo('/dashboard')
+  } else {
+    // Signed in with wrong account — sign out and show error
+    await supabase.auth.signOut()
+    error.value = 'Access denied: this app is private.'
+    loading.value = false
+  }
 })
 
 const email = ref('')
@@ -28,12 +39,11 @@ async function handleLogin() {
       return
     }
     if (!data.session) {
-      error.value = 'Sign-in succeeded but no session was returned — check your email for a confirmation link.'
+      error.value = 'No session returned — check your email for a confirmation link.'
       loading.value = false
       return
     }
-    // Success: keep spinner while the auth state change propagates.
-    // The watchEffect below will navigate to /dashboard once user.value is set.
+    // Success — keep spinner; watchEffect navigates once user.value is set.
   } catch (e: unknown) {
     error.value = e instanceof Error ? e.message : 'Unexpected error — check your connection.'
     loading.value = false
