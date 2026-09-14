@@ -28,15 +28,14 @@ async function handleLogin() {
       return
     }
     if (!data.session) {
-      error.value = 'Sign-in succeeded but no session was returned. Check Supabase email confirmation settings.'
+      error.value = 'Sign-in succeeded but no session was returned — check your email for a confirmation link.'
       loading.value = false
       return
     }
-    // Wait a tick for the auth state to propagate before navigating
-    await nextTick()
-    await navigateTo('/dashboard')
+    // Success: keep spinner while the auth state change propagates.
+    // The watchEffect below will navigate to /dashboard once user.value is set.
   } catch (e: unknown) {
-    error.value = e instanceof Error ? e.message : 'Unexpected error. Check your connection.'
+    error.value = e instanceof Error ? e.message : 'Unexpected error — check your connection.'
     loading.value = false
   }
 }
