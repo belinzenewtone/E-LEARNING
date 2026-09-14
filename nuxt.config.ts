@@ -14,8 +14,10 @@ export default defineNuxtConfig({
 
   compatibilityDate: '2026-06-30',
 
-  // Supabase module config
+  // Supabase module config — url/key read from SUPABASE_URL / SUPABASE_KEY
   supabase: {
+    url: process.env.SUPABASE_URL ?? '',
+    key: process.env.SUPABASE_KEY ?? '',
     redirectOptions: {
       login: '/login',
       callback: '/confirm',
@@ -24,19 +26,11 @@ export default defineNuxtConfig({
     types: './types/database.types.ts'
   },
 
-  // Route rules: prerender public pages, protect dashboard
+  // Route rules: only prerender the landing page; login must be SSR
+  // so it picks up the Supabase runtime config on every request
   routeRules: {
     '/': { prerender: true },
-    '/login': { prerender: true },
     '/dashboard/**': { ssr: false }
-  },
-
-  // Runtime env vars exposed to client
-  runtimeConfig: {
-    public: {
-      supabaseUrl: process.env.SUPABASE_URL,
-      supabaseKey: process.env.SUPABASE_KEY
-    }
   },
 
   eslint: {
